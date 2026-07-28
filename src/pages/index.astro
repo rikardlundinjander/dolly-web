@@ -34,7 +34,7 @@ const faqs = [
 
 <Layout>
   <!-- Vit innehållsyta ovanpå mörk footer (footer-reveal) -->
-  <div class="relative z-10 rounded-b-[2rem] bg-bg pb-24">
+  <div class="relative z-10 overflow-x-clip rounded-b-[2rem] bg-bg pb-24">
     <Nav />
 
     <!-- Hero -->
@@ -77,12 +77,19 @@ const faqs = [
         Requires macOS 15 or later · One-time purchase
       </p>
 
-      <!-- Hero-video -->
-      <div
-        id="demo"
-        class="mt-16 flex aspect-video w-full scroll-mt-24 items-center justify-center rounded-xl bg-surface"
-      >
-        <span class="text-sm text-text-subtle">Product video</span>
+      <!-- Hero-video: startar i containerbredd, skalas upp vid scroll -->
+      <div id="demo" class="mt-16 w-full scroll-mt-24">
+        <video
+          id="hero-video"
+          class="aspect-video w-full origin-top rounded-xl bg-surface object-cover will-change-transform"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="auto"
+        >
+          <source src="/KH_web_placeholder_herovid.mp4" type="video/mp4" />
+        </video>
       </div>
     </Container>
 
@@ -210,3 +217,27 @@ const faqs = [
 
   <Footer />
 </Layout>
+
+<script>
+  // Hero-video skalas upp när man scrollar (respekterar reduced-motion).
+  const video = document.getElementById("hero-video");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (video && !reduce) {
+    const MAX = 1.22; // sluttning: hur mycket den växer
+    const DIST = 520; // px scroll tills full uppskalning
+    let ticking = false;
+    const update = () => {
+      const p = Math.min(Math.max(window.scrollY, 0) / DIST, 1);
+      video.style.transform = `scale(${(1 + p * (MAX - 1)).toFixed(4)})`;
+      ticking = false;
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    update();
+    addEventListener("scroll", onScroll, { passive: true });
+  }
+</script>
