@@ -33,8 +33,8 @@ const faqs = [
 ---
 
 <Layout>
-  <!-- Vit innehållsyta ovanpå mörk footer (footer-reveal) -->
-  <div class="relative z-10 overflow-x-clip rounded-b-[2rem] bg-bg pb-24">
+  <!-- Vit innehållsyta som lyfter av den fixed footern (footer-reveal) -->
+  <div id="page" class="relative z-10 overflow-x-clip rounded-b-[2rem] bg-bg pb-24">
     <Nav />
 
     <!-- Hero -->
@@ -263,5 +263,22 @@ const faqs = [
     );
     update();
     addEventListener("scroll", onScroll, { passive: true });
+  }
+</script>
+
+<script>
+  // Footer-reveal: reservera exakt footerns höjd under sidan så den fixed
+  // footern avslöjas när innehållet lyft av den vid botten.
+  const page = document.getElementById("page");
+  const footer = document.querySelector("footer");
+  if (page && footer) {
+    const setSpace = () => {
+      page.style.marginBottom = footer.offsetHeight + "px";
+    };
+    setSpace();
+    addEventListener("resize", setSpace, { passive: true });
+    if (document.fonts && document.fonts.ready) {
+      document.fonts.ready.then(setSpace);
+    }
   }
 </script>
