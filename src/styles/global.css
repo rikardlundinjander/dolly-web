@@ -1,4 +1,7 @@
 @import "tailwindcss";
+/* Inter variabel med optisk storlek (opsz) — ger Inter Display-beteende
+   vid stora storlekar automatiskt via font-optical-sizing: auto. Self-hostad. */
+@import "@fontsource-variable/inter/opsz.css";
 
 /* =============================================================
    Dolly — Design tokens
@@ -49,10 +52,9 @@
   --shadow-md: 0 4px 12px rgba(9, 9, 11, 0.06), 0 2px 4px rgba(9, 9, 11, 0.04);
   --shadow-lg: 0 12px 32px rgba(9, 9, 11, 0.08), 0 4px 8px rgba(9, 9, 11, 0.04);
 
-  /* Typografi — Inter Display (rubriker) + Inter (brödtext).
-     Webfonts wire:as i Fas 1; faller tills dess till system. */
-  --font-sans: "Inter", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "Inter Display", "Inter", ui-sans-serif, system-ui, sans-serif;
+  /* Typografi — Inter Variable (opsz sköter display vs text automatiskt) */
+  --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   /* Typskala — modest ratio, generöst spann */
@@ -142,6 +144,7 @@ body {
   background-color: var(--bg);
   color: var(--text);
   font-family: var(--font-sans);
+  font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;

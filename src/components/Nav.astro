@@ -1,0 +1,43 @@
+---
+// Flytande blur-pill-nav (Mobbin). Sticky. Skuggan tonas in vid scroll.
+const links = [
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Changelog", href: "#changelog" },
+];
+---
+
+<header class="sticky top-4 z-50 px-[var(--spacing-gutter)]">
+  <nav
+    id="site-nav"
+    data-scrolled="false"
+    class="mx-auto flex max-w-3xl items-center justify-between gap-6 rounded-pill bg-[var(--nav-bg)] py-2.5 pr-2.5 pl-5 shadow-sm backdrop-blur-xl transition-shadow duration-300 ease-[var(--ease-out-quart)] data-[scrolled=true]:shadow-md"
+  >
+    <a href="/" class="text-base font-semibold tracking-tight text-text">Dolly</a>
+    <ul class="hidden items-center gap-6 text-sm text-text-muted sm:flex">
+      {
+        links.map((l) => (
+          <li>
+            <a href={l.href} class="transition-colors hover:text-text">
+              {l.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+    <a
+      href="#"
+      class="rounded-pill bg-btn-primary px-4 py-2 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+    >
+      Download
+    </a>
+  </nav>
+</header>
+
+<script>
+  const nav = document.getElementById("site-nav");
+  const onScroll = () =>
+    nav?.setAttribute("data-scrolled", String(window.scrollY > 8));
+  onScroll();
+  addEventListener("scroll", onScroll, { passive: true });
+</script>

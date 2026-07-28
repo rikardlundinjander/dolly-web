@@ -1,12 +1,10 @@
 ---
 import Layout from "../layouts/Layout.astro";
+import Container from "../components/Container.astro";
+import Nav from "../components/Nav.astro";
+import Footer from "../components/Footer.astro";
 
-// Fas 0/1 — Mobbin-kalibrerad token-proof.
-// Byggd från riktiga Mobbin-skärmdumpar: flytande blur-pill-nav, vit canvas
-// med grå ytor, pill-knappar, rundade kort, sparsam blå accent, footer-reveal.
-// Copy är placeholder men domän-relevant (ingen lorem).
-
-const nav = ["Features", "Pricing", "Changelog"];
+// Fas 1 — komponentiserad stomme. Copy är placeholder men domän-relevant.
 const features = [
   { title: "Auto-zoom", body: "Kameran följer pekaren automatiskt — mjukt och redigerbart." },
   { title: "Polished backdrops", body: "Rundade hörn, padding och skugga direkt ur lådan." },
@@ -17,38 +15,16 @@ const features = [
 <Layout>
   <!-- Vit innehållsyta ovanpå mörk footer (footer-reveal) -->
   <div class="relative z-10 rounded-b-[2rem] bg-bg pb-24">
-    <!-- Flytande blur-pill-nav -->
-    <header class="sticky top-4 z-50 px-[var(--spacing-gutter)]">
-      <nav
-        class="mx-auto flex max-w-3xl items-center justify-between gap-6 rounded-pill border border-border/60 bg-[var(--nav-bg)] py-2.5 pl-5 pr-2.5 shadow-sm backdrop-blur-xl"
-      >
-        <a href="/" class="text-base font-semibold tracking-tight text-text">Dolly</a>
-        <ul class="hidden items-center gap-6 text-sm text-text-muted sm:flex">
-          {nav.map((item) => (
-            <li><a href="#" class="transition-colors hover:text-text">{item}</a></li>
-          ))}
-        </ul>
-        <a
-          href="#"
-          class="rounded-pill bg-btn-primary px-4 py-2 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-        >
-          Download
-        </a>
-      </nav>
-    </header>
+    <Nav />
 
     <!-- Hero -->
-    <main
-      class="mx-auto flex max-w-[var(--container-max)] flex-col items-center px-[var(--spacing-gutter)] pt-24 text-center"
-    >
-      <!-- Blå accent-badge (sparsam) -->
+    <Container class="flex flex-col items-center pt-24 text-center">
       <span
         class="mb-8 inline-flex items-center gap-2 rounded-pill bg-accent px-3 py-1 text-xs font-medium text-accent-contrast"
       >
         v1.0 — nu tillgänglig
       </span>
 
-      <!-- App-ikon-platshållare -->
       <div class="mb-8 size-16 rounded-[18px] bg-text shadow-md"></div>
 
       <h1
@@ -79,51 +55,24 @@ const features = [
 
       <!-- Mockup-container (video poppar här) -->
       <div
-        class="mt-16 flex aspect-video w-full items-center justify-center rounded-xl border border-border bg-surface shadow-lg"
+        class="mt-16 flex aspect-video w-full items-center justify-center rounded-xl bg-surface"
       >
         <span class="text-sm text-text-subtle">Produktvideo</span>
       </div>
 
-      <!-- Feature-kort på vit canvas -->
+      <!-- Feature-kort -->
       <div class="mt-20 grid w-full grid-cols-1 gap-4 text-left sm:grid-cols-3">
-        {features.map((f) => (
-          <div class="rounded-lg bg-surface p-6">
-            <p class="text-base font-semibold text-text">{f.title}</p>
-            <p class="mt-2 text-sm text-text-muted">{f.body}</p>
-          </div>
-        ))}
+        {
+          features.map((f) => (
+            <div class="rounded-lg bg-surface p-6">
+              <p class="text-base font-semibold text-text">{f.title}</p>
+              <p class="mt-2 text-sm text-text-muted">{f.body}</p>
+            </div>
+          ))
+        }
       </div>
-    </main>
+    </Container>
   </div>
 
-  <!-- Mörk footer (reveal under den vita ytan) -->
-  <footer class="-mt-8 bg-inverse-bg pb-10 pt-28 text-inverse-text">
-    <div
-      class="mx-auto flex max-w-[var(--container-max)] flex-col gap-12 px-[var(--spacing-gutter)] sm:flex-row sm:justify-between"
-    >
-      <div class="max-w-xs">
-        <p class="font-display text-2xl font-bold tracking-tight">Dolly</p>
-        <p class="mt-3 text-sm text-inverse-muted">
-          Beautiful screen recordings for macOS.
-        </p>
-      </div>
-      <div class="flex gap-16 text-sm">
-        <ul class="flex flex-col gap-3 text-inverse-muted">
-          <li><a href="#" class="hover:text-inverse-text">Features</a></li>
-          <li><a href="#" class="hover:text-inverse-text">Pricing</a></li>
-          <li><a href="#" class="hover:text-inverse-text">Changelog</a></li>
-        </ul>
-        <ul class="flex flex-col gap-3 text-inverse-muted">
-          <li><a href="#" class="hover:text-inverse-text">Privacy</a></li>
-          <li><a href="#" class="hover:text-inverse-text">Terms</a></li>
-          <li><a href="#" class="hover:text-inverse-text">Refund</a></li>
-        </ul>
-      </div>
-    </div>
-    <div
-      class="mx-auto mt-16 max-w-[var(--container-max)] px-[var(--spacing-gutter)] text-xs text-inverse-muted"
-    >
-      © Dolly 2026
-    </div>
-  </footer>
+  <Footer />
 </Layout>
