@@ -1,0 +1,65 @@
+---
+import Layout from "../layouts/Layout.astro";
+
+// Fas 0 — token-proof. Ingen riktig copy/layout ännu; det kommer i Fas 1–2.
+// Syftet med denna sida: verifiera att design-tokens (färg, typ, radie,
+// motion, mörk sektion) fungerar innan vi bygger vidare.
+---
+
+<Layout>
+  <main
+    class="mx-auto flex min-h-dvh max-w-[var(--container-max)] flex-col justify-center gap-16 px-[var(--spacing-gutter)] py-24"
+  >
+    <!-- Ljus sektion -->
+    <section class="flex flex-col gap-6">
+      <p class="text-sm font-medium tracking-widest text-text-subtle uppercase">
+        heydolly.app · scaffold
+      </p>
+      <h1
+        class="font-display text-5xl leading-[1.05] font-semibold tracking-tight text-text sm:text-6xl"
+      >
+        Dolly
+      </h1>
+      <p class="max-w-xl text-lg text-text-muted">
+        Beautiful screen recordings for macOS. Den här sidan är stommen — den
+        finns bara för att verifiera design-tokens. Riktig layout kommer i nästa
+        fas.
+      </p>
+      <div class="flex flex-wrap items-center gap-3">
+        <a
+          href="#"
+          class="rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-contrast transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] hover:bg-accent-hover"
+        >
+          Download for Mac
+        </a>
+        <a
+          href="#"
+          class="rounded-md border border-border-strong px-5 py-2.5 text-sm font-medium text-text transition-colors duration-[var(--duration-fast)] hover:bg-surface-strong"
+        >
+          See it in action
+        </a>
+      </div>
+
+      <!-- Radie- + yt-prov -->
+      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
+        <div class="rounded-xs border border-border bg-surface p-4 text-xs text-text-muted">radius-xs</div>
+        <div class="rounded-md border border-border bg-surface p-4 text-xs text-text-muted">radius-md</div>
+        <div class="rounded-xl border border-border bg-surface p-4 text-xs text-text-muted">radius-xl</div>
+        <div class="rounded-2xl border border-border bg-surface p-4 text-xs text-text-muted">radius-2xl</div>
+      </div>
+    </section>
+
+    <!-- Mörk sektion (video poppar här senare) -->
+    <section
+      class="flex flex-col gap-4 rounded-2xl bg-inverse-bg p-10 text-inverse-text"
+    >
+      <p class="text-sm font-medium tracking-widest text-inverse-muted uppercase">
+        Mörk sektion
+      </p>
+      <p class="max-w-xl text-lg text-inverse-text">
+        Ljus sajt, mörka sektioner för video — precis som vi planerade. Färgen
+        på den här ytan styrs av <code class="font-mono text-brand-400">--inverse-bg</code>.
+      </p>
+    </section>
+  </main>
+</Layout>
