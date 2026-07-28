@@ -7,6 +7,10 @@ import Footer from "../components/Footer.astro";
 import FeatureRow from "../components/FeatureRow.astro";
 import StepPlayer from "../components/StepPlayer.astro";
 
+// Polar single-license-checkout (används av alla köp-knappar)
+const POLAR_CHECKOUT =
+  "https://buy.polar.sh/polar_cl_twiEvKa2nqt7k2bPyNEMGlCkmiZydNOUvPIyU105wyO";
+
 // Fas 2 — full landningssida. Media = platshållare (video kommer senare).
 // Copy engelsk (produkten är engelsk-native). PLATSHÅLLAR-PRIS nedan.
 // Alla tre pekar på samma placeholder tills vi har per-steg-videor.
@@ -64,7 +68,7 @@ const faqs = [
 
       <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
         <a
-          href="#pricing"
+          href={POLAR_CHECKOUT}
           class="rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text shadow-xs transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] hover:bg-btn-primary-hover"
         >
           Download for Mac
@@ -162,7 +166,7 @@ const faqs = [
           <span class="text-sm text-text-muted">once</span>
         </div>
         <a
-          href="https://buy.polar.sh/polar_cl_twiEvKa2nqt7k2bPyNEMGlCkmiZydNOUvPIyU105wyO"
+          href={POLAR_CHECKOUT}
           class="mt-8 block rounded-pill bg-btn-primary py-3 text-center text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
         >
           Buy now
@@ -205,7 +209,7 @@ const faqs = [
           Make your next recording look designed.
         </h2>
         <a
-          href="#pricing"
+          href={POLAR_CHECKOUT}
           class="mt-8 rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
         >
           Download for Mac
