@@ -88,7 +88,7 @@
   --bg: var(--color-neutral-0);
   --surface: var(--color-neutral-100);
   --surface-strong: var(--color-neutral-200);
-  --nav-bg: rgba(244, 244, 245, 0.72); /* ljusgrå translucent för blur-nav */
+  --nav-bg: rgba(237, 237, 237, 0.68); /* #EDEDED @ 68% — translucent blur-nav */
   --text: var(--color-neutral-1000);
   --text-muted: var(--color-neutral-500);
   --text-subtle: var(--color-neutral-400);
