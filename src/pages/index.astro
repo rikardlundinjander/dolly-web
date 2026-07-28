@@ -122,8 +122,12 @@ const faqs = [
     >
       <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {
-          steps.map((s) => (
-            <div class="flex flex-col gap-3 rounded-lg bg-surface p-8">
+          steps.map((s, i) => (
+            <div
+              data-reveal
+              style={`--reveal-delay:${i * 80}ms`}
+              class="flex flex-col gap-3 rounded-lg bg-surface p-8"
+            >
               <span class="font-mono text-sm text-text-subtle">{s.n}</span>
               <p class="text-lg font-semibold text-text">{s.title}</p>
               <p class="text-sm text-text-muted">{s.body}</p>
@@ -140,8 +144,12 @@ const faqs = [
     >
       <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {
-          grid.map((f) => (
-            <div class="rounded-lg bg-surface p-6">
+          grid.map((f, i) => (
+            <div
+              data-reveal
+              style={`--reveal-delay:${(i % 3) * 80}ms`}
+              class="rounded-lg bg-surface p-6"
+            >
               <p class="text-base font-semibold text-text">{f.title}</p>
               <p class="mt-2 text-sm text-text-muted">{f.body}</p>
             </div>
@@ -157,7 +165,7 @@ const faqs = [
       title="Pay once. It's yours."
       lead="No subscription. One-time purchase with 12 months of updates included."
     >
-      <div class="mx-auto max-w-md rounded-2xl bg-surface p-8 sm:p-10">
+      <div data-reveal class="mx-auto max-w-md rounded-2xl bg-surface p-8 sm:p-10">
         <p class="text-base font-semibold text-text">Dolly</p>
         <p class="mt-1 text-sm text-text-muted">One-time purchase</p>
         <div class="mt-6 flex items-baseline gap-2">
@@ -182,7 +190,7 @@ const faqs = [
 
     <!-- FAQ -->
     <Section id="faq" title="Questions?">
-      <div class="mx-auto max-w-2xl divide-y divide-border">
+      <div data-reveal class="mx-auto max-w-2xl divide-y divide-border">
         {
           faqs.map((item) => (
             <details class="group py-5">
@@ -201,7 +209,7 @@ const faqs = [
 
     <!-- Slut-CTA -->
     <Section>
-      <div class="flex flex-col items-center text-center">
+      <div data-reveal class="flex flex-col items-center text-center">
         <h2
           class="max-w-2xl font-display text-4xl font-bold tracking-[-0.025em] text-text sm:text-5xl"
         >

@@ -11,7 +11,7 @@ interface Props {
 const { kicker, title, body, media = "Video", reverse = false } = Astro.props;
 ---
 
-<div class="grid items-center gap-10 sm:grid-cols-2 sm:gap-16">
+<div data-reveal class="grid items-center gap-10 sm:grid-cols-2 sm:gap-16">
   <div class:list={["flex flex-col gap-4", reverse && "sm:order-2"]}>
     {kicker && <span class="text-sm font-medium text-accent">{kicker}</span>}
     <h3
