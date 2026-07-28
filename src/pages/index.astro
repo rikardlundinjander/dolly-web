@@ -220,15 +220,21 @@ const faqs = [
 
 <script>
   // Hero-video skalas upp när man scrollar (respekterar reduced-motion).
+  // origin-top => växer nedåt; vi reserverar lika mycket margin-bottom så
+  // sektionen under pushas ned istället för att krockas.
   const video = document.getElementById("hero-video");
+  const demo = document.getElementById("demo");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (video && !reduce) {
-    const MAX = 1.22; // sluttning: hur mycket den växer
+  if (video && demo && !reduce) {
+    const MAX = 1.22; // hur mycket den växer
     const DIST = 520; // px scroll tills full uppskalning
+    let h = video.offsetHeight; // olayoutad höjd (opåverkad av transform)
     let ticking = false;
     const update = () => {
       const p = Math.min(Math.max(window.scrollY, 0) / DIST, 1);
-      video.style.transform = `scale(${(1 + p * (MAX - 1)).toFixed(4)})`;
+      const scale = 1 + p * (MAX - 1);
+      video.style.transform = `scale(${scale.toFixed(4)})`;
+      demo.style.marginBottom = ((scale - 1) * h).toFixed(1) + "px";
       ticking = false;
     };
     const onScroll = () => {
@@ -237,6 +243,14 @@ const faqs = [
         requestAnimationFrame(update);
       }
     };
+    addEventListener(
+      "resize",
+      () => {
+        h = video.offsetHeight;
+        update();
+      },
+      { passive: true },
+    );
     update();
     addEventListener("scroll", onScroll, { passive: true });
   }
