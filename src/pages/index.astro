@@ -5,13 +5,16 @@ import Section from "../components/Section.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import FeatureRow from "../components/FeatureRow.astro";
+import StepPlayer from "../components/StepPlayer.astro";
 
 // Fas 2 — full landningssida. Media = platshållare (video kommer senare).
 // Copy engelsk (produkten är engelsk-native). PLATSHÅLLAR-PRIS nedan.
+// Alla tre pekar på samma placeholder tills vi har per-steg-videor.
+const STEP_VIDEO = "/KH_web_placeholder_herovid.mp4";
 const steps = [
-  { n: "01", title: "Record", body: "Capture a window, a region, or the full screen — with your webcam, if you like." },
-  { n: "02", title: "Dolly polishes", body: "Auto-zoom, backdrop, and cursor smoothing apply while you record." },
-  { n: "03", title: "Export", body: "Trim, tweak, and export a share-ready video in seconds." },
+  { title: "Record", body: "Capture a window, a region, or the full screen — with your webcam, if you like.", src: STEP_VIDEO },
+  { title: "Dolly polishes", body: "Auto-zoom, backdrop, and cursor smoothing apply while you record.", src: STEP_VIDEO },
+  { title: "Export", body: "Trim, tweak, and export a share-ready video in seconds.", src: STEP_VIDEO },
 ];
 
 const grid = [
@@ -120,26 +123,7 @@ const faqs = [
       kicker="How it works"
       title="From capture to share in three steps."
     >
-      <div
-        data-reveal
-        class="mb-10 flex aspect-video w-full items-center justify-center rounded-xl bg-surface"
-      >
-        <span class="text-sm text-text-subtle">Video</span>
-      </div>
-      <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
-        {
-          steps.map((s, i) => (
-            <div
-              data-reveal
-              style={`--reveal-delay:${i * 80}ms`}
-              class="flex flex-col gap-3 rounded-lg bg-surface p-8"
-            >
-              <p class="text-lg font-semibold text-text">{s.title}</p>
-              <p class="text-sm text-text-muted">{s.body}</p>
-            </div>
-          ))
-        }
-      </div>
+      <StepPlayer steps={steps} />
     </Section>
 
     <!-- Feature-grid -->

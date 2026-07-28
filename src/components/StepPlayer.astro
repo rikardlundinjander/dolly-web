@@ -1,0 +1,126 @@
+---
+// "How it works"-player: 16:9-video styrd av tre nav-boxar.
+// Autoplay av steg 1 när sektionen kommer i vy → auto-advance vid slut →
+// klick hoppar direkt. Aktiv box markeras + progress-bar visar förloppet.
+interface Step {
+  title: string;
+  body: string;
+  src: string;
+}
+interface Props {
+  steps: Step[];
+}
+const { steps } = Astro.props;
+---
+
+<div data-step-player>
+  <!-- Player -->
+  <div
+    data-reveal
+    class="relative mb-10 aspect-video w-full overflow-hidden rounded-xl bg-surface"
+  >
+    <video
+      data-player
+      class="size-full object-cover"
+      muted
+      playsinline
+      preload="metadata"></video>
+  </div>
+
+  <!-- Navigation -->
+  <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
+    {
+      steps.map((s, i) => (
+        <button
+          type="button"
+          data-step={i}
+          data-src={s.src}
+          data-reveal
+          style={`--reveal-delay:${i * 80}ms`}
+          aria-label={`Spela: ${s.title}`}
+          class="group flex cursor-pointer flex-col gap-3 rounded-lg bg-surface p-8 text-left transition-colors hover:bg-surface-strong data-[active=true]:bg-surface-strong"
+        >
+          <p class="text-lg font-semibold text-text">{s.title}</p>
+          <p class="text-sm text-text-muted">{s.body}</p>
+          <span class="mt-3 block h-0.5 w-full overflow-hidden rounded-pill bg-border">
+            <span
+              data-progress
+              class="block h-full w-0 bg-accent transition-[width] duration-150 ease-linear"
+            />
+          </span>
+        </button>
+      ))
+    }
+  </div>
+</div>
+
+<script>
+  const root = document.querySelector<HTMLElement>("[data-step-player]");
+  if (root) {
+    const video = root.querySelector<HTMLVideoElement>("[data-player]")!;
+    const buttons = [
+      ...root.querySelectorAll<HTMLButtonElement>("[data-step]"),
+    ];
+    const progresses = buttons.map((b) =>
+      b.querySelector<HTMLElement>("[data-progress]"),
+    );
+    let current = -1;
+    let started = false;
+
+    const setProgress = (i: number, pct: number) => {
+      const p = progresses[i];
+      if (p) p.style.width = pct + "%";
+    };
+
+    const activate = (i: number, autoplay = true) => {
+      current = i;
+      buttons.forEach((b, idx) =>
+        b.setAttribute("data-active", String(idx === i)),
+      );
+      // Nollställ alla utom klarmarkerade tidigare steg
+      progresses.forEach((_, idx) => {
+        if (idx > i) setProgress(idx, 0);
+        else if (idx < i) setProgress(idx, 100);
+      });
+      setProgress(i, 0);
+      const src = buttons[i].dataset.src || "";
+      if (!video.currentSrc.endsWith(src)) {
+        video.src = src;
+        video.load();
+      }
+      if (autoplay) video.play().catch(() => {});
+    };
+
+    video.addEventListener("timeupdate", () => {
+      if (current < 0 || !video.duration) return;
+      setProgress(current, (video.currentTime / video.duration) * 100);
+    });
+
+    video.addEventListener("ended", () => {
+      setProgress(current, 100);
+      if (current < buttons.length - 1) activate(current + 1);
+    });
+
+    buttons.forEach((b, i) => b.addEventListener("click", () => activate(i)));
+
+    // Starta steg 1 när sektionen kommer i vy; pausa när den lämnar
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (e.isIntersecting) {
+            if (!started) {
+              started = true;
+              activate(0);
+            } else {
+              video.play().catch(() => {});
+            }
+          } else {
+            video.pause();
+          }
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(root);
+  }
+</script>
