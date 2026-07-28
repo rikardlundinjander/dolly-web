@@ -38,16 +38,18 @@ const { steps } = Astro.props;
           data-reveal
           style={`--reveal-delay:${i * 80}ms`}
           aria-label={`Spela: ${s.title}`}
-          class="group flex cursor-pointer flex-col gap-3 rounded-lg bg-surface p-8 text-left transition-colors hover:bg-surface-strong data-[active=true]:bg-surface-strong"
+          class="cursor-pointer text-left"
         >
-          <p class="text-lg font-semibold text-text">{s.title}</p>
-          <p class="text-sm text-text-muted">{s.body}</p>
-          <span class="mt-3 block h-0.5 w-full overflow-hidden rounded-pill bg-border">
-            <span
-              data-progress
-              class="block h-full w-0 bg-accent transition-[width] duration-150 ease-linear"
-            />
-          </span>
+          <div class="flex flex-col gap-3 opacity-40 transition-opacity duration-300 ease-[var(--ease-out-quart)]">
+            <span class="mb-1 block h-0.5 w-full overflow-hidden rounded-pill bg-border">
+              <span
+                data-progress
+                class="block h-full w-0 bg-accent transition-[width] duration-150 ease-linear"
+              />
+            </span>
+            <p class="text-lg font-semibold text-text">{s.title}</p>
+            <p class="text-sm text-text-muted">{s.body}</p>
+          </div>
         </button>
       ))
     }
@@ -64,6 +66,7 @@ const { steps } = Astro.props;
     const progresses = buttons.map((b) =>
       b.querySelector<HTMLElement>("[data-progress]"),
     );
+    const inners = buttons.map((b) => b.querySelector<HTMLElement>("div")!);
     let current = -1;
     let started = false;
 
@@ -74,9 +77,11 @@ const { steps } = Astro.props;
 
     const activate = (i: number, autoplay = true) => {
       current = i;
-      buttons.forEach((b, idx) =>
-        b.setAttribute("data-active", String(idx === i)),
-      );
+      buttons.forEach((b, idx) => {
+        const on = idx === i;
+        b.setAttribute("data-active", String(on));
+        inners[idx].style.opacity = on ? "1" : "0.4";
+      });
       // Nollställ alla utom klarmarkerade tidigare steg
       progresses.forEach((_, idx) => {
         if (idx > i) setProgress(idx, 0);
@@ -101,7 +106,15 @@ const { steps } = Astro.props;
       if (current < buttons.length - 1) activate(current + 1);
     });
 
-    buttons.forEach((b, i) => b.addEventListener("click", () => activate(i)));
+    buttons.forEach((b, i) => {
+      b.addEventListener("click", () => activate(i));
+      b.addEventListener("mouseenter", () => {
+        if (i !== current) inners[i].style.opacity = "0.7";
+      });
+      b.addEventListener("mouseleave", () => {
+        if (i !== current) inners[i].style.opacity = "0.4";
+      });
+    });
 
     // Starta steg 1 när sektionen kommer i vy; pausa när den lämnar
     const io = new IntersectionObserver(
