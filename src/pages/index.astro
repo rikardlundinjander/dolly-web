@@ -1,14 +1,34 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/Container.astro";
+import Section from "../components/Section.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
+import FeatureRow from "../components/FeatureRow.astro";
 
-// Fas 1 — komponentiserad stomme. Copy är placeholder men domän-relevant.
-const features = [
-  { title: "Auto-zoom", body: "Kameran följer pekaren automatiskt — mjukt och redigerbart." },
-  { title: "Polished backdrops", body: "Rundade hörn, padding och skugga direkt ur lådan." },
-  { title: "Smooth cursor", body: "Utjämnad pekarrörelse renderad ur inspelad metadata." },
+// Fas 2 — full landningssida. Media = platshållare (video kommer senare).
+// Copy engelsk (produkten är engelsk-native). PLATSHÅLLAR-PRIS nedan.
+const steps = [
+  { n: "01", title: "Record", body: "Capture a window, a region, or the full screen — with your webcam, if you like." },
+  { n: "02", title: "Dolly polishes", body: "Auto-zoom, backdrop, and cursor smoothing apply while you record." },
+  { n: "03", title: "Export", body: "Trim, tweak, and export a share-ready video in seconds." },
+];
+
+const grid = [
+  { title: "Webcam bubble", body: "Record your camera alongside the screen, anchored anywhere." },
+  { title: "Annotations", body: "Pin text and callouts that follow the frame." },
+  { title: "Intro & outro", body: "Add clean opening and closing motion with easing you control." },
+  { title: "Trim & timeline", body: "A magnetic timeline for cuts, zooms, and effects." },
+  { title: "One-click export", body: "Presets for the platforms you actually post to." },
+  { title: "Stays on your Mac", body: "Dolly runs entirely on-device. Nothing leaves your machine." },
+];
+
+const faqs = [
+  { q: "Is Dolly a subscription?", a: "No. Dolly is a one-time purchase that includes 12 months of updates. Keep the version you bought for as long as you like." },
+  { q: "Which macOS versions are supported?", a: "macOS 15 (Sequoia) and later." },
+  { q: "Where are my recordings stored?", a: "Locally, on your Mac. Dolly runs entirely on-device — nothing is uploaded." },
+  { q: "How do updates work?", a: "Dolly updates itself automatically. Your 12 months of updates begin at purchase." },
+  { q: "Can I get a refund?", a: "Yes — checkout and refunds are handled by Polar, our payment provider." },
 ];
 ---
 
@@ -22,7 +42,7 @@ const features = [
       <span
         class="mb-8 inline-flex items-center gap-2 rounded-pill bg-accent px-3 py-1 text-xs font-medium text-accent-contrast"
       >
-        v1.0 — nu tillgänglig
+        v1.0 — now available
       </span>
 
       <div class="mb-8 size-16 rounded-[18px] bg-text shadow-md"></div>
@@ -33,37 +53,83 @@ const features = [
         Beautiful screen recordings, natively on Mac.
       </h1>
       <p class="mt-6 max-w-xl text-lg text-text-muted">
-        Dolly spelar in, zoomar och putsar automatiskt. Inget att konfigurera —
-        exportera på sekunder.
+        Dolly records, zooms, and polishes automatically. Nothing to configure —
+        export in seconds.
       </p>
 
       <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
         <a
-          href="#"
+          href="#pricing"
           class="rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text shadow-xs transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] hover:bg-btn-primary-hover"
         >
           Download for Mac
         </a>
         <a
-          href="#"
+          href="#demo"
           class="rounded-pill border border-border-strong bg-bg px-6 py-3 text-sm font-medium text-text shadow-xs transition-colors duration-[var(--duration-fast)] hover:bg-surface"
         >
           Watch the demo →
         </a>
       </div>
-      <p class="mt-4 text-sm text-text-subtle">Kräver macOS 15 eller senare · Engångsköp</p>
+      <p class="mt-4 text-sm text-text-subtle">
+        Requires macOS 15 or later · One-time purchase
+      </p>
 
-      <!-- Mockup-container (video poppar här) -->
+      <!-- Hero-video -->
       <div
-        class="mt-16 flex aspect-video w-full items-center justify-center rounded-xl bg-surface"
+        id="demo"
+        class="mt-16 flex aspect-video w-full scroll-mt-24 items-center justify-center rounded-xl bg-surface"
       >
-        <span class="text-sm text-text-subtle">Produktvideo</span>
+        <span class="text-sm text-text-subtle">Product video</span>
       </div>
+    </Container>
 
-      <!-- Feature-kort -->
-      <div class="mt-20 grid w-full grid-cols-1 gap-4 text-left sm:grid-cols-3">
+    <!-- Feature-rader -->
+    <Section id="features" class="flex flex-col gap-24 sm:gap-32">
+      <FeatureRow
+        kicker="Auto-zoom"
+        title="Zoom that follows the action."
+        body="Dolly watches your cursor and zooms in where it matters — automatically. Every zoom stays editable on the timeline."
+      />
+      <FeatureRow
+        kicker="Backdrops"
+        title="Instantly presentable."
+        body="Rounded corners, padding, and a soft shadow over a backdrop of your choice. Raw capture in, designed output out."
+        reverse
+      />
+      <FeatureRow
+        kicker="Cursor"
+        title="A pointer worth watching."
+        body="Dolly re-renders a smoothed cursor from recorded metadata — deliberate motion, none of the jitter."
+      />
+    </Section>
+
+    <!-- Så funkar det -->
+    <Section
+      kicker="How it works"
+      title="From capture to share in three steps."
+    >
+      <div class="grid grid-cols-1 gap-8 sm:grid-cols-3">
         {
-          features.map((f) => (
+          steps.map((s) => (
+            <div class="flex flex-col gap-3 rounded-lg bg-surface p-8">
+              <span class="font-mono text-sm text-text-subtle">{s.n}</span>
+              <p class="text-lg font-semibold text-text">{s.title}</p>
+              <p class="text-sm text-text-muted">{s.body}</p>
+            </div>
+          ))
+        }
+      </div>
+    </Section>
+
+    <!-- Feature-grid -->
+    <Section
+      title="Everything in the box."
+      lead="No add-ons, no upsells. One app that does the whole job."
+    >
+      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {
+          grid.map((f) => (
             <div class="rounded-lg bg-surface p-6">
               <p class="text-base font-semibold text-text">{f.title}</p>
               <p class="mt-2 text-sm text-text-muted">{f.body}</p>
@@ -71,7 +137,73 @@ const features = [
           ))
         }
       </div>
-    </Container>
+    </Section>
+
+    <!-- Pricing -->
+    <Section
+      id="pricing"
+      kicker="Pricing"
+      title="Pay once. It's yours."
+      lead="No subscription. One-time purchase with 12 months of updates included."
+    >
+      <div class="mx-auto max-w-md rounded-2xl bg-surface p-8 sm:p-10">
+        <p class="text-base font-semibold text-text">Dolly</p>
+        <p class="mt-1 text-sm text-text-muted">One-time purchase</p>
+        <div class="mt-6 flex items-baseline gap-2">
+          <span class="font-display text-5xl font-bold tracking-tight text-text">$49</span>
+          <span class="text-sm text-text-muted">once</span>
+        </div>
+        <a
+          href="#"
+          class="mt-8 block rounded-pill bg-btn-primary py-3 text-center text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        >
+          Download for Mac
+        </a>
+        <p class="mt-3 text-center text-xs text-text-subtle">Secure checkout via Polar</p>
+        <ul class="mt-8 flex flex-col gap-3 text-sm text-text-muted">
+          <li>12 months of updates</li>
+          <li>All features included</li>
+          <li>Runs entirely on your Mac</li>
+          <li>Requires macOS 15 or later</li>
+        </ul>
+      </div>
+    </Section>
+
+    <!-- FAQ -->
+    <Section id="faq" title="Questions?">
+      <div class="mx-auto max-w-2xl divide-y divide-border">
+        {
+          faqs.map((item) => (
+            <details class="group py-5">
+              <summary class="flex cursor-pointer items-center justify-between gap-4 text-base font-medium text-text marker:content-none">
+                {item.q}
+                <span class="text-text-subtle transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
+                  +
+                </span>
+              </summary>
+              <p class="mt-3 max-w-xl text-sm text-text-muted">{item.a}</p>
+            </details>
+          ))
+        }
+      </div>
+    </Section>
+
+    <!-- Slut-CTA -->
+    <Section>
+      <div class="flex flex-col items-center text-center">
+        <h2
+          class="max-w-2xl font-display text-4xl font-bold tracking-[-0.025em] text-text sm:text-5xl"
+        >
+          Make your next recording look designed.
+        </h2>
+        <a
+          href="#pricing"
+          class="mt-8 rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        >
+          Download for Mac
+        </a>
+      </div>
+    </Section>
   </div>
 
   <Footer />

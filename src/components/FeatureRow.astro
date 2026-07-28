@@ -1,0 +1,32 @@
+---
+// Split feature-rad: text på ena sidan, media (video-platshållare) på andra.
+// reverse=true lägger media till vänster på desktop.
+interface Props {
+  kicker?: string;
+  title: string;
+  body: string;
+  media?: string;
+  reverse?: boolean;
+}
+const { kicker, title, body, media = "Video", reverse = false } = Astro.props;
+---
+
+<div class="grid items-center gap-10 sm:grid-cols-2 sm:gap-16">
+  <div class:list={["flex flex-col gap-4", reverse && "sm:order-2"]}>
+    {kicker && <span class="text-sm font-medium text-accent">{kicker}</span>}
+    <h3
+      class="font-display text-3xl font-bold tracking-[-0.02em] text-text sm:text-4xl"
+    >
+      {title}
+    </h3>
+    <p class="max-w-md text-lg text-text-muted">{body}</p>
+  </div>
+  <div
+    class:list={[
+      "flex aspect-video items-center justify-center rounded-xl bg-surface",
+      reverse && "sm:order-1",
+    ]}
+  >
+    <span class="text-sm text-text-subtle">{media}</span>
+  </div>
+</div>
