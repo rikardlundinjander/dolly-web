@@ -1,65 +1,129 @@
 ---
 import Layout from "../layouts/Layout.astro";
 
-// Fas 0 — token-proof. Ingen riktig copy/layout ännu; det kommer i Fas 1–2.
-// Syftet med denna sida: verifiera att design-tokens (färg, typ, radie,
-// motion, mörk sektion) fungerar innan vi bygger vidare.
+// Fas 0/1 — Mobbin-kalibrerad token-proof.
+// Byggd från riktiga Mobbin-skärmdumpar: flytande blur-pill-nav, vit canvas
+// med grå ytor, pill-knappar, rundade kort, sparsam blå accent, footer-reveal.
+// Copy är placeholder men domän-relevant (ingen lorem).
+
+const nav = ["Features", "Pricing", "Changelog"];
+const features = [
+  { title: "Auto-zoom", body: "Kameran följer pekaren automatiskt — mjukt och redigerbart." },
+  { title: "Polished backdrops", body: "Rundade hörn, padding och skugga direkt ur lådan." },
+  { title: "Smooth cursor", body: "Utjämnad pekarrörelse renderad ur inspelad metadata." },
+];
 ---
 
 <Layout>
-  <main
-    class="mx-auto flex min-h-dvh max-w-[var(--container-max)] flex-col justify-center gap-16 px-[var(--spacing-gutter)] py-24"
-  >
-    <!-- Ljus sektion -->
-    <section class="flex flex-col gap-6">
-      <p class="text-sm font-medium tracking-widest text-text-subtle uppercase">
-        heydolly.app · scaffold
-      </p>
-      <h1
-        class="font-display text-5xl leading-[1.05] font-semibold tracking-tight text-text sm:text-6xl"
+  <!-- Vit innehållsyta ovanpå mörk footer (footer-reveal) -->
+  <div class="relative z-10 rounded-b-[2rem] bg-bg pb-24">
+    <!-- Flytande blur-pill-nav -->
+    <header class="sticky top-4 z-50 px-[var(--spacing-gutter)]">
+      <nav
+        class="mx-auto flex max-w-3xl items-center justify-between gap-6 rounded-pill border border-border/60 bg-[var(--nav-bg)] py-2.5 pl-5 pr-2.5 shadow-sm backdrop-blur-xl"
       >
-        Dolly
-      </h1>
-      <p class="max-w-xl text-lg text-text-muted">
-        Beautiful screen recordings for macOS. Den här sidan är stommen — den
-        finns bara för att verifiera design-tokens. Riktig layout kommer i nästa
-        fas.
-      </p>
-      <div class="flex flex-wrap items-center gap-3">
+        <a href="/" class="text-base font-semibold tracking-tight text-text">Dolly</a>
+        <ul class="hidden items-center gap-6 text-sm text-text-muted sm:flex">
+          {nav.map((item) => (
+            <li><a href="#" class="transition-colors hover:text-text">{item}</a></li>
+          ))}
+        </ul>
         <a
           href="#"
-          class="rounded-md bg-accent px-5 py-2.5 text-sm font-medium text-accent-contrast transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] hover:bg-accent-hover"
+          class="rounded-pill bg-btn-primary px-4 py-2 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        >
+          Download
+        </a>
+      </nav>
+    </header>
+
+    <!-- Hero -->
+    <main
+      class="mx-auto flex max-w-[var(--container-max)] flex-col items-center px-[var(--spacing-gutter)] pt-24 text-center"
+    >
+      <!-- Blå accent-badge (sparsam) -->
+      <span
+        class="mb-8 inline-flex items-center gap-2 rounded-pill bg-accent px-3 py-1 text-xs font-medium text-accent-contrast"
+      >
+        v1.0 — nu tillgänglig
+      </span>
+
+      <!-- App-ikon-platshållare -->
+      <div class="mb-8 size-16 rounded-[18px] bg-text shadow-md"></div>
+
+      <h1
+        class="max-w-4xl font-display text-5xl font-bold leading-[1.02] tracking-[-0.03em] text-text sm:text-6xl"
+      >
+        Beautiful screen recordings, natively on Mac.
+      </h1>
+      <p class="mt-6 max-w-xl text-lg text-text-muted">
+        Dolly spelar in, zoomar och putsar automatiskt. Inget att konfigurera —
+        exportera på sekunder.
+      </p>
+
+      <div class="mt-9 flex flex-wrap items-center justify-center gap-3">
+        <a
+          href="#"
+          class="rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text shadow-xs transition-colors duration-[var(--duration-fast)] ease-[var(--ease-out-quart)] hover:bg-btn-primary-hover"
         >
           Download for Mac
         </a>
         <a
           href="#"
-          class="rounded-md border border-border-strong px-5 py-2.5 text-sm font-medium text-text transition-colors duration-[var(--duration-fast)] hover:bg-surface-strong"
+          class="rounded-pill border border-border-strong bg-bg px-6 py-3 text-sm font-medium text-text shadow-xs transition-colors duration-[var(--duration-fast)] hover:bg-surface"
         >
-          See it in action
+          Watch the demo →
         </a>
       </div>
+      <p class="mt-4 text-sm text-text-subtle">Kräver macOS 15 eller senare · Engångsköp</p>
 
-      <!-- Radie- + yt-prov -->
-      <div class="mt-4 grid grid-cols-2 gap-3 sm:grid-cols-4">
-        <div class="rounded-xs border border-border bg-surface p-4 text-xs text-text-muted">radius-xs</div>
-        <div class="rounded-md border border-border bg-surface p-4 text-xs text-text-muted">radius-md</div>
-        <div class="rounded-xl border border-border bg-surface p-4 text-xs text-text-muted">radius-xl</div>
-        <div class="rounded-2xl border border-border bg-surface p-4 text-xs text-text-muted">radius-2xl</div>
+      <!-- Mockup-container (video poppar här) -->
+      <div
+        class="mt-16 flex aspect-video w-full items-center justify-center rounded-xl border border-border bg-surface shadow-lg"
+      >
+        <span class="text-sm text-text-subtle">Produktvideo</span>
       </div>
-    </section>
 
-    <!-- Mörk sektion (video poppar här senare) -->
-    <section
-      class="flex flex-col gap-4 rounded-2xl bg-inverse-bg p-10 text-inverse-text"
+      <!-- Feature-kort på vit canvas -->
+      <div class="mt-20 grid w-full grid-cols-1 gap-4 text-left sm:grid-cols-3">
+        {features.map((f) => (
+          <div class="rounded-lg bg-surface p-6">
+            <p class="text-base font-semibold text-text">{f.title}</p>
+            <p class="mt-2 text-sm text-text-muted">{f.body}</p>
+          </div>
+        ))}
+      </div>
+    </main>
+  </div>
+
+  <!-- Mörk footer (reveal under den vita ytan) -->
+  <footer class="-mt-8 bg-inverse-bg pb-10 pt-28 text-inverse-text">
+    <div
+      class="mx-auto flex max-w-[var(--container-max)] flex-col gap-12 px-[var(--spacing-gutter)] sm:flex-row sm:justify-between"
     >
-      <p class="text-sm font-medium tracking-widest text-inverse-muted uppercase">
-        Mörk sektion
-      </p>
-      <p class="max-w-xl text-lg text-inverse-text">
-        Ljus sajt, mörka sektioner för video — precis som vi planerade. Färgen
-        på den här ytan styrs av <code class="font-mono text-brand-400">--inverse-bg</code>.
-      </p>
-    </section>
-  </main>
+      <div class="max-w-xs">
+        <p class="font-display text-2xl font-bold tracking-tight">Dolly</p>
+        <p class="mt-3 text-sm text-inverse-muted">
+          Beautiful screen recordings for macOS.
+        </p>
+      </div>
+      <div class="flex gap-16 text-sm">
+        <ul class="flex flex-col gap-3 text-inverse-muted">
+          <li><a href="#" class="hover:text-inverse-text">Features</a></li>
+          <li><a href="#" class="hover:text-inverse-text">Pricing</a></li>
+          <li><a href="#" class="hover:text-inverse-text">Changelog</a></li>
+        </ul>
+        <ul class="flex flex-col gap-3 text-inverse-muted">
+          <li><a href="#" class="hover:text-inverse-text">Privacy</a></li>
+          <li><a href="#" class="hover:text-inverse-text">Terms</a></li>
+          <li><a href="#" class="hover:text-inverse-text">Refund</a></li>
+        </ul>
+      </div>
+    </div>
+    <div
+      class="mx-auto mt-16 max-w-[var(--container-max)] px-[var(--spacing-gutter)] text-xs text-inverse-muted"
+    >
+      © Dolly 2026
+    </div>
+  </footer>
 </Layout>

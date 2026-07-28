@@ -34,13 +34,20 @@
   --color-brand-600: #2f6ef0;
   --color-brand-700: #245ad0;
 
-  /* Radie — Mobbin-mjuka hörn */
-  --radius-xs: 0.375rem; /* 6px  */
-  --radius-sm: 0.5rem;   /* 8px  */
-  --radius-md: 0.75rem;  /* 12px */
-  --radius-lg: 1rem;     /* 16px */
-  --radius-xl: 1.25rem;  /* 20px */
-  --radius-2xl: 1.75rem; /* 28px */
+  /* Radie — kalibrerat mot Mobbin: knappar/nav/badges = pill, kort rundare */
+  --radius-xs: 0.375rem;  /* 6px  */
+  --radius-sm: 0.625rem;  /* 10px — små kontroller */
+  --radius-md: 0.875rem;  /* 14px */
+  --radius-lg: 1.25rem;   /* 20px — kort */
+  --radius-xl: 1.5rem;    /* 24px — mockup-container */
+  --radius-2xl: 1.75rem;  /* 28px — pricing / stora kort */
+  --radius-pill: 9999px;  /* knappar, nav, badges */
+
+  /* Skuggor — Mobbin-diskreta, nästan bara en kant */
+  --shadow-xs: 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-sm: 0 1px 3px rgba(9, 9, 11, 0.05), 0 1px 2px rgba(9, 9, 11, 0.04);
+  --shadow-md: 0 4px 12px rgba(9, 9, 11, 0.06), 0 2px 4px rgba(9, 9, 11, 0.04);
+  --shadow-lg: 0 12px 32px rgba(9, 9, 11, 0.08), 0 4px 8px rgba(9, 9, 11, 0.04);
 
   /* Typografi — Inter Display (rubriker) + Inter (brödtext).
      Webfonts wire:as i Fas 1; faller tills dess till system. */
@@ -75,14 +82,21 @@
 
 /* ---------- 2. SEMANTIK (roll-baserad, temabytbar) ---------- */
 :root {
+  /* Mobbin: VIT canvas; grå ytor för kort/nav (vita kort använder kant istället) */
   --bg: var(--color-neutral-0);
-  --surface: var(--color-neutral-50);
-  --surface-strong: var(--color-neutral-100);
+  --surface: var(--color-neutral-100);
+  --surface-strong: var(--color-neutral-200);
+  --nav-bg: rgba(244, 244, 245, 0.72); /* ljusgrå translucent för blur-nav */
   --text: var(--color-neutral-1000);
   --text-muted: var(--color-neutral-500);
   --text-subtle: var(--color-neutral-400);
   --border: var(--color-neutral-200);
   --border-strong: var(--color-neutral-300);
+
+  /* Primärknapp = svart (Mobbin). Blå accenten är sällan-bruk. */
+  --btn-primary-bg: var(--color-neutral-1000);
+  --btn-primary-bg-hover: var(--color-neutral-800);
+  --btn-primary-text: var(--color-neutral-0);
   --accent: var(--color-brand-500);
   --accent-hover: var(--color-brand-600);
   --accent-contrast: var(--color-neutral-0);
@@ -105,6 +119,9 @@
   --color-text-subtle: var(--text-subtle);
   --color-border: var(--border);
   --color-border-strong: var(--border-strong);
+  --color-btn-primary: var(--btn-primary-bg);
+  --color-btn-primary-hover: var(--btn-primary-bg-hover);
+  --color-btn-primary-text: var(--btn-primary-text);
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-contrast: var(--accent-contrast);
