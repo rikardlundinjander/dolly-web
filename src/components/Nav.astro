@@ -9,9 +9,7 @@ const links = [
 
 <header class="sticky top-4 z-50 px-[var(--spacing-gutter)]">
   <nav
-    id="site-nav"
-    data-scrolled="false"
-    class="mx-auto flex h-14 max-w-3xl items-center justify-between gap-6 overflow-hidden rounded-pill bg-[var(--nav-bg)] pr-2.5 pl-5 shadow-sm backdrop-blur-xl transition-shadow duration-300 ease-[var(--ease-out-quart)] data-[scrolled=true]:shadow-md"
+    class="mx-auto flex h-14 max-w-3xl items-center justify-between gap-6 overflow-hidden rounded-pill bg-[var(--nav-bg)] pr-2.5 pl-5 backdrop-blur-xl"
   >
     <!-- Brand: "Dolly" rullar upp och ut, symbolen in underifrån, när hero-ikonen
          scrollat förbi. group/brand + data-swapped styr de två lagren. -->
@@ -61,12 +59,6 @@ const links = [
 </header>
 
 <script>
-  const nav = document.getElementById("site-nav");
-  const onScroll = () =>
-    nav?.setAttribute("data-scrolled", String(window.scrollY > 8));
-  onScroll();
-  addEventListener("scroll", onScroll, { passive: true });
-
   // Brand-växling: byt "Dolly" mot symbolen när hero-appikonen lämnat vyn
   // (bakom navet). IntersectionObserver → symmetrisk åt båda scrollhåll.
   const brand = document.getElementById("nav-brand");
