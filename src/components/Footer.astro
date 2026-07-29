@@ -3,8 +3,22 @@ import Container from "./Container.astro";
 
 // Mörk footer — avslöjas under den vita, rundade innehållsytan (footer-reveal).
 const cols = [
-  { heading: "Product", links: ["Features", "Pricing", "Changelog"] },
-  { heading: "Legal", links: ["Privacy", "Terms", "Refund"] },
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "/#features" },
+      { label: "Pricing", href: "/#pricing" },
+      { label: "FAQ", href: "/#faq" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Refund", href: "/refund" },
+    ],
+  },
 ];
 ---
 
@@ -24,8 +38,11 @@ const cols = [
           <ul class="flex flex-col gap-3 text-inverse-muted">
             {col.links.map((link) => (
               <li>
-                <a href="#" class="transition-colors hover:text-inverse-text">
-                  {link}
+                <a
+                  href={link.href}
+                  class="transition-colors hover:text-inverse-text"
+                >
+                  {link.label}
                 </a>
               </li>
             ))}
