@@ -77,3 +77,23 @@ const {
     }
   }
 </script>
+
+<script>
+  // Spela [data-autopause]-videor bara när de är i vy (performance).
+  const vids = document.querySelectorAll("video[data-autopause]");
+  if (vids.length && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }
+      },
+      { threshold: 0.25 },
+    );
+    vids.forEach((v) => io.observe(v));
+  } else {
+    vids.forEach((v) => (v as HTMLVideoElement).play().catch(() => {}));
+  }
+</script>

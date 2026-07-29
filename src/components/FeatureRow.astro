@@ -6,9 +6,17 @@ interface Props {
   title: string;
   body: string;
   media?: string;
+  video?: string;
   reverse?: boolean;
 }
-const { kicker, title, body, media = "Video", reverse = false } = Astro.props;
+const {
+  kicker,
+  title,
+  body,
+  media = "Video",
+  video,
+  reverse = false,
+} = Astro.props;
 ---
 
 <div data-reveal class="grid items-center gap-10 sm:grid-cols-2 sm:gap-16">
@@ -23,10 +31,25 @@ const { kicker, title, body, media = "Video", reverse = false } = Astro.props;
   </div>
   <div
     class:list={[
-      "flex aspect-square items-center justify-center rounded-xl bg-surface",
+      "flex aspect-square items-center justify-center overflow-hidden rounded-xl bg-surface",
       reverse && "sm:order-1",
     ]}
   >
-    <span class="text-sm text-text-subtle">{media}</span>
+    {
+      video ? (
+        <video
+          class="h-full w-full object-cover"
+          data-autopause
+          muted
+          loop
+          playsinline
+          preload="metadata"
+        >
+          <source src={video} type="video/mp4" />
+        </video>
+      ) : (
+        <span class="text-sm text-text-subtle">{media}</span>
+      )
+    }
   </div>
 </div>
