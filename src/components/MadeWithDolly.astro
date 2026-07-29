@@ -1,0 +1,125 @@
+---
+import Container from "./Container.astro";
+
+// "Made with Dolly" — full-bredds marquee. Glider långsamt vänster i vila,
+// scroll-hastigheten adderar fart (ner = snabbare vänster, upp = byter håll)
+// och ebbar ut. Placeholder-video i alla rutor tills riktiga klipp finns.
+const VIDEO = "/KH_web_placeholder_herovid.mp4";
+const items = [
+  { aspect: "16/9" },
+  { aspect: "9/16" },
+  { aspect: "1/1" },
+  { aspect: "4/3" },
+  { aspect: "16/9" },
+  { aspect: "3/4" },
+];
+// Renderas två gånger för sömlös loop.
+const loop = [...items, ...items];
+---
+
+<section id="made" class="scroll-mt-24 overflow-hidden py-20 sm:py-28">
+  <Container>
+    <div data-reveal class="mx-auto mb-14 max-w-2xl text-center">
+      <h2
+        class="font-display text-4xl font-bold tracking-[-0.025em] text-text sm:text-5xl"
+      >
+        Made with Dolly.
+      </h2>
+    </div>
+  </Container>
+
+  <div data-marquee class="relative w-full overflow-hidden">
+    <div data-track class="flex w-max gap-4 will-change-transform">
+      {
+        loop.map((item) => (
+          <div
+            class="relative h-44 shrink-0 overflow-hidden rounded-xl bg-surface sm:h-60"
+            style={`aspect-ratio:${item.aspect}`}
+          >
+            <video
+              class="h-full w-full object-cover"
+              autoplay
+              muted
+              loop
+              playsinline
+              preload="metadata"
+            >
+              <source src={VIDEO} type="video/mp4" />
+            </video>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<script>
+  const marquee = document.querySelector<HTMLElement>("[data-marquee]");
+  const track = marquee?.querySelector<HTMLElement>("[data-track]");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  if (marquee && track) {
+    if (reduce) {
+      // Reduced-motion: ingen auto-rörelse, gör raden manuellt scrollbar.
+      marquee.style.overflowX = "auto";
+    } else {
+      const BASE = 0.35; // px/frame i vila (vänster)
+      const K = 0.18; // hur mycket scroll-hastighet påverkar
+      const FRICTION = 0.92; // hur snabbt scroll-puffen ebbar ut
+      const MAX_SCROLL_VEL = 80;
+
+      let setWidth = track.scrollWidth / 2;
+      const measure = () => {
+        setWidth = track.scrollWidth / 2;
+      };
+      addEventListener("resize", measure, { passive: true });
+
+      let pos = 0;
+      let scrollVel = 0;
+      let lastY = window.scrollY;
+      let running = false;
+      let raf = 0;
+
+      addEventListener(
+        "scroll",
+        () => {
+          const y = window.scrollY;
+          scrollVel += y - lastY;
+          lastY = y;
+          if (scrollVel > MAX_SCROLL_VEL) scrollVel = MAX_SCROLL_VEL;
+          if (scrollVel < -MAX_SCROLL_VEL) scrollVel = -MAX_SCROLL_VEL;
+        },
+        { passive: true },
+      );
+
+      const tick = () => {
+        const v = -BASE - K * scrollVel; // negativ = vänster
+        pos += v;
+        if (setWidth > 0) {
+          while (pos <= -setWidth) pos += setWidth;
+          while (pos > 0) pos -= setWidth;
+        }
+        track.style.transform = `translate3d(${pos.toFixed(2)}px,0,0)`;
+        scrollVel *= FRICTION;
+        if (Math.abs(scrollVel) < 0.01) scrollVel = 0;
+        raf = requestAnimationFrame(tick);
+      };
+
+      const io = new IntersectionObserver(
+        ([e]) => {
+          if (e.isIntersecting && !running) {
+            running = true;
+            lastY = window.scrollY;
+            measure();
+            raf = requestAnimationFrame(tick);
+          } else if (!e.isIntersecting && running) {
+            running = false;
+            cancelAnimationFrame(raf);
+          }
+        },
+        { threshold: 0 },
+      );
+      io.observe(marquee);
+    }
+  }
+</script>
