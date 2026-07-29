@@ -4,14 +4,13 @@ import Container from "./Container.astro";
 // "Made with Dolly" — full-bredds marquee. Glider långsamt vänster i vila,
 // scroll-hastigheten adderar fart (ner = snabbare vänster, upp = byter håll)
 // och ebbar ut. Placeholder-video i alla rutor tills riktiga klipp finns.
-const VIDEO = "/KH_web_placeholder_herovid.mp4";
 const items = [
   { aspect: "16/9" },
-  { aspect: "9/16" },
+  { aspect: "4/5" },
   { aspect: "1/1" },
-  { aspect: "4/3" },
   { aspect: "16/9" },
-  { aspect: "3/4" },
+  { aspect: "1/1" },
+  { aspect: "4/5" },
 ];
 // Renderas två gånger för sömlös loop.
 const loop = [...items, ...items];
@@ -33,19 +32,10 @@ const loop = [...items, ...items];
       {
         loop.map((item) => (
           <div
-            class="relative h-44 shrink-0 overflow-hidden rounded-xl bg-surface sm:h-60"
+            class="relative flex h-[22rem] shrink-0 items-center justify-center overflow-hidden rounded-xl bg-surface sm:h-[30rem]"
             style={`aspect-ratio:${item.aspect}`}
           >
-            <video
-              class="h-full w-full object-cover"
-              autoplay
-              muted
-              loop
-              playsinline
-              preload="metadata"
-            >
-              <source src={VIDEO} type="video/mp4" />
-            </video>
+            <span class="text-sm text-text-subtle">Video</span>
           </div>
         ))
       }
@@ -64,7 +54,7 @@ const loop = [...items, ...items];
       marquee.style.overflowX = "auto";
     } else {
       const BASE = 0.35; // px/frame i vila (vänster)
-      const K = 0.18; // hur mycket scroll-hastighet påverkar
+      const K = 0.09; // hur mycket scroll-hastighet påverkar
       const FRICTION = 0.92; // hur snabbt scroll-puffen ebbar ut
       const MAX_SCROLL_VEL = 80;
 
