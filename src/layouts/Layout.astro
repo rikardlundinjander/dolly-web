@@ -63,7 +63,12 @@ const {
   const footer = document.querySelector("footer");
   if (page && footer) {
     const setSpace = () => {
-      page.style.marginBottom = footer.offsetHeight + "px";
+      // Dra in overlappet med sidans hörnradie så footerns raka överkant hamnar
+      // vid TOPPEN av den rundade kurvan (annars avslöjar hörnet ytan ovanför
+      // footern → man ser "slutet" på footern).
+      const radius =
+        parseFloat(getComputedStyle(page).borderBottomLeftRadius) || 0;
+      page.style.marginBottom = footer.offsetHeight - radius + "px";
     };
     setSpace();
     addEventListener("resize", setSpace, { passive: true });
