@@ -228,12 +228,17 @@ const faqs = [
   // sektionen under pushas ned istället för att krockas.
   const video = document.getElementById("hero-video");
   const demo = document.getElementById("demo");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (video && demo && !reduce) {
+  // Skalningen körs BARA på desktop (≥768px) och utan reduced-motion.
+  // På mobil orsakade per-frame transform+margin-bottom scroll-jitter (navet
+  // "vibrerade"), och effekten behövs inte där.
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)");
+  const desktop = matchMedia("(min-width: 768px)");
+  if (video && demo) {
     const MAX = 1.22; // hur mycket den växer
     const DIST = 520; // px scroll tills full uppskalning
-    let h = video.offsetHeight; // olayoutad höjd (opåverkad av transform)
+    let h = video.offsetHeight;
     let ticking = false;
+    let active = false;
     const update = () => {
       const p = Math.min(Math.max(window.scrollY, 0) / DIST, 1);
       const scale = 1 + p * (MAX - 1);
@@ -247,16 +252,37 @@ const faqs = [
         requestAnimationFrame(update);
       }
     };
+    const enable = () => {
+      if (active) return;
+      active = true;
+      h = video.offsetHeight;
+      update();
+      addEventListener("scroll", onScroll, { passive: true });
+    };
+    const disable = () => {
+      if (!active) return;
+      active = false;
+      removeEventListener("scroll", onScroll);
+      video.style.transform = "";
+      demo.style.marginBottom = "";
+    };
+    const apply = () => {
+      if (desktop.matches && !reduceMotion.matches) enable();
+      else disable();
+    };
+    apply();
+    desktop.addEventListener("change", apply);
+    reduceMotion.addEventListener("change", apply);
     addEventListener(
       "resize",
       () => {
-        h = video.offsetHeight;
-        update();
+        if (active) {
+          h = video.offsetHeight;
+          update();
+        }
       },
       { passive: true },
     );
-    update();
-    addEventListener("scroll", onScroll, { passive: true });
   }
 
   // Pausa hero-videon när den är utanför vyn (performance)
