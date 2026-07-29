@@ -15,7 +15,7 @@ const { kicker, title, body, media = "Video", reverse = false } = Astro.props;
   <div class:list={["flex flex-col gap-4", reverse && "sm:order-2"]}>
     {kicker && <span class="text-sm font-medium text-accent">{kicker}</span>}
     <h3
-      class="font-display text-3xl font-bold tracking-[-0.02em] text-text sm:text-4xl"
+      class="font-display text-2xl font-bold tracking-[-0.02em] text-text sm:text-3xl"
     >
       {title}
     </h3>
