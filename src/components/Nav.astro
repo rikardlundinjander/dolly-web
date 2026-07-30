@@ -1,10 +1,12 @@
 ---
 // Flytande blur-pill-nav (Mobbin). Sticky. Skuggan tonas in vid scroll.
+import { getDownloadUrl } from "../lib/release";
 const links = [
   { label: "Features", href: "/#features" },
   { label: "Pricing", href: "/#pricing" },
   { label: "FAQ", href: "/#faq" },
 ];
+const downloadUrl = await getDownloadUrl();
 ---
 
 <header class="sticky top-4 z-50 px-[var(--spacing-gutter)]">
@@ -50,7 +52,7 @@ const links = [
       }
     </ul>
     <a
-      href="https://updates.heydolly.app/Dolly-1.0.1.dmg"
+      href={downloadUrl}
       class="rounded-pill bg-btn-primary px-4 py-2 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
     >
       Download

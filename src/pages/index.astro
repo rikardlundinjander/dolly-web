@@ -7,11 +7,12 @@ import Footer from "../components/Footer.astro";
 import FeatureRow from "../components/FeatureRow.astro";
 import StepPlayer from "../components/StepPlayer.astro";
 import MadeWithDolly from "../components/MadeWithDolly.astro";
+import { getDownloadUrl } from "../lib/release";
 
-// Polar single-license-checkout + direkt DMG-nedladdning
+// Polar single-license-checkout + direkt DMG-nedladdning (löses från appcasten)
 const POLAR_CHECKOUT =
   "https://buy.polar.sh/polar_cl_twiEvKa2nqt7k2bPyNEMGlCkmiZydNOUvPIyU105wyO";
-const DMG_DOWNLOAD = "https://updates.heydolly.app/Dolly-1.0.1.dmg";
+const DMG_DOWNLOAD = await getDownloadUrl();
 
 // Fas 2 — full landningssida. Media = platshållare (video kommer senare).
 // Copy engelsk (produkten är engelsk-native). PLATSHÅLLAR-PRIS nedan.
