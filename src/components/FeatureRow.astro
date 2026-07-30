@@ -1,29 +1,25 @@
 ---
-// Split feature-rad: text på ena sidan, media (video-platshållare) på andra.
-// reverse=true lägger media till vänster på desktop.
+// Split feature-rad: media + text. Mobil: media överst, text under.
+// Desktop: sida vid sida; reverse=true lägger media till vänster.
 interface Props {
-  kicker?: string;
   title: string;
   body: string;
   media?: string;
   video?: string;
   reverse?: boolean;
 }
-const {
-  kicker,
-  title,
-  body,
-  media = "Video",
-  video,
-  reverse = false,
-} = Astro.props;
+const { title, body, media = "Video", video, reverse = false } = Astro.props;
 ---
 
-<div data-reveal class="grid items-center gap-10 sm:grid-cols-2 sm:gap-16">
-  <div class:list={["flex flex-col gap-4", reverse && "sm:order-2"]}>
-    {kicker && <span class="text-sm font-medium text-accent">{kicker}</span>}
+<div data-reveal class="grid items-center gap-6 sm:grid-cols-2 sm:gap-16">
+  <div
+    class:list={[
+      "order-2 flex flex-col gap-4",
+      reverse ? "sm:order-2" : "sm:order-1",
+    ]}
+  >
     <h3
-      class="font-display text-2xl font-bold tracking-[-0.02em] text-text sm:text-3xl"
+      class="font-display text-xl font-bold tracking-[-0.02em] text-text sm:text-3xl"
     >
       {title}
     </h3>
@@ -31,8 +27,8 @@ const {
   </div>
   <div
     class:list={[
-      "flex aspect-square items-center justify-center overflow-hidden rounded-sm bg-surface sm:rounded-lg",
-      reverse && "sm:order-1",
+      "order-1 flex aspect-square items-center justify-center overflow-hidden rounded-sm bg-surface sm:rounded-lg",
+      reverse ? "sm:order-1" : "sm:order-2",
     ]}
   >
     {
