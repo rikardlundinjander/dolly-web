@@ -40,10 +40,14 @@ const faqs = [
   { q: "Can I get a refund?", a: "Yes — checkout and refunds are handled by Polar, our payment provider." },
 ];
 
-// TODO: Team-licensen behöver egen Polar-checkout (pekar på single tills vidare).
 const plans = [
-  { name: "Single License", price: "$69", featured: true },
-  { name: "Team License", price: "$49", featured: false },
+  { name: "Single License", price: "$69", featured: true, href: POLAR_CHECKOUT },
+  {
+    name: "Team License",
+    price: "$49",
+    featured: false,
+    href: "https://buy.polar.sh/polar_cl_gNlCWU8FpwGWDEGLsPhEEAZU4RyTCZIP8CyPi0YhF32",
+  },
 ];
 ---
 
@@ -191,7 +195,7 @@ const plans = [
                 </span>
               </div>
               <a
-                href={POLAR_CHECKOUT}
+                href={plan.href}
                 class="mt-8 block rounded-pill bg-btn-primary py-3 text-center text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
               >
                 Buy now
