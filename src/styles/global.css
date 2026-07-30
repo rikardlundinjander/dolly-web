@@ -84,11 +84,13 @@
 
 /* ---------- 2. SEMANTIK (roll-baserad, temabytbar) ---------- */
 :root {
+  color-scheme: light;
   /* Mobbin: VIT canvas; grå ytor för kort/nav (vita kort använder kant istället) */
   --bg: var(--color-neutral-0);
   --surface: var(--color-neutral-100);
   --surface-strong: var(--color-neutral-200);
   --nav-bg: rgba(237, 237, 237, 0.68); /* #EDEDED @ 68% — translucent blur-nav */
+  --nav-bg-solid: #ededed; /* opak variant för mobil-nav */
   --text: var(--color-neutral-1000);
   --text-muted: var(--color-neutral-500);
   --text-subtle: var(--color-neutral-400);
@@ -108,6 +110,35 @@
   --inverse-text: var(--color-neutral-0);
   --inverse-muted: var(--color-neutral-400);
   --inverse-border: var(--color-neutral-800);
+}
+
+/* ---------- DARK MODE (skriver om semantik-lagret) ---------- */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --bg: var(--color-neutral-1000);
+  --surface: var(--color-neutral-900);
+  --surface-strong: var(--color-neutral-800);
+  --nav-bg: rgba(21, 21, 23, 0.6);
+  --nav-bg-solid: #151517;
+  --text: var(--color-neutral-50);
+  --text-muted: var(--color-neutral-400);
+  --text-subtle: var(--color-neutral-500);
+  --border: var(--color-neutral-800);
+  --border-strong: var(--color-neutral-700);
+
+  /* Primärknapp = vit på mörkt (Mobbin-inverterat) */
+  --btn-primary-bg: var(--color-neutral-0);
+  --btn-primary-bg-hover: var(--color-neutral-200);
+  --btn-primary-text: var(--color-neutral-1000);
+  --accent: var(--color-brand-400);
+  --accent-hover: var(--color-brand-500);
+  --accent-contrast: var(--color-neutral-0);
+
+  /* "Inverse" = footer/mörka block; något ljusare än bg så reveal syns */
+  --inverse-bg: var(--color-neutral-900);
+  --inverse-text: var(--color-neutral-50);
+  --inverse-muted: var(--color-neutral-400);
+  --inverse-border: var(--color-neutral-700);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */

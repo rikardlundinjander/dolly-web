@@ -51,5 +51,56 @@ const cols = [
       }
     </div>
   </Container>
-  <Container class="mt-16 text-xs text-inverse-muted">© Dolly 2026</Container>
+  <Container
+    class="mt-16 flex items-center justify-between gap-4 text-xs text-inverse-muted"
+  >
+    <span>© Dolly 2026</span>
+    <div
+      data-theme-toggle
+      class="inline-flex rounded-pill border border-inverse-border p-0.5"
+    >
+      <button type="button" data-set-theme="light" class="rounded-pill px-3 py-1 transition-colors">
+        Light
+      </button>
+      <button type="button" data-set-theme="dark" class="rounded-pill px-3 py-1 transition-colors">
+        Dark
+      </button>
+    </div>
+  </Container>
 </footer>
+
+<style>
+  [data-theme-toggle] button {
+    color: var(--inverse-muted);
+  }
+  [data-theme-toggle] button[data-active] {
+    background: var(--inverse-text);
+    color: var(--inverse-bg);
+  }
+</style>
+
+<script>
+  const toggle = document.querySelector("[data-theme-toggle]");
+  if (toggle) {
+    const buttons = [
+      ...toggle.querySelectorAll<HTMLButtonElement>("button[data-set-theme]"),
+    ];
+    const sync = () => {
+      const cur = document.documentElement.dataset.theme || "light";
+      buttons.forEach((b) =>
+        b.toggleAttribute("data-active", b.dataset.setTheme === cur),
+      );
+    };
+    buttons.forEach((b) =>
+      b.addEventListener("click", () => {
+        const t = b.dataset.setTheme!;
+        document.documentElement.dataset.theme = t;
+        try {
+          localStorage.setItem("theme", t);
+        } catch (e) {}
+        sync();
+      }),
+    );
+    sync();
+  }
+</script>

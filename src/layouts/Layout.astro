@@ -25,6 +25,16 @@ const {
     <meta property="og:description" content={description} />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
+    <script is:inline>
+      // Sätt tema innan paint (ingen flicker). Default = light (ingen attribut).
+      (() => {
+        try {
+          const t = localStorage.getItem("theme");
+          if (t === "dark" || t === "light")
+            document.documentElement.dataset.theme = t;
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <slot />
