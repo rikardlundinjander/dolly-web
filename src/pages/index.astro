@@ -136,14 +136,13 @@ const faqs = [
       title="Everything in the box."
       lead="No add-ons, no upsells. One app that does the whole job."
     >
-      <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div
+        data-stack
+        class="relative flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+      >
         {
-          grid.map((f, i) => (
-            <div
-              data-reveal
-              style={`--reveal-delay:${(i % 3) * 80}ms`}
-              class="rounded-lg bg-surface p-6"
-            >
+          grid.map((f) => (
+            <div class="feature-card sticky top-24 flex min-h-40 flex-col justify-center rounded-lg bg-surface p-6 shadow-md will-change-transform sm:static sm:min-h-0 sm:justify-start sm:shadow-none">
               <p class="text-base font-semibold text-text">{f.title}</p>
               <p class="mt-2 text-sm text-text-muted">{f.body}</p>
             </div>
@@ -363,4 +362,77 @@ const faqs = [
         }
       });
     });
+</script>
+
+<script>
+  // "Everything in the box" — mobil: scroll-staplad deck. Korten pinnas vid
+  // FOCUS; när nästa kort täcker dem blurras/krymper/faller de bakåt.
+  // Desktop (≥sm): vanlig grid, effekten rensas.
+  const stack = document.querySelector<HTMLElement>("[data-stack]");
+  if (stack) {
+    const cards = [...stack.querySelectorAll<HTMLElement>(".feature-card")];
+    const mqMobile = matchMedia("(max-width: 639px)");
+    const reduceStack = matchMedia("(prefers-reduced-motion: reduce)");
+    const FOCUS = 96; // = top-24
+    const MAX_BLUR = 8;
+    let steps: number[] = [];
+    let ticking = false;
+
+    const measure = () => {
+      steps = cards.map((c, i) =>
+        i < cards.length - 1 ? cards[i + 1].offsetTop - c.offsetTop || 1 : 1,
+      );
+    };
+    const clearStyles = () =>
+      cards.forEach((c) => {
+        c.style.filter = "";
+        c.style.opacity = "";
+        c.style.transform = "";
+        c.style.zIndex = "";
+      });
+    const update = () => {
+      ticking = false;
+      if (!mqMobile.matches || reduceStack.matches) return;
+      for (let i = 0; i < cards.length; i++) {
+        const c = cards[i];
+        c.style.zIndex = String(i + 1);
+        const next = cards[i + 1];
+        let burial = 0;
+        if (next) {
+          const nt = next.getBoundingClientRect().top;
+          burial = Math.min(1, Math.max(0, 1 + (FOCUS - nt) / steps[i]));
+        }
+        c.style.filter = burial > 0 ? `blur(${(burial * MAX_BLUR).toFixed(1)}px)` : "";
+        c.style.opacity = String(1 - burial * 0.65);
+        c.style.transform = `translateY(${(-burial * 24).toFixed(1)}px) scale(${(1 - burial * 0.05).toFixed(3)})`;
+      }
+    };
+    const onScroll = () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(update);
+      }
+    };
+    const apply = () => {
+      if (mqMobile.matches && !reduceStack.matches) {
+        measure();
+        update();
+      } else {
+        clearStyles();
+      }
+    };
+
+    measure();
+    apply();
+    addEventListener("scroll", onScroll, { passive: true });
+    addEventListener(
+      "resize",
+      () => {
+        measure();
+        apply();
+      },
+      { passive: true },
+    );
+    mqMobile.addEventListener("change", apply);
+  }
 </script>
