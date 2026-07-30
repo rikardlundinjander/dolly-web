@@ -158,9 +158,8 @@ const faqs = [
       <div data-reveal class="mx-auto max-w-md rounded-2xl bg-surface p-8 sm:p-10">
         <p class="text-base font-semibold text-text">Dolly</p>
         <p class="mt-1 text-sm text-text-muted">One-time purchase</p>
-        <div class="mt-6 flex items-baseline gap-2">
+        <div class="mt-6">
           <span class="font-display text-5xl font-bold tracking-tight text-text">$69</span>
-          <span class="text-sm text-text-muted">once</span>
         </div>
         <a
           href={POLAR_CHECKOUT}
@@ -182,14 +181,16 @@ const faqs = [
       <div data-reveal class="mx-auto max-w-2xl divide-y divide-border">
         {
           faqs.map((item) => (
-            <details class="group py-5">
-              <summary class="flex cursor-pointer items-center justify-between gap-4 text-base font-medium text-text marker:content-none">
+            <details class="faq group">
+              <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-base font-medium text-text marker:content-none">
                 {item.q}
-                <span class="text-text-subtle transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
+                <span class="shrink-0 pl-4 text-text-subtle transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
                   +
                 </span>
               </summary>
-              <p class="mt-3 max-w-xl text-sm text-text-muted">{item.a}</p>
+              <div class="faq-panel overflow-hidden">
+                <p class="max-w-xl pb-5 text-sm text-text-muted">{item.a}</p>
+              </div>
             </details>
           ))
         }
@@ -199,17 +200,36 @@ const faqs = [
     <!-- Slut-CTA -->
     <Section>
       <div data-reveal class="flex flex-col items-center text-center">
+        <div
+          class="mb-8 size-16 overflow-hidden rounded-[20px] shadow-[0_4px_6.72px_-1px_rgba(0,0,0,0.14),0_2px_4.48px_-2px_rgba(0,0,0,0.14)]"
+        >
+          <img
+            src="/dolly-app-icon.svg"
+            alt="Dolly app icon"
+            width="64"
+            height="64"
+            class="size-full"
+          />
+        </div>
         <h2
-          class="max-w-2xl font-display text-4xl font-bold tracking-[-0.025em] text-text sm:text-5xl"
+          class="max-w-2xl font-display text-3xl font-bold tracking-[-0.025em] text-text sm:text-4xl"
         >
           Make your next recording look designed.
         </h2>
-        <a
-          href={POLAR_CHECKOUT}
-          class="mt-8 rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-        >
-          Buy now
-        </a>
+        <div class="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <a
+            href={POLAR_CHECKOUT}
+            class="rounded-pill bg-btn-primary px-6 py-3 text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+          >
+            Buy now
+          </a>
+          <a
+            href={DMG_DOWNLOAD}
+            class="rounded-pill border border-border-strong bg-bg px-6 py-3 text-sm font-medium text-text transition-colors hover:bg-surface"
+          >
+            Download
+          </a>
+        </div>
       </div>
     </Section>
   </div>
@@ -291,4 +311,46 @@ const faqs = [
     );
     io.observe(video);
   }
+</script>
+
+<script>
+  // FAQ: mjuk höjd-animering vid öppning/stängning (respekterar reduced-motion).
+  const faqReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+  document
+    .querySelectorAll<HTMLDetailsElement>("details.faq")
+    .forEach((d) => {
+      const summary = d.querySelector("summary");
+      const panel = d.querySelector<HTMLElement>(".faq-panel");
+      if (!summary || !panel) return;
+      let anim: Animation | null = null;
+      summary.addEventListener("click", (e) => {
+        if (faqReduce) return; // låt native toggla utan animering
+        e.preventDefault();
+        anim?.cancel();
+        if (!d.open) {
+          d.open = true;
+          anim = panel.animate(
+            [
+              { height: "0px", opacity: 0 },
+              { height: panel.scrollHeight + "px", opacity: 1 },
+            ],
+            { duration: 280, easing: EASE },
+          );
+          anim.onfinish = () => (panel.style.height = "");
+        } else {
+          anim = panel.animate(
+            [
+              { height: panel.scrollHeight + "px", opacity: 1 },
+              { height: "0px", opacity: 0 },
+            ],
+            { duration: 240, easing: EASE },
+          );
+          anim.onfinish = () => {
+            d.open = false;
+            panel.style.height = "";
+          };
+        }
+      });
+    });
 </script>
