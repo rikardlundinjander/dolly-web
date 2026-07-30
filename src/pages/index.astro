@@ -39,6 +39,12 @@ const faqs = [
   { q: "How do updates work?", a: "Dolly updates itself automatically. Your 12 months of updates begin at purchase." },
   { q: "Can I get a refund?", a: "Yes — checkout and refunds are handled by Polar, our payment provider." },
 ];
+
+// TODO: Team-licensen behöver egen Polar-checkout (pekar på single tills vidare).
+const plans = [
+  { name: "Single License", price: "$69", featured: true },
+  { name: "Team License", price: "$49", featured: false },
+];
 ---
 
 <Layout>
@@ -157,24 +163,39 @@ const faqs = [
       title="Pay once. It's yours."
       lead="No subscription. One-time purchase with 12 months of updates included."
     >
-      <div data-reveal class="mx-auto max-w-md rounded-2xl bg-surface p-8 sm:p-10">
-        <p class="text-base font-semibold text-text">Dolly</p>
-        <p class="mt-1 text-sm text-text-muted">One-time purchase</p>
-        <div class="mt-6">
-          <span class="font-display text-5xl font-bold tracking-tight text-text">$69</span>
-        </div>
-        <a
-          href={POLAR_CHECKOUT}
-          class="mt-8 block rounded-pill bg-btn-primary py-3 text-center text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-        >
-          Buy now
-        </a>
-        <p class="mt-3 text-center text-xs text-text-subtle">Secure checkout via Polar</p>
-        <ul class="mt-8 flex flex-col gap-3 text-sm text-text-muted">
-          <li>12 months of updates</li>
-          <li>All features included</li>
-          <li>Runs entirely on your Mac</li>
-        </ul>
+      <div data-reveal class="mx-auto grid max-w-3xl gap-4 sm:grid-cols-2">
+        {
+          plans.map((plan) => (
+            <div
+              class:list={[
+                "rounded-2xl p-8 sm:p-10",
+                plan.featured ? "bg-surface" : "border border-border bg-bg",
+              ]}
+            >
+              <p class="text-base font-semibold text-text">{plan.name}</p>
+              <p class="mt-1 text-sm text-text-muted">One-time purchase</p>
+              <div class="mt-6">
+                <span class="font-display text-5xl font-bold tracking-tight text-text">
+                  {plan.price}
+                </span>
+              </div>
+              <a
+                href={POLAR_CHECKOUT}
+                class="mt-8 block rounded-pill bg-btn-primary py-3 text-center text-sm font-medium text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+              >
+                Buy now
+              </a>
+              <p class="mt-3 text-center text-xs text-text-subtle">
+                Secure checkout via Polar
+              </p>
+              <ul class="mt-8 flex flex-col gap-3 text-sm text-text-muted">
+                <li>12 months of updates</li>
+                <li>All features included</li>
+                <li>Runs entirely on your Mac</li>
+              </ul>
+            </div>
+          ))
+        }
       </div>
     </Section>
 
