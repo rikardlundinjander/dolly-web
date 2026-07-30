@@ -137,25 +137,36 @@ const plans = [
       <StepPlayer steps={steps} />
     </Section>
 
-    <!-- Feature-grid -->
-    <Section
-      title="Everything in the box."
-      lead="No add-ons, no upsells. One app that does the whole job."
-    >
-      <div
-        data-stack
-        class="relative flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
-      >
-        {
-          grid.map((f) => (
-            <div class="feature-card sticky top-24 flex min-h-40 flex-col justify-center rounded-lg bg-surface p-6 shadow-md will-change-transform sm:static sm:min-h-0 sm:justify-start sm:shadow-none">
-              <p class="text-base font-semibold text-text">{f.title}</p>
-              <p class="mt-2 text-sm text-text-muted">{f.body}</p>
-            </div>
-          ))
-        }
-      </div>
-    </Section>
+    <!-- Feature-grid (mobil: scroll-staplad deck med sticky intro) -->
+    <section class="scroll-mt-24 py-20 sm:py-28">
+      <Container>
+        <div
+          class="sticky top-[76px] z-30 mx-auto mb-8 flex max-w-2xl flex-col items-center bg-bg pb-4 text-center sm:static sm:mb-14 sm:bg-transparent sm:pb-0"
+        >
+          <h2
+            class="font-display text-3xl font-bold tracking-[-0.025em] text-text sm:text-4xl"
+          >
+            Everything in the box.
+          </h2>
+          <p class="mt-4 text-lg text-text-muted">
+            No add-ons, no upsells. One app that does the whole job.
+          </p>
+        </div>
+        <div
+          data-stack
+          class="relative flex flex-col gap-4 sm:grid sm:grid-cols-2 sm:gap-4 lg:grid-cols-3"
+        >
+          {
+            grid.map((f) => (
+              <div class="feature-card sticky top-64 rounded-lg bg-surface p-6 will-change-transform sm:static">
+                <p class="text-base font-semibold text-text">{f.title}</p>
+                <p class="mt-2 text-sm text-text-muted">{f.body}</p>
+              </div>
+            ))
+          }
+        </div>
+      </Container>
+    </section>
 
     <!-- Pricing -->
     <Section
@@ -394,7 +405,7 @@ const plans = [
     const cards = [...stack.querySelectorAll<HTMLElement>(".feature-card")];
     const mqMobile = matchMedia("(max-width: 639px)");
     const reduceStack = matchMedia("(prefers-reduced-motion: reduce)");
-    const FOCUS = 96; // = top-24
+    const FOCUS = 256; // = top-64 (under sticky intro)
     const MAX_BLUR = 8;
     let steps: number[] = [];
     let ticking = false;
@@ -425,7 +436,7 @@ const plans = [
         }
         c.style.filter = burial > 0 ? `blur(${(burial * MAX_BLUR).toFixed(1)}px)` : "";
         c.style.opacity = String(1 - burial * 0.65);
-        c.style.transform = `translateY(${(-burial * 24).toFixed(1)}px) scale(${(1 - burial * 0.05).toFixed(3)})`;
+        c.style.transform = `translateY(${(-burial * 24).toFixed(1)}px) scale(${(1 - burial * 0.14).toFixed(3)})`;
       }
     };
     const onScroll = () => {
