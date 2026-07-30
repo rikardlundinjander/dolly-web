@@ -6,7 +6,6 @@ import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import FeatureRow from "../components/FeatureRow.astro";
 import StepPlayer from "../components/StepPlayer.astro";
-import MadeWithDolly from "../components/MadeWithDolly.astro";
 import { getDownloadUrl } from "../lib/release";
 
 // Polar single-license-checkout + direkt DMG-nedladdning (löses från appcasten)
@@ -20,7 +19,7 @@ const DMG_DOWNLOAD = await getDownloadUrl();
 const STEP_VIDEO = "/KH_web_placeholder_herovid.mp4";
 const steps = [
   { title: "Record", body: "Capture a window, a region, or the full screen — with your webcam, if you like.", src: STEP_VIDEO },
-  { title: "Dolly polishes", body: "Auto-zoom, backdrop, and cursor smoothing apply while you record.", src: STEP_VIDEO },
+  { title: "Polish", body: "Auto-zoom, backdrop, and cursor smoothing apply while you record.", src: STEP_VIDEO },
   { title: "Export", body: "Trim, tweak, and export a share-ready video in seconds.", src: STEP_VIDEO },
 ];
 
@@ -35,7 +34,7 @@ const grid = [
 
 const faqs = [
   { q: "Is Dolly a subscription?", a: "No. Dolly is a one-time purchase that includes 12 months of updates. Keep the version you bought for as long as you like." },
-  { q: "Which macOS versions are supported?", a: "macOS 15 (Sequoia) and later." },
+  { q: "What Mac do I need?", a: "Any Mac with Apple silicon or Intel, running macOS 15 (Sequoia) or later." },
   { q: "Where are my recordings stored?", a: "Locally, on your Mac. Dolly runs entirely on-device — nothing is uploaded." },
   { q: "How do updates work?", a: "Dolly updates itself automatically. Your 12 months of updates begin at purchase." },
   { q: "Can I get a refund?", a: "Yes — checkout and refunds are handled by Polar, our payment provider." },
@@ -84,7 +83,7 @@ const faqs = [
         </a>
       </div>
       <p class="mt-4 text-sm text-text-subtle">
-        7-day trial · Requires macOS 15 or later · One-time purchase
+        7-day trial · One-time purchase
       </p>
 
       <!-- Hero-video: startar i containerbredd, skalas upp vid scroll -->
@@ -174,13 +173,9 @@ const faqs = [
           <li>12 months of updates</li>
           <li>All features included</li>
           <li>Runs entirely on your Mac</li>
-          <li>Requires macOS 15 or later</li>
         </ul>
       </div>
     </Section>
-
-    <!-- Made with Dolly (scroll-reaktiv marquee) -->
-    <MadeWithDolly />
 
     <!-- FAQ -->
     <Section id="faq" title="Questions?">

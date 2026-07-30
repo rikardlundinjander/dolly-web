@@ -40,11 +40,11 @@ const downloadUrl = await getDownloadUrl();
         <img src="/dolly-logo-single.svg" alt="" class="h-5 w-auto" />
       </span>
     </a>
-    <ul class="hidden items-center gap-6 text-sm text-text-muted sm:flex">
+    <ul class="hidden items-center gap-6 text-sm text-text sm:flex">
       {
         links.map((l) => (
           <li>
-            <a href={l.href} class="transition-colors hover:text-text">
+            <a href={l.href} class="transition-colors hover:text-text-muted">
               {l.label}
             </a>
           </li>
