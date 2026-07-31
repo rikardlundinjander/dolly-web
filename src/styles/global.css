@@ -3,15 +3,6 @@
    vid stora storlekar automatiskt via font-optical-sizing: auto. Self-hostad. */
 @import "@fontsource-variable/inter/opsz.css";
 
-/* Libre Caslon Condensed (Regular) — TEST för hero/sektionsrubriker */
-@font-face {
-  font-family: "Libre Caslon Condensed";
-  src: url("/fonts/LibreCaslonCondensed-Regular.woff2") format("woff2");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
 /* =============================================================
    Dolly — Design tokens
    Tre lager:
@@ -64,7 +55,6 @@
   /* Typografi — Inter Variable (opsz sköter display vs text automatiskt) */
   --font-sans: "Inter Variable", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display: "Inter Variable", ui-sans-serif, system-ui, sans-serif;
-  --font-heading: "Libre Caslon Condensed", Georgia, "Times New Roman", serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   /* Typskala — modest ratio, generöst spann */
