@@ -173,7 +173,7 @@
   --glare-on-light: rgba(0, 0, 0, 0.02);
 
   /* Hologram-filmens styrka per underlag */
-  --holo-strength-on-dark: 0.25;
+  --holo-strength-on-dark: 0.45;
   --holo-strength-on-light: 0.35;
 }
 

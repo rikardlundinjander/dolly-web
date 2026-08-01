@@ -29,10 +29,10 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
           <a
             href={plan.href}
             class:list={[
-              "press glare tilt holo group flex flex-col rounded-4xl p-8 sm:p-10 md:col-span-4",
+              "press tilt holo group flex flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
-                ? "bg-inverse-bg text-inverse-text [--glare-color:var(--glare-on-light)] [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply]"
+                ? "bg-inverse-bg text-inverse-text [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply]"
                 : "bg-surface text-text transition-colors hover:bg-surface-hover",
             ]}
           >
@@ -60,7 +60,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
             </div>
             <span
               class:list={[
-                "mt-8 block rounded-xl py-3.5 text-center text-base transition-colors duration-[var(--duration-base)]",
+                "mt-8 block rounded-lg py-2 text-center text-sm transition-colors duration-[var(--duration-base)]",
                 plan.featured
                   ? "bg-btn-inverse text-btn-inverse-text hover:bg-btn-inverse-hover"
                   : "bg-btn-secondary text-text hover:bg-btn-secondary-hover",
