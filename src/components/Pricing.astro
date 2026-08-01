@@ -29,10 +29,10 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
           <a
             href={plan.href}
             class:list={[
-              "press tilt holo group flex min-h-[31rem] flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
+              "press tilt holo border-glare group flex min-h-[31rem] flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
-                ? "bg-inverse-bg text-inverse-text [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply]"
+                ? "bg-inverse-bg text-inverse-text [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply] [--border-glare-color:var(--border-glare-on-light)]"
                 : "bg-surface text-text transition-colors hover:bg-surface-hover",
             ]}
           >

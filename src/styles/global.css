@@ -175,6 +175,10 @@
   /* Hologram-filmens styrka per underlag */
   --holo-strength-on-dark: 0.45;
   --holo-strength-on-light: 0.35;
+
+  /* Border-glare (spotlight-ring) per underlag */
+  --border-glare-on-dark: rgba(255, 255, 255, 0.4);
+  --border-glare-on-light: rgba(0, 0, 0, 0.25);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -375,6 +379,39 @@ body {
   .holo::before {
     display: none;
   }
+}
+
+/* Border-glare: 1px spotlight-ring som lyser upp nära pekaren vid hover.
+   Gradienten maskas till enbart border-ringen (content-box XOR full yta).
+   Position via --glare-x/y, färg per underlag via --border-glare-color. */
+.border-glare {
+  position: relative;
+}
+.border-glare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: radial-gradient(
+    10rem circle at var(--glare-x, 50%) var(--glare-y, 50%) in oklab,
+    var(--border-glare-color, var(--border-glare-on-dark)),
+    transparent 70%
+  );
+  -webkit-mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#fff 0 0) content-box,
+    linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out-quart);
+  pointer-events: none;
+}
+.border-glare:hover::after {
+  opacity: 1;
 }
 
 /* Tilt: subtil 3D-lutning mot pekaren (vinklar via --tilt-x/y från
