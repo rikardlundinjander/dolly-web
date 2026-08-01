@@ -74,6 +74,18 @@ const {
 </script>
 
 <script>
+  // Glare: uppdatera ljusfläckens position (--glare-x/y) när pekaren rör
+  // sig över .glare-ytor. Själva effekten ligger i global.css.
+  document.querySelectorAll<HTMLElement>(".glare").forEach((el) => {
+    el.addEventListener("pointermove", (e) => {
+      const r = el.getBoundingClientRect();
+      el.style.setProperty("--glare-x", e.clientX - r.left + "px");
+      el.style.setProperty("--glare-y", e.clientY - r.top + "px");
+    });
+  });
+</script>
+
+<script>
   // Footer-reveal: reservera footerns höjd (minus sidans hörnradie) så den
   // fixed footern avslöjas när innehållet lyft av den vid botten.
   const page = document.getElementById("page");

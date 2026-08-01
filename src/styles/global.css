@@ -165,6 +165,10 @@
   --btn-inverse-bg: var(--color-neutral-1000);
   --btn-inverse-bg-hover: var(--color-neutral-800);
   --btn-inverse-text: var(--color-neutral-0);
+
+  /* Glare-fläckens färg per underlag */
+  --glare-on-dark: rgba(255, 255, 255, 0.1);
+  --glare-on-light: rgba(0, 0, 0, 0.05);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -295,4 +299,27 @@ body {
    behöver övertrumfas) */
 [data-item]:hover [data-title] {
   color: var(--text) !important;
+}
+
+/* Glare: mjuk ljusfläck som följer pekaren (positioneras via --glare-x/y
+   från script i Layout). Färg per yta via --glare-color. */
+.glare {
+  position: relative;
+  overflow: hidden;
+}
+.glare::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    22rem circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    var(--glare-color, var(--glare-on-dark)),
+    transparent 60%
+  );
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out-quart);
+  pointer-events: none;
+}
+.glare:hover::after {
+  opacity: 1;
 }
