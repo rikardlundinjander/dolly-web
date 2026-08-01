@@ -36,19 +36,32 @@ const faqs = [
 
     <div
       data-reveal
-      class="mx-auto mt-12 max-w-2xl divide-y divide-border md:mt-[var(--space-3xl)]"
+      class="mx-auto mt-12 flex max-w-2xl flex-col gap-2 md:mt-[var(--space-3xl)]"
     >
       {
         faqs.map((item) => (
-          <details class="faq group">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-lg text-text marker:content-none">
+          <details class="faq group rounded-md transition-colors duration-[var(--duration-base)] hover:bg-surface">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg text-text marker:content-none">
               {item.q}
-              <span class="shrink-0 pl-4 text-text-subtle transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
-                +
-              </span>
+              <svg
+                class="size-4 shrink-0 text-text-subtle transition-transform duration-[var(--duration-base)] group-open:rotate-180"
+                viewBox="0 0 16 16"
+                fill="none"
+                aria-hidden="true"
+              >
+                <path
+                  d="M4 6l4 4 4-4"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
             </summary>
             <div class="faq-panel overflow-hidden">
-              <p class="max-w-xl pb-5 text-base text-text-muted">{item.a}</p>
+              <p class="max-w-xl px-6 pb-6 text-base text-text-muted">
+                {item.a}
+              </p>
             </div>
           </details>
         ))
