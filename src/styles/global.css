@@ -167,8 +167,8 @@
   --btn-inverse-text: var(--color-neutral-0);
 
   /* Glare-fläckens färg per underlag */
-  --glare-on-dark: rgba(255, 255, 255, 0.06);
-  --glare-on-light: rgba(0, 0, 0, 0.03);
+  --glare-on-dark: rgba(255, 255, 255, 0.04);
+  --glare-on-light: rgba(0, 0, 0, 0.02);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -312,9 +312,9 @@ body {
   position: absolute;
   inset: 0;
   background: radial-gradient(
-    22rem circle at var(--glare-x, 50%) var(--glare-y, 50%),
+    36rem circle at var(--glare-x, 50%) var(--glare-y, 50%),
     var(--glare-color, var(--glare-on-dark)),
-    transparent 60%
+    transparent 70%
   );
   opacity: 0;
   transition: opacity var(--duration-slow) var(--ease-out-quart);
