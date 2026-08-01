@@ -1,0 +1,55 @@
+---
+import Container from "./Container.astro";
+import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
+
+// Pricing (redesign): per-seat. Två hårfint kantade license-rader + contact.
+const plans = [
+  { name: "Single License", price: "$69", href: BUY_SINGLE },
+  { name: "Team License", price: "$49", href: BUY_TEAM },
+];
+const DESC = "No subscription. One-time purchase with 12 months of updates included.";
+---
+
+<section id="pricing" class="py-20 md:py-28">
+  <Container>
+    <div class="mx-auto max-w-2xl">
+      <div data-reveal class="text-center">
+        <h2 class="text-3xl text-text sm:text-4xl">Pay once. It's yours.</h2>
+        <p class="mt-4 text-base text-text-muted">{DESC}</p>
+      </div>
+
+      <div data-reveal class="mt-12 flex flex-col gap-4">
+        {
+          plans.map((plan) => (
+            <div class="rounded-2xl border border-border p-6 sm:p-7">
+              <p class="text-lg text-text">{plan.name}</p>
+              <p class="mt-2 max-w-sm text-sm text-text-muted">{DESC}</p>
+              <div class="mt-6 flex items-center justify-between gap-4">
+                <div class="flex items-baseline gap-1.5">
+                  <span class="text-3xl text-text">{plan.price}</span>
+                  <span class="text-sm text-text-muted">/seat</span>
+                </div>
+                <a
+                  href={plan.href}
+                  class="shrink-0 rounded-pill bg-btn-primary px-5 py-2.5 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+                >
+                  Buy license
+                </a>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+
+      <p class="mt-6 text-center text-sm text-text-muted">
+        Need more than 10 seats?{" "}
+        <a
+          href="mailto:support@heydolly.app"
+          class="text-text underline underline-offset-2 transition-colors hover:text-text-muted"
+        >
+          Contact us
+        </a>
+      </p>
+    </div>
+  </Container>
+</section>
