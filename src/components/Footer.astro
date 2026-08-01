@@ -1,31 +1,59 @@
 ---
 import Container from "./Container.astro";
 
-// Mörk minimal footer (redesign). Förfinas senare mot skissen.
-const legal = [
-  { label: "Privacy", href: "/privacy" },
-  { label: "Terms", href: "/terms" },
-  { label: "Refund", href: "/refund" },
+// Footer (redesign) — layout som v1: varumärkesblock + länkkolumner + ©-rad.
+// Fixed bakom #page för footer-reveal. Dark-only, en vikt, tokens.
+const cols = [
+  {
+    heading: "Product",
+    links: [
+      { label: "Features", href: "/#features" },
+      { label: "Pricing", href: "/#pricing" },
+    ],
+  },
+  {
+    heading: "Legal",
+    links: [
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
+      { label: "Refund", href: "/refund" },
+    ],
+  },
 ];
 ---
 
-<footer class="fixed inset-x-0 bottom-0 z-0 bg-surface py-16 text-text">
-  <Container
-    class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between"
-  >
-    <a href="/" class="flex items-center gap-2.5" aria-label="Dolly">
-      <img src="/dolly-logo-single.svg" alt="" class="h-5 w-5 [filter:invert(1)]" />
-      <span class="text-lg tracking-tight text-text">Dolly</span>
-    </a>
-    <nav class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-text-muted">
+<footer class="fixed inset-x-0 bottom-0 z-0 bg-surface pt-28 pb-10 text-text">
+  <Container class="flex flex-col gap-12 sm:flex-row sm:justify-between">
+    <div class="max-w-xs">
+      <a href="/" class="flex items-center gap-2.5" aria-label="Dolly">
+        <img
+          src="/dolly-logo-single.svg"
+          alt=""
+          class="h-5 w-5 [filter:invert(1)]"
+        />
+        <span class="text-lg tracking-tight text-text">Dolly</span>
+      </a>
+      <p class="mt-3 text-sm text-text-muted">
+        Beautiful screen recordings for macOS.
+      </p>
+    </div>
+    <div class="flex gap-16 text-sm">
       {
-        legal.map((l) => (
-          <a href={l.href} class="transition-colors hover:text-text">
-            {l.label}
-          </a>
+        cols.map((col) => (
+          <ul class="flex flex-col gap-3 text-text-muted">
+            {col.links.map((link) => (
+              <li>
+                <a href={link.href} class="transition-colors hover:text-text">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
         ))
       }
-    </nav>
-    <p class="text-sm text-text-subtle">© Dolly 2026</p>
+    </div>
+  </Container>
+  <Container class="mt-16 text-xs text-text-subtle">
+    <span>© Dolly 2026</span>
   </Container>
 </footer>
