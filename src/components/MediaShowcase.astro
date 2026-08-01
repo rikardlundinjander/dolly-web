@@ -1,0 +1,129 @@
+---
+import Container from "./Container.astro";
+
+// Media-sektion (redesign): centrerad titel + paragraf → spelare (grå placeholder)
+// → 3 väljar-USP med progress-linje. Väljarna cyklar auto (progress fylls),
+// klick byter. Grå ruta som video-placeholder tills riktiga klipp finns.
+interface Item {
+  label: string;
+  body: string;
+}
+interface Props {
+  title: string;
+  body: string;
+  items: Item[];
+}
+const { title, body, items } = Astro.props;
+---
+
+<section class="py-20 md:py-28">
+  <Container>
+    <div data-reveal class="mx-auto max-w-xl text-center">
+      <h2 class="text-3xl text-text sm:text-4xl">{title}</h2>
+      <p class="mt-4 text-base text-text-muted">{body}</p>
+    </div>
+
+    <div data-showcase class="mt-14">
+      <!-- Spelare (grå placeholder) -->
+      <div
+        class="flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg bg-surface"
+      >
+        <span data-player-label class="text-sm text-text-subtle"></span>
+      </div>
+
+      <!-- Väljare -->
+      <div class="grid-12 mt-10">
+        {
+          items.map((it, i) => (
+            <button
+              type="button"
+              data-item
+              data-index={i}
+              class="group cursor-pointer text-left md:col-span-4"
+            >
+              <span class="block h-px w-full overflow-hidden bg-border">
+                <span
+                  data-progress
+                  class="block h-full w-0 bg-text transition-[width] duration-100 ease-linear"
+                />
+              </span>
+              <span data-title class="mt-4 block text-base">
+                {it.label}
+              </span>
+              <span class="mt-2 block text-sm text-text-muted">{it.body}</span>
+            </button>
+          ))
+        }
+      </div>
+    </div>
+  </Container>
+</section>
+
+<script>
+  const DURATION = 5000; // ms per USP
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((root) => {
+    const label = root.querySelector<HTMLElement>("[data-player-label]");
+    const items = [...root.querySelectorAll<HTMLElement>("[data-item]")];
+    const titles = items.map((i) => i.querySelector<HTMLElement>("[data-title]")!);
+    const bars = items.map((i) => i.querySelector<HTMLElement>("[data-progress]")!);
+    if (!items.length) return;
+
+    let current = 0;
+    let startTs = 0;
+    let raf = 0;
+    let running = false;
+
+    const paint = (i: number, pct: number) => {
+      items.forEach((it, idx) => {
+        const on = idx === i;
+        it.toggleAttribute("data-active", on);
+        titles[idx].style.color = on ? "var(--text)" : "var(--text-muted)";
+        bars[idx].style.width = on ? pct + "%" : idx < i ? "100%" : "0%";
+      });
+      if (label) label.textContent = titles[i].textContent;
+    };
+
+    const tick = (ts: number) => {
+      if (!startTs) startTs = ts;
+      const p = Math.min((ts - startTs) / DURATION, 1);
+      paint(current, p * 100);
+      if (p >= 1) {
+        current = (current + 1) % items.length;
+        startTs = 0;
+      }
+      if (running) raf = requestAnimationFrame(tick);
+    };
+    const start = () => {
+      if (running || reduce) return;
+      running = true;
+      startTs = 0;
+      raf = requestAnimationFrame(tick);
+    };
+    const stop = () => {
+      running = false;
+      cancelAnimationFrame(raf);
+    };
+    const select = (i: number) => {
+      current = i;
+      startTs = 0;
+      paint(i, 0);
+      if (!reduce) start();
+    };
+
+    items.forEach((it, i) => it.addEventListener("click", () => select(i)));
+    paint(0, 0);
+
+    if (reduce) return;
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        ([e]) => (e.isIntersecting ? start() : stop()),
+        { threshold: 0.4 },
+      );
+      io.observe(root);
+    } else {
+      start();
+    }
+  });
+</script>
