@@ -47,10 +47,12 @@ const { title, body, items } = Astro.props;
                   class="block h-full w-0 bg-text transition-[width] duration-100 ease-linear"
                 />
               </span>
-              <span data-title class="mt-4 block text-base">
+              <span data-title class="mt-4 block text-base pr-[var(--space-lg)]">
                 {it.label}
               </span>
-              <span class="mt-2 block text-sm text-text-muted">{it.body}</span>
+              <span class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)]">
+                {it.body}
+              </span>
             </button>
           ))
         }
