@@ -21,20 +21,20 @@
    ============================================================= */
 
 @theme {
-  /* ---------- FÄRG: neutral-skala (0 = vitt → 1000 = near-black) ---------- */
+  /* ---------- FÄRG: neutral-skala (0 = vitt → 1000 = near-black, pure gray) ---------- */
   --color-neutral-0: #ffffff;
-  --color-neutral-50: #f6f6f7;
-  --color-neutral-100: #ededee;
-  --color-neutral-200: #d6d6d9;
-  --color-neutral-300: #b4b4b9;
-  --color-neutral-400: #8a8a90;
-  --color-neutral-500: #66666c;
-  --color-neutral-600: #48484e;
-  --color-neutral-700: #303035;
-  --color-neutral-800: #1d1d21;
-  --color-neutral-900: #141417;
-  --color-neutral-950: #0e0e11;
-  --color-neutral-1000: #09090b;
+  --color-neutral-50: #f7f7f7;
+  --color-neutral-100: #ededed;
+  --color-neutral-200: #d6d6d6;
+  --color-neutral-300: #b4b4b4;
+  --color-neutral-400: #8a8a8a;
+  --color-neutral-500: #666666;
+  --color-neutral-600: #484848;
+  --color-neutral-700: #303030;
+  --color-neutral-800: #1e1e1e;
+  --color-neutral-900: #141414;
+  --color-neutral-950: #0e0e0e;
+  --color-neutral-1000: #090909;
 
   /* ---------- FÄRG: accent-skala (sparsam; blå) ---------- */
   --color-brand-50: #eef4ff;

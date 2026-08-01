@@ -4,8 +4,8 @@ import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 
 // Pricing (redesign): per-seat. Två hårfint kantade license-rader + contact.
 const plans = [
-  { name: "Single License", price: "$69", href: BUY_SINGLE },
-  { name: "Team License", price: "$49", href: BUY_TEAM },
+  { name: "Single License", price: "$69", href: BUY_SINGLE, featured: true },
+  { name: "Team License", price: "$49", href: BUY_TEAM, featured: false },
 ];
 const DESC = "No subscription. One-time purchase with 12 months of updates included.";
 ---
@@ -13,7 +13,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
 <section id="pricing" class="py-20 md:py-28">
   <Container>
     <div class="mx-auto max-w-2xl">
-      <div data-reveal class="text-center">
+      <div data-reveal class="mx-auto max-w-sm text-center">
         <h2 class="text-3xl text-text sm:text-4xl">Pay once. It's yours.</h2>
         <p class="mt-4 text-base text-text-muted">{DESC}</p>
       </div>
@@ -21,7 +21,12 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
       <div data-reveal class="mt-12 flex flex-col gap-4">
         {
           plans.map((plan) => (
-            <div class="rounded-2xl border border-border p-6 sm:p-7">
+            <div
+              class:list={[
+                "rounded-xs p-6 sm:p-7",
+                plan.featured ? "bg-surface" : "border border-border",
+              ]}
+            >
               <p class="text-lg text-text">{plan.name}</p>
               <p class="mt-2 max-w-sm text-sm text-text-muted">{DESC}</p>
               <div class="mt-6 flex items-center justify-between gap-4">

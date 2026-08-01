@@ -21,9 +21,8 @@ const editing = [
 ---
 
 <Layout>
-  <Nav />
-
-  <main>
+  <div id="page" class="relative z-10 rounded-b-[1.5rem] bg-bg">
+    <Nav />
     <!-- Hero -->
     <section class="pt-24 pb-20 text-center md:pt-32">
       <Container>
@@ -47,7 +46,7 @@ const editing = [
         </p>
 
         <!-- Hero-video (placeholder) -->
-        <div class="mt-14 aspect-video w-full rounded-lg bg-surface"></div>
+        <div class="mt-14 aspect-video w-full rounded-xs bg-surface"></div>
       </Container>
     </section>
 
@@ -70,7 +69,7 @@ const editing = [
 
     <!-- Pricing -->
     <Pricing />
-  </main>
+  </div>
 
   <Footer />
 </Layout>
