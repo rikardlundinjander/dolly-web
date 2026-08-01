@@ -74,13 +74,29 @@ const {
 </script>
 
 <script>
-  // Glare: uppdatera ljusfläckens position (--glare-x/y) när pekaren rör
-  // sig över .glare-ytor. Själva effekten ligger i global.css.
-  document.querySelectorAll<HTMLElement>(".glare").forEach((el) => {
+  // Glare + tilt: följ pekaren över .glare/.tilt-ytor och uppdatera
+  // CSS-vars (--glare-x/y, --tilt-x/y). Effekterna ligger i global.css.
+  const MAX_TILT = 2; // grader åt varje håll
+  const tiltReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  document.querySelectorAll<HTMLElement>(".glare, .tilt").forEach((el) => {
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
-      el.style.setProperty("--glare-x", e.clientX - r.left + "px");
-      el.style.setProperty("--glare-y", e.clientY - r.top + "px");
+      const x = e.clientX - r.left;
+      const y = e.clientY - r.top;
+      if (el.classList.contains("glare")) {
+        el.style.setProperty("--glare-x", x + "px");
+        el.style.setProperty("--glare-y", y + "px");
+      }
+      if (el.classList.contains("tilt") && !tiltReduce) {
+        const nx = x / r.width - 0.5;
+        const ny = y / r.height - 0.5;
+        el.style.setProperty("--tilt-y", nx * 2 * MAX_TILT + "deg");
+        el.style.setProperty("--tilt-x", -ny * 2 * MAX_TILT + "deg");
+      }
+    });
+    el.addEventListener("pointerleave", () => {
+      el.style.setProperty("--tilt-x", "0deg");
+      el.style.setProperty("--tilt-y", "0deg");
     });
   });
 </script>

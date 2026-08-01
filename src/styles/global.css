@@ -167,8 +167,8 @@
   --btn-inverse-text: var(--color-neutral-0);
 
   /* Glare-fläckens färg per underlag */
-  --glare-on-dark: rgba(255, 255, 255, 0.1);
-  --glare-on-light: rgba(0, 0, 0, 0.05);
+  --glare-on-dark: rgba(255, 255, 255, 0.06);
+  --glare-on-light: rgba(0, 0, 0, 0.03);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -322,4 +322,16 @@ body {
 }
 .glare:hover::after {
   opacity: 1;
+}
+
+/* Tilt: subtil 3D-lutning mot pekaren (vinklar via --tilt-x/y från
+   samma script som glare). Kombineras fritt med .glare/.press —
+   .press:active skriver över transformen vid tryck. */
+@media (prefers-reduced-motion: no-preference) {
+  .tilt {
+    transform: perspective(50rem) rotateX(var(--tilt-x, 0deg))
+      rotateY(var(--tilt-y, 0deg));
+    transition: transform var(--duration-base) var(--ease-out-quart);
+    will-change: transform;
+  }
 }
