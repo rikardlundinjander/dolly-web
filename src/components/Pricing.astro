@@ -29,7 +29,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
           <a
             href={plan.href}
             class:list={[
-              "press tilt holo group flex flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
+              "press tilt holo group flex min-h-[31rem] flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
                 ? "bg-inverse-bg text-inverse-text [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply]"
@@ -45,7 +45,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
             >
               {DESC}
             </p>
-            <div class="mt-16 flex items-baseline gap-2">
+            <div class="mt-auto flex items-baseline gap-2 pt-16">
               <span class="text-4xl">{plan.price}</span>
               <span
                 class:list={[
