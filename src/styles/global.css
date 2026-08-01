@@ -66,8 +66,8 @@
   --text-lg--line-height: 1.5;
   --text-xl: 1.5rem;       /* 24 */
   --text-xl--line-height: 1.35;
-  --text-2xl: 1.75rem;     /* 28 */
-  --text-2xl--line-height: 1.25;
+  --text-2xl: 2rem;        /* 32 */
+  --text-2xl--line-height: 1.2;
   --text-3xl: 2.25rem;     /* 36 */
   --text-3xl--line-height: 1.15;
   --text-4xl: 2.75rem;     /* 44 */
