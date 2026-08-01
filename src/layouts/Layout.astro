@@ -78,7 +78,7 @@ const {
   // CSS-vars (--glare-x/y, --tilt-x/y). Effekterna ligger i global.css.
   const MAX_TILT = 2; // grader åt varje håll
   const tiltReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  document.querySelectorAll<HTMLElement>(".glare, .tilt").forEach((el) => {
+  document.querySelectorAll<HTMLElement>(".glare, .tilt, .holo").forEach((el) => {
     el.addEventListener("pointermove", (e) => {
       const r = el.getBoundingClientRect();
       const x = e.clientX - r.left;
@@ -86,6 +86,12 @@ const {
       if (el.classList.contains("glare")) {
         el.style.setProperty("--glare-x", x + "px");
         el.style.setProperty("--glare-y", y + "px");
+      }
+      if (el.classList.contains("holo")) {
+        el.style.setProperty(
+          "--holo-shift",
+          ((x / r.width) * 100).toFixed(1) + "%",
+        );
       }
       if (el.classList.contains("tilt") && !tiltReduce) {
         const nx = x / r.width - 0.5;

@@ -169,6 +169,10 @@
   /* Glare-fläckens färg per underlag */
   --glare-on-dark: rgba(255, 255, 255, 0.04);
   --glare-on-light: rgba(0, 0, 0, 0.02);
+
+  /* Hologram-filmens styrka per underlag */
+  --holo-strength-on-dark: 0.25;
+  --holo-strength-on-light: 0.35;
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -322,6 +326,42 @@ body {
 }
 .glare:hover::after {
   opacity: 1;
+}
+
+/* Hologram: spektral film som glider med pekarens x-läge (--holo-shift
+   från samma script som glare). Blandas med underlaget via overlay —
+   styrka per yta via --holo-strength. */
+.holo {
+  position: relative;
+  overflow: hidden;
+}
+.holo::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 18%,
+    rgba(125, 215, 255, 0.55) 34%,
+    rgba(255, 130, 220, 0.55) 44%,
+    rgba(190, 255, 170, 0.55) 54%,
+    rgba(160, 140, 255, 0.55) 64%,
+    transparent 80%
+  );
+  background-size: 250% 250%;
+  background-position: var(--holo-shift, 50%) 50%;
+  mix-blend-mode: overlay;
+  opacity: 0;
+  transition: opacity var(--duration-slow) var(--ease-out-quart);
+  pointer-events: none;
+}
+.holo:hover::before {
+  opacity: var(--holo-strength, var(--holo-strength-on-dark));
+}
+@media (prefers-reduced-motion: reduce) {
+  .holo::before {
+    display: none;
+  }
 }
 
 /* Tilt: subtil 3D-lutning mot pekaren (vinklar via --tilt-x/y från
