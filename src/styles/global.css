@@ -32,6 +32,7 @@
   --color-neutral-600: #484848;
   --color-neutral-700: #303030;
   --color-neutral-800: #1e1e1e;
+  --color-neutral-850: #191919;
   --color-neutral-900: #141414;
   --color-neutral-950: #0e0e0e;
   --color-neutral-1000: #090909;
@@ -132,6 +133,7 @@
 
   --bg: var(--color-neutral-1000);
   --surface: var(--color-neutral-900);
+  --surface-hover: var(--color-neutral-850);
   --surface-elevated: var(--color-neutral-800);
   --text: var(--color-neutral-50);
   --text-muted: var(--color-neutral-400);
@@ -147,7 +149,7 @@
   --btn-primary-text: var(--color-neutral-1000);
   /* Sekundär = semitransparent grå glas (backdrop-blur bakom) */
   --btn-secondary-bg: rgba(255, 255, 255, 0.08);
-  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.14);
+  --btn-secondary-bg-hover: rgba(255, 255, 255, 0.11);
   --btn-secondary-border: var(--border-strong);
   --btn-secondary-text: var(--text);
 
@@ -179,6 +181,7 @@
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
+  --color-surface-hover: var(--surface-hover);
   --color-surface-elevated: var(--surface-elevated);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
