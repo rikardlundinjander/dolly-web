@@ -11,22 +11,45 @@ const BUY = BUY_SINGLE;
   class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md"
 >
   <Container class="flex h-16 items-center justify-between">
-    <a href="/" class="flex items-center" aria-label="Dolly">
+    <a
+      href="/"
+      class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+      aria-label="Dolly"
+    >
       <img src="/dolly-logo.svg" alt="Dolly" class="h-6 w-auto" />
     </a>
     <div class="flex items-center gap-2">
       <a
         href={DMG}
-        class="rounded-lg bg-btn-secondary px-4 py-2 text-sm text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover"
+        class="press rounded-lg bg-btn-secondary px-4 py-2 text-sm text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover"
       >
         Download for Mac
       </a>
       <a
         href={BUY}
-        class="rounded-lg bg-btn-primary px-4 py-2 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        class="press rounded-lg bg-btn-primary px-4 py-2 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
       >
         Buy now
       </a>
     </div>
   </Container>
 </header>
+
+<style>
+  header {
+    transition: box-shadow var(--duration-slow) var(--ease-out-quart);
+  }
+  header[data-scrolled] {
+    box-shadow: var(--shadow-md);
+  }
+</style>
+
+<script>
+  const header = document.querySelector("header");
+  if (header) {
+    const sync = () =>
+      header.toggleAttribute("data-scrolled", window.scrollY > 8);
+    addEventListener("scroll", sync, { passive: true });
+    sync();
+  }
+</script>

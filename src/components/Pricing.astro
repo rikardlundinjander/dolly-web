@@ -23,8 +23,10 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
           plans.map((plan) => (
             <div
               class:list={[
-                "rounded-xs p-6 sm:p-7",
-                plan.featured ? "bg-surface" : "border border-border",
+                "rounded-xs p-6 transition-colors duration-[var(--duration-base)] sm:p-7",
+                plan.featured
+                  ? "bg-surface hover:bg-surface-elevated"
+                  : "border border-border hover:border-border-strong",
               ]}
             >
               <p class="text-lg text-text">{plan.name}</p>
@@ -36,7 +38,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
                 </div>
                 <a
                   href={plan.href}
-                  class="shrink-0 rounded-lg bg-btn-primary px-5 py-2.5 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+                  class="press shrink-0 rounded-lg bg-btn-primary px-5 py-2.5 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
                 >
                   Buy license
                 </a>

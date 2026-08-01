@@ -212,23 +212,48 @@ body {
   }
 }
 
-/* ---------- Scroll-reveal (bibliotekfri) ---------- */
+/* ---------- Scroll-reveal (bibliotekfri) ----------
+   Mjuk entré: fade + lyft + hårfin blur som släpper. Staggra syskon
+   med style="--reveal-delay: 90ms" osv. */
 :root[data-anim] [data-reveal] {
   opacity: 0;
-  transform: translateY(0.75rem);
+  transform: translateY(1rem);
+  filter: blur(6px);
   transition:
-    opacity var(--duration-slow) var(--ease-out-expo),
-    transform var(--duration-slow) var(--ease-out-expo);
+    opacity 600ms var(--ease-out-expo),
+    transform 600ms var(--ease-out-expo),
+    filter 600ms var(--ease-out-expo);
   transition-delay: var(--reveal-delay, 0ms);
 }
 :root[data-anim] [data-reveal][data-visible] {
   opacity: 1;
   transform: none;
+  filter: none;
 }
 @media (prefers-reduced-motion: reduce) {
   :root[data-anim] [data-reveal] {
     opacity: 1;
     transform: none;
+    filter: none;
     transition: none;
   }
+}
+
+/* ---------- Interaktioner ---------- */
+/* Knapp-tryck: diskret nedskalning (utanför reduced motion) */
+@media (prefers-reduced-motion: no-preference) {
+  .press {
+    transition:
+      background-color var(--duration-base) var(--ease-out-quart),
+      transform var(--duration-fast) var(--ease-out-quart);
+  }
+  .press:active {
+    transform: scale(0.97);
+  }
+}
+
+/* Showcase-väljare: titeln tänds på hover (inline-färg från scriptet
+   behöver övertrumfas) */
+[data-item]:hover [data-title] {
+  color: var(--text) !important;
 }

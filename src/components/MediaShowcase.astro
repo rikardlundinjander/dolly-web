@@ -26,6 +26,7 @@ const { title, body, items } = Astro.props;
     <div data-showcase class="mt-14 md:mt-[var(--space-3xl)]">
       <!-- Spelare (grå placeholder) -->
       <div
+        data-reveal
         class="flex aspect-video w-full items-center justify-center overflow-hidden rounded-xs bg-surface"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
@@ -39,15 +40,20 @@ const { title, body, items } = Astro.props;
               type="button"
               data-item
               data-index={i}
+              data-reveal
               class="group cursor-pointer text-left md:col-span-4"
+              style={`--reveal-delay: ${i * 90}ms`}
             >
-              <span class="block h-px w-full overflow-hidden bg-border">
+              <span class="block h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong">
                 <span
                   data-progress
                   class="block h-full w-0 bg-text transition-[width] duration-100 ease-linear"
                 />
               </span>
-              <span data-title class="mt-4 block text-base pr-[var(--space-lg)]">
+              <span
+                data-title
+                class="mt-4 block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+              >
                 {it.label}
               </span>
               <span class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)]">

@@ -23,9 +23,13 @@ const features = [
     <p class="text-xl text-text">Key features</p>
     <div class="grid-12 mt-8">
       {
-        features.map((f) => (
-          <div data-reveal class="md:col-span-4">
-            <div class="aspect-[3/2] w-full rounded-xs bg-surface" />
+        features.map((f, i) => (
+          <div
+            data-reveal
+            class="group md:col-span-4"
+            style={`--reveal-delay: ${i * 90}ms`}
+          >
+            <div class="aspect-[3/2] w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
             <h3 class="mt-6 text-base text-text">{f.title}</h3>
             <p class="mt-2 text-base text-text-muted">{f.body}</p>
           </div>
