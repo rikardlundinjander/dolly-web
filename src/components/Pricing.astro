@@ -2,7 +2,9 @@
 import Container from "./Container.astro";
 import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 
-// Pricing (redesign): per-seat. Två hårfint kantade license-rader + contact.
+// Pricing (redesign): två stora kort-knappar på gridden (4/12 kol vardera,
+// centrerade). Hela kortet är klickbart — hover-fill och press-skala.
+// Single = vit (invers yta), Team = mörk surface.
 const plans = [
   { name: "Single License", price: "$69", href: BUY_SINGLE, featured: true },
   { name: "Team License", price: "$49", href: BUY_TEAM, featured: false },
@@ -16,51 +18,69 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
   class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]"
 >
   <Container>
-    <div class="mx-auto max-w-2xl">
-      <div data-reveal class="text-center">
-        <h2 class="text-3xl text-text sm:text-4xl">Pay once. It's yours.</h2>
-        <p class="mx-auto mt-4 max-w-sm text-lg text-text-muted">{DESC}</p>
-      </div>
+    <div data-reveal class="text-center">
+      <h2 class="text-3xl text-text sm:text-4xl">Pay once. It's yours.</h2>
+      <p class="mx-auto mt-4 max-w-sm text-lg text-text-muted">{DESC}</p>
+    </div>
 
-      <div data-reveal class="mt-12 flex flex-col gap-4 md:mt-[var(--space-3xl)]">
-        {
-          plans.map((plan) => (
-            <div
+    <div data-reveal class="grid-12 mt-12 md:mt-[var(--space-3xl)]">
+      {
+        plans.map((plan, i) => (
+          <a
+            href={plan.href}
+            class:list={[
+              "press group flex flex-col rounded-4xl p-8 sm:p-10 md:col-span-4",
+              i === 0 && "md:col-start-3",
+              plan.featured
+                ? "bg-inverse-bg text-inverse-text"
+                : "bg-surface text-text transition-colors hover:bg-surface-elevated",
+            ]}
+          >
+            <p class="text-lg">{plan.name}</p>
+            <p
               class:list={[
-                "rounded-md p-6 transition-colors duration-[var(--duration-base)] sm:p-7",
-                plan.featured
-                  ? "bg-surface hover:bg-surface-elevated"
-                  : "border border-border hover:border-border-strong",
+                "mt-3 max-w-xs text-base",
+                plan.featured ? "text-inverse-text-muted" : "text-text-muted",
               ]}
             >
-              <p class="text-lg text-text">{plan.name}</p>
-              <p class="mt-2 max-w-sm text-sm text-text-muted">{DESC}</p>
-              <div class="mt-6 flex items-center justify-between gap-4">
-                <div class="flex items-baseline gap-1.5">
-                  <span class="text-3xl text-text">{plan.price}</span>
-                  <span class="text-sm text-text-muted">/seat</span>
-                </div>
-                <a
-                  href={plan.href}
-                  class="press shrink-0 rounded-lg bg-btn-primary px-5 py-2.5 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-                >
-                  Buy license
-                </a>
-              </div>
+              {DESC}
+            </p>
+            <div class="mt-16 flex items-baseline gap-2">
+              <span class="text-4xl">{plan.price}</span>
+              <span
+                class:list={[
+                  "text-base",
+                  plan.featured
+                    ? "text-inverse-text-muted"
+                    : "text-text-muted",
+                ]}
+              >
+                /seat
+              </span>
             </div>
-          ))
-        }
-      </div>
-
-      <p class="mt-6 text-center text-sm text-text-muted">
-        Need more than 10 seats?{" "}
-        <a
-          href="mailto:support@heydolly.app"
-          class="text-text underline underline-offset-2 transition-colors hover:text-text-muted"
-        >
-          Contact us
-        </a>
-      </p>
+            <span
+              class:list={[
+                "mt-8 block rounded-xl py-3.5 text-center text-base transition-colors duration-[var(--duration-base)]",
+                plan.featured
+                  ? "bg-btn-inverse text-btn-inverse-text group-hover:bg-btn-inverse-hover"
+                  : "bg-btn-secondary text-text group-hover:bg-btn-secondary-hover",
+              ]}
+            >
+              Buy license
+            </span>
+          </a>
+        ))
+      }
     </div>
+
+    <p class="mt-12 text-center text-sm text-text-muted">
+      Need more than 10 seats?{" "}
+      <a
+        href="mailto:support@heydolly.app"
+        class="text-text underline underline-offset-2 transition-colors hover:text-text-muted"
+      >
+        Contact us
+      </a>
+    </p>
   </Container>
 </section>
