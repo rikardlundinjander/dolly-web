@@ -1,10 +1,10 @@
 ---
 import Container from "./Container.astro";
+import { getDownloadUrl, BUY_SINGLE } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo vänster, två knappar höger.
-// TODO: koppla auto-DMG + Polar när shell:et står.
-const DMG = "https://updates.heydolly.app/Dolly-1.0.1.dmg";
-const BUY = "https://buy.polar.sh/polar_cl_twiEvKa2nqt7k2bPyNEMGlCkmiZydNOUvPIyU105wyO";
+const DMG = await getDownloadUrl(); // senaste DMG från appcasten
+const BUY = BUY_SINGLE;
 ---
 
 <header

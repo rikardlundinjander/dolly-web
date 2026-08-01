@@ -1,0 +1,36 @@
+---
+import Container from "./Container.astro";
+
+// Key features — 3-upp (bild + titel + text) på 12-kol-gridden (4 kol vardera).
+const features = [
+  {
+    title: "Cinematic auto-zooms",
+    body: "Dolly watches your cursor and zooms in where it matters — automatically. Every zoom stays editable on the timeline.",
+  },
+  {
+    title: "Beautiful by default.",
+    body: "Rounded corners, padding, and a soft shadow over a backdrop of your choice. Raw capture in, designed output out.",
+  },
+  {
+    title: "All in one take. Even your iPhone.",
+    body: "Screen, camera, mic, system audio — even your iPhone. One take now, full control after.",
+  },
+];
+---
+
+<section class="py-16 md:py-24">
+  <Container>
+    <p class="text-sm text-text-subtle">Key features</p>
+    <div class="grid-12 mt-8">
+      {
+        features.map((f) => (
+          <div data-reveal class="md:col-span-4">
+            <div class="aspect-[3/2] w-full rounded-lg bg-surface" />
+            <h3 class="mt-6 text-lg text-text">{f.title}</h3>
+            <p class="mt-2 text-sm text-text-muted">{f.body}</p>
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+</section>
