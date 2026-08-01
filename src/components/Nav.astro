@@ -7,9 +7,7 @@ const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const BUY = BUY_SINGLE;
 ---
 
-<header
-  class="sticky top-0 z-50 bg-bg/80 backdrop-blur-md"
->
+<header class="sticky top-0 z-50">
   <Container class="flex h-16 items-center justify-between">
     <a
       href="/"
@@ -34,22 +32,3 @@ const BUY = BUY_SINGLE;
     </div>
   </Container>
 </header>
-
-<style>
-  header {
-    transition: box-shadow var(--duration-slow) var(--ease-out-quart);
-  }
-  header[data-scrolled] {
-    box-shadow: var(--shadow-md);
-  }
-</style>
-
-<script>
-  const header = document.querySelector("header");
-  if (header) {
-    const sync = () =>
-      header.toggleAttribute("data-scrolled", window.scrollY > 8);
-    addEventListener("scroll", sync, { passive: true });
-    sync();
-  }
-</script>

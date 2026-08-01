@@ -52,6 +52,23 @@ const {
   } else {
     els.forEach((el) => el.setAttribute("data-visible", ""));
   }
+
+  // Sektionsfokus: [data-focus] skärps när sektionen når viewportens
+  // mittband (60 %), blurras igen när den lämnar. Tvåvägs, till skillnad
+  // från reveal ovan.
+  const focusEls = document.querySelectorAll("[data-focus]");
+  if (!reduce && "IntersectionObserver" in window) {
+    const focusIo = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries)
+          e.target.toggleAttribute("data-infocus", e.isIntersecting);
+      },
+      { rootMargin: "-20% 0px -20% 0px", threshold: 0 },
+    );
+    focusEls.forEach((el) => focusIo.observe(el));
+  } else {
+    focusEls.forEach((el) => el.setAttribute("data-infocus", ""));
+  }
 </script>
 
 <script>
