@@ -32,7 +32,6 @@
   --color-neutral-600: #484848;
   --color-neutral-700: #303030;
   --color-neutral-800: #1e1e1e;
-  --color-neutral-850: #191919;
   --color-neutral-900: #141414;
   --color-neutral-950: #0e0e0e;
   --color-neutral-1000: #090909;
@@ -133,7 +132,7 @@
 
   --bg: var(--color-neutral-1000);
   --surface: var(--color-neutral-900);
-  --surface-hover: var(--color-neutral-850);
+  --surface-hover: #151515; /* surface +4% lightness — hårfin hover */
   --surface-elevated: var(--color-neutral-800);
   --text: var(--color-neutral-50);
   --text-muted: var(--color-neutral-400);
