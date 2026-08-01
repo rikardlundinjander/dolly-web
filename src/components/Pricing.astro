@@ -45,11 +45,11 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
             >
               {DESC}
             </p>
-            <div class="mt-auto flex items-baseline gap-2 pt-16">
-              <span class="text-4xl">{plan.price}</span>
+            <div class="mt-auto flex items-start gap-1 pt-16">
+              <span class="text-4xl leading-none">{plan.price}</span>
               <span
                 class:list={[
-                  "text-base",
+                  "text-base leading-none",
                   plan.featured
                     ? "text-inverse-text-muted"
                     : "text-text-muted",
