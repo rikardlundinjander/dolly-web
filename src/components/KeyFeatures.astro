@@ -20,14 +20,14 @@ const features = [
 
 <section class="py-16 md:py-24">
   <Container>
-    <p class="text-sm text-text-subtle">Key features</p>
+    <p class="text-xl text-text">Key features</p>
     <div class="grid-12 mt-8">
       {
         features.map((f) => (
           <div data-reveal class="md:col-span-4">
             <div class="aspect-[3/2] w-full rounded-xs bg-surface" />
-            <h3 class="mt-6 text-lg text-text">{f.title}</h3>
-            <p class="mt-2 text-sm text-text-muted">{f.body}</p>
+            <h3 class="mt-6 text-base text-text">{f.title}</h3>
+            <p class="mt-2 text-base text-text-muted">{f.body}</p>
           </div>
         ))
       }
