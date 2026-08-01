@@ -23,20 +23,29 @@ const cols = [
 ];
 ---
 
-<footer class="fixed inset-x-0 bottom-0 z-0 bg-surface pt-28 pb-10 text-text">
+<footer
+  class="fixed inset-x-0 bottom-0 z-0 bg-inverse-bg pt-28 pb-10 text-inverse-text"
+>
   <Container class="flex flex-col gap-12 sm:flex-row sm:justify-between">
     <div class="max-w-xs">
       <a href="/" class="inline-flex items-center" aria-label="Dolly">
-        <img src="/dolly-logo.svg" alt="Dolly" class="h-6 w-auto" />
+        <img
+          src="/dolly-logo.svg"
+          alt="Dolly"
+          class="h-6 w-auto [filter:invert(1)]"
+        />
       </a>
     </div>
     <div class="flex gap-16 text-sm">
       {
         cols.map((col) => (
-          <ul class="flex flex-col gap-3 text-text-muted">
+          <ul class="flex flex-col gap-3 text-inverse-text-muted">
             {col.links.map((link) => (
               <li>
-                <a href={link.href} class="transition-colors hover:text-text">
+                <a
+                  href={link.href}
+                  class="transition-colors hover:text-inverse-text"
+                >
                   {link.label}
                 </a>
               </li>
@@ -46,7 +55,7 @@ const cols = [
       }
     </div>
   </Container>
-  <Container class="mt-16 text-xs text-text-subtle">
+  <Container class="mt-16 text-xs text-inverse-text-subtle">
     <span>© Dolly 2026</span>
   </Container>
 </footer>

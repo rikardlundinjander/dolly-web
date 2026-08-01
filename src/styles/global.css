@@ -153,6 +153,12 @@
   --accent: var(--color-brand-400);
   --accent-hover: var(--color-brand-300);
   --accent-contrast: var(--color-neutral-1000);
+
+  /* Invers yta (ljus på mörk sida — t.ex. footern) */
+  --inverse-bg: var(--color-neutral-0);
+  --inverse-text: var(--color-neutral-1000);
+  --inverse-text-muted: var(--color-neutral-500);
+  --inverse-text-subtle: var(--color-neutral-400);
 }
 
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
@@ -173,6 +179,10 @@
   --color-accent: var(--accent);
   --color-accent-hover: var(--accent-hover);
   --color-accent-contrast: var(--accent-contrast);
+  --color-inverse-bg: var(--inverse-bg);
+  --color-inverse-text: var(--inverse-text);
+  --color-inverse-text-muted: var(--inverse-text-muted);
+  --color-inverse-text-subtle: var(--inverse-text-subtle);
 }
 
 /* ---------- Bas ---------- */
