@@ -1,0 +1,100 @@
+---
+import Container from "./Container.astro";
+
+// FAQ (redesign) — samma innehåll som v1, stylad enligt nya designen:
+// centrerad sektionsrubrik, hårfina delare, +-ikon som roterar, mjuk
+// höjd-animering. En vikt — betoning via färg, inte font-weight.
+const faqs = [
+  {
+    q: "Is Dolly a subscription?",
+    a: "No. Dolly is a one-time purchase that includes 12 months of updates. Keep the version you bought for as long as you like.",
+  },
+  {
+    q: "What Mac do I need?",
+    a: "Any Mac with Apple silicon or Intel, running macOS 15 (Sequoia) or later.",
+  },
+  {
+    q: "Where are my recordings stored?",
+    a: "Locally, on your Mac. Dolly runs entirely on-device — nothing is uploaded.",
+  },
+  {
+    q: "How do updates work?",
+    a: "Dolly updates itself automatically. Your 12 months of updates begin at purchase.",
+  },
+  {
+    q: "Can I get a refund?",
+    a: "Yes — checkout and refunds are handled by Polar, our payment provider.",
+  },
+];
+---
+
+<section id="faq" data-focus class="py-20 md:py-28">
+  <Container>
+    <div data-reveal class="mx-auto max-w-xl text-center">
+      <h2 class="text-3xl text-text sm:text-4xl">Questions?</h2>
+    </div>
+
+    <div
+      data-reveal
+      class="mx-auto mt-12 max-w-2xl divide-y divide-border md:mt-[var(--space-3xl)]"
+    >
+      {
+        faqs.map((item) => (
+          <details class="faq group">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 py-5 text-lg text-text marker:content-none">
+              {item.q}
+              <span class="shrink-0 pl-4 text-text-subtle transition-transform duration-[var(--duration-fast)] group-open:rotate-45">
+                +
+              </span>
+            </summary>
+            <div class="faq-panel overflow-hidden">
+              <p class="max-w-xl pb-5 text-base text-text-muted">{item.a}</p>
+            </div>
+          </details>
+        ))
+      }
+    </div>
+  </Container>
+</section>
+
+<script>
+  // Mjuk höjd-animering vid öppning/stängning (respekterar reduced-motion).
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
+  document
+    .querySelectorAll<HTMLDetailsElement>("details.faq")
+    .forEach((d) => {
+      const summary = d.querySelector("summary");
+      const panel = d.querySelector<HTMLElement>(".faq-panel");
+      if (!summary || !panel) return;
+      let anim: Animation | null = null;
+      summary.addEventListener("click", (e) => {
+        if (reduce) return; // låt native toggla utan animering
+        e.preventDefault();
+        anim?.cancel();
+        if (!d.open) {
+          d.open = true;
+          anim = panel.animate(
+            [
+              { height: "0px", opacity: 0 },
+              { height: panel.scrollHeight + "px", opacity: 1 },
+            ],
+            { duration: 280, easing: EASE },
+          );
+          anim.onfinish = () => (panel.style.height = "");
+        } else {
+          anim = panel.animate(
+            [
+              { height: panel.scrollHeight + "px", opacity: 1 },
+              { height: "0px", opacity: 0 },
+            ],
+            { duration: 240, easing: EASE },
+          );
+          anim.onfinish = () => {
+            d.open = false;
+            panel.style.height = "";
+          };
+        }
+      });
+    });
+</script>
