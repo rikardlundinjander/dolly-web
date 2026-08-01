@@ -1,106 +1,31 @@
 ---
 import Container from "./Container.astro";
 
-// Mörk footer — avslöjas under den vita, rundade innehållsytan (footer-reveal).
-const cols = [
-  {
-    heading: "Product",
-    links: [
-      { label: "Features", href: "/#features" },
-      { label: "Pricing", href: "/#pricing" },
-      { label: "FAQ", href: "/#faq" },
-    ],
-  },
-  {
-    heading: "Legal",
-    links: [
-      { label: "Privacy", href: "/privacy" },
-      { label: "Terms", href: "/terms" },
-      { label: "Refund", href: "/refund" },
-    ],
-  },
+// Mörk minimal footer (redesign). Förfinas senare mot skissen.
+const legal = [
+  { label: "Privacy", href: "/privacy" },
+  { label: "Terms", href: "/terms" },
+  { label: "Refund", href: "/refund" },
 ];
 ---
 
-<footer
-  class="fixed inset-x-0 bottom-0 z-0 bg-inverse-bg pt-28 pb-10 text-inverse-text"
->
-  <Container class="flex flex-col gap-12 sm:flex-row sm:justify-between">
-    <div class="max-w-xs">
-      <p class="font-display text-2xl font-bold tracking-tight">Dolly</p>
-      <p class="mt-3 text-sm text-inverse-muted">
-        Beautiful screen recordings for macOS.
-      </p>
-    </div>
-    <div class="flex gap-16 text-sm">
+<footer class="mt-24 border-t border-border py-16">
+  <Container
+    class="flex flex-col gap-8 sm:flex-row sm:items-center sm:justify-between"
+  >
+    <a href="/" class="flex items-center gap-2.5" aria-label="Dolly">
+      <img src="/dolly-logo-single.svg" alt="" class="h-5 w-5 [filter:invert(1)]" />
+      <span class="text-lg tracking-tight text-text">Dolly</span>
+    </a>
+    <nav class="flex flex-wrap gap-x-8 gap-y-2 text-sm text-text-muted">
       {
-        cols.map((col) => (
-          <ul class="flex flex-col gap-3 text-inverse-muted">
-            {col.links.map((link) => (
-              <li>
-                <a
-                  href={link.href}
-                  class="transition-colors hover:text-inverse-text"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
+        legal.map((l) => (
+          <a href={l.href} class="transition-colors hover:text-text">
+            {l.label}
+          </a>
         ))
       }
-    </div>
-  </Container>
-  <Container
-    class="mt-16 flex items-center justify-between gap-4 text-xs text-inverse-muted"
-  >
-    <span>© Dolly 2026</span>
-    <div
-      data-theme-toggle
-      class="inline-flex rounded-pill border border-inverse-border p-0.5"
-    >
-      <button type="button" data-set-theme="light" class="rounded-pill px-3 py-1 transition-colors">
-        Light
-      </button>
-      <button type="button" data-set-theme="dark" class="rounded-pill px-3 py-1 transition-colors">
-        Dark
-      </button>
-    </div>
+    </nav>
+    <p class="text-sm text-text-subtle">© Dolly 2026</p>
   </Container>
 </footer>
-
-<style>
-  [data-theme-toggle] button {
-    color: var(--inverse-muted);
-  }
-  [data-theme-toggle] button[data-active] {
-    background: var(--inverse-text);
-    color: var(--inverse-bg);
-  }
-</style>
-
-<script>
-  const toggle = document.querySelector("[data-theme-toggle]");
-  if (toggle) {
-    const buttons = [
-      ...toggle.querySelectorAll<HTMLButtonElement>("button[data-set-theme]"),
-    ];
-    const sync = () => {
-      const cur = document.documentElement.dataset.theme || "light";
-      buttons.forEach((b) =>
-        b.toggleAttribute("data-active", b.dataset.setTheme === cur),
-      );
-    };
-    buttons.forEach((b) =>
-      b.addEventListener("click", () => {
-        const t = b.dataset.setTheme!;
-        document.documentElement.dataset.theme = t;
-        try {
-          localStorage.setItem("theme", t);
-        } catch (e) {}
-        sync();
-      }),
-    );
-    sync();
-  }
-</script>

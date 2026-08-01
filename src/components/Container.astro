@@ -1,6 +1,5 @@
 ---
-// Layoutprimitiv: centrerad max-bredd + sido-gutter. Använd överallt för
-// konsekvent horisontell rytm.
+// Layoutprimitiv: centrerad max-bredd (skissens 1328px) + responsiv sido-gutter.
 interface Props {
   class?: string;
 }
@@ -9,7 +8,7 @@ const { class: className = "" } = Astro.props;
 
 <div
   class:list={[
-    "mx-auto w-full max-w-[var(--container-max)] px-[var(--spacing-gutter)]",
+    "mx-auto w-full max-w-[var(--container-max)] px-[var(--gutter-page)] md:px-10",
     className,
   ]}
 >
