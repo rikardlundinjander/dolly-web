@@ -82,10 +82,7 @@ const { title, body, items } = Astro.props;
               style={`--reveal-delay: ${i * 90}ms`}
             >
               <span class="block h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong">
-                <span
-                  data-progress
-                  class="block h-full w-0 bg-text transition-[width] duration-100 ease-linear"
-                />
+                <span data-progress class="block h-full w-0 bg-text" />
               </span>
               <span
                 data-title
@@ -177,26 +174,34 @@ const { title, body, items } = Astro.props;
       if (playing) startPlayback();
     };
 
+    // rAF-driven målning i båda lägena — video.currentTime läses per frame
+    // (timeupdate fyrar bara ~4 ggr/s och ger hack i linjen).
     const tick = (ts: number) => {
       if (!playing) return;
-      if (!startTs) startTs = ts - elapsed;
-      elapsed = ts - startTs;
-      const p = Math.min(elapsed / DURATION, 1);
-      paint(p * 100);
-      if (p >= 1) {
-        advance();
-        return;
+      if (isVideo()) {
+        if (video!.duration)
+          paint((video!.currentTime / video!.duration) * 100);
+      } else {
+        if (!startTs) startTs = ts - elapsed;
+        elapsed = ts - startTs;
+        const p = Math.min(elapsed / DURATION, 1);
+        paint(p * 100);
+        if (p >= 1) {
+          advance();
+          return;
+        }
       }
       raf = requestAnimationFrame(tick);
     };
 
     const startPlayback = () => {
+      cancelAnimationFrame(raf); // aldrig mer än en loop
       if (isVideo()) {
         video!.play().catch(() => {});
       } else {
         startTs = 0;
-        raf = requestAnimationFrame(tick);
       }
+      raf = requestAnimationFrame(tick);
     };
 
     const play = () => {
@@ -209,8 +214,8 @@ const { title, body, items } = Astro.props;
       if (!playing) return;
       playing = false;
       updateIcons();
+      cancelAnimationFrame(raf);
       if (isVideo()) video!.pause();
-      else cancelAnimationFrame(raf);
     };
     const togglePlay = () => {
       if (playing) {
@@ -222,11 +227,6 @@ const { title, body, items } = Astro.props;
       }
     };
 
-    // Videodrivna items: strecket speglar videons längd.
-    video?.addEventListener("timeupdate", () => {
-      if (isVideo() && video.duration)
-        paint((video.currentTime / video.duration) * 100);
-    });
     video?.addEventListener("ended", advance);
 
     // Klick på hela spelaren togglar; ikonen likaså (utan dubbeltrigga).
