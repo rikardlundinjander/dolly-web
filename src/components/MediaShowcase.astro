@@ -1,12 +1,15 @@
 ---
 import Container from "./Container.astro";
 
-// Media-sektion (redesign): centrerad titel + paragraf → spelare (grå placeholder)
-// → 3 väljar-USP med progress-linje. Väljarna cyklar auto (progress fylls),
-// klick byter. Grå ruta som video-placeholder tills riktiga klipp finns.
+// Media-sektion (redesign): centrerad titel + paragraf → spelare → 3 väljar-USP.
+// Endast aktiv item har vitt progress-streck; det speglar videons längd
+// (5s-timer som fallback för placeholder-items utan klipp). När videon är
+// slut nollas strecket och nästa item startar. Klick på spelaren (eller
+// hover-ikonen i hörnet) togglar play/pause.
 interface Item {
   label: string;
   body: string;
+  video?: string; // mp4-URL; utelämnad = grå placeholder + timer
 }
 interface Props {
   title: string;
@@ -24,12 +27,45 @@ const { title, body, items } = Astro.props;
     </div>
 
     <div data-showcase class="mt-14 md:mt-[var(--space-3xl)]">
-      <!-- Spelare (grå placeholder) -->
+      <!-- Spelare -->
       <div
+        data-player
         data-reveal
-        class="flex aspect-video w-full items-center justify-center overflow-hidden rounded-xs bg-surface"
+        class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
+        <video
+          data-video
+          class="absolute inset-0 hidden h-full w-full object-cover"
+          muted
+          playsinline
+          preload="metadata"></video>
+        <!-- Play/pause vid hover -->
+        <button
+          type="button"
+          data-toggle
+          aria-label="Play or pause"
+          class="absolute right-4 bottom-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text opacity-0 backdrop-blur-md transition-opacity duration-[var(--duration-base)] group-hover:opacity-100"
+        >
+          <svg
+            data-icon-play
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden="true"
+            class="size-4"
+          >
+            <path d="M5 3.2v9.6L12.5 8 5 3.2z"></path>
+          </svg>
+          <svg
+            data-icon-pause
+            viewBox="0 0 16 16"
+            fill="currentColor"
+            aria-hidden="true"
+            class="hidden size-4"
+          >
+            <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z"></path>
+          </svg>
+        </button>
       </div>
 
       <!-- Väljare -->
@@ -40,6 +76,7 @@ const { title, body, items } = Astro.props;
               type="button"
               data-item
               data-index={i}
+              data-video-src={it.video ?? ""}
               data-reveal
               class="group cursor-pointer text-left md:col-span-4"
               style={`--reveal-delay: ${i * 90}ms`}
@@ -68,70 +105,165 @@ const { title, body, items } = Astro.props;
 </section>
 
 <script>
-  const DURATION = 5000; // ms per USP
+  const DURATION = 5000; // ms — fallback-"videolängd" för placeholder-items
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((root) => {
+    const player = root.querySelector<HTMLElement>("[data-player]");
+    const video = root.querySelector<HTMLVideoElement>("[data-video]");
     const label = root.querySelector<HTMLElement>("[data-player-label]");
+    const toggleBtn = root.querySelector<HTMLElement>("[data-toggle]");
+    const iconPlay = root.querySelector<HTMLElement>("[data-icon-play]");
+    const iconPause = root.querySelector<HTMLElement>("[data-icon-pause]");
     const items = [...root.querySelectorAll<HTMLElement>("[data-item]")];
-    const titles = items.map((i) => i.querySelector<HTMLElement>("[data-title]")!);
-    const bars = items.map((i) => i.querySelector<HTMLElement>("[data-progress]")!);
-    if (!items.length) return;
+    const titles = items.map(
+      (i) => i.querySelector<HTMLElement>("[data-title]")!,
+    );
+    const bars = items.map(
+      (i) => i.querySelector<HTMLElement>("[data-progress]")!,
+    );
+    if (!items.length || !player) return;
 
+    const srcs = items.map((i) => i.dataset.videoSrc || "");
     let current = 0;
-    let startTs = 0;
+    let playing = false;
+    let userPaused = false; // manuell paus ska överleva scroll ut/in
     let raf = 0;
-    let running = false;
+    let startTs = 0;
+    let elapsed = 0;
 
-    const paint = (i: number, pct: number) => {
-      items.forEach((it, idx) => {
-        const on = idx === i;
-        it.toggleAttribute("data-active", on);
-        titles[idx].style.color = on ? "var(--text)" : "var(--text-muted)";
-        bars[idx].style.width = on ? pct + "%" : idx < i ? "100%" : "0%";
-      });
+    const isVideo = () => !!srcs[current] && !!video;
+
+    // Endast aktiv item har vitt streck; övriga visar bara spårets botten.
+    const paint = (pct: number) => {
+      bars.forEach(
+        (b, idx) => (b.style.width = idx === current ? pct + "%" : "0%"),
+      );
+    };
+
+    const updateIcons = () => {
+      iconPlay?.classList.toggle("hidden", playing);
+      iconPause?.classList.toggle("hidden", !playing);
+    };
+
+    const setActive = (i: number) => {
+      current = i;
+      startTs = 0;
+      elapsed = 0;
+      items.forEach((it, idx) => it.toggleAttribute("data-active", idx === i));
+      titles.forEach(
+        (t, idx) =>
+          (t.style.color = idx === i ? "var(--text)" : "var(--text-muted)"),
+      );
+      paint(0);
       if (label) label.textContent = titles[i].textContent;
+      if (video) {
+        if (srcs[i]) {
+          video.classList.remove("hidden");
+          if (video.getAttribute("src") !== srcs[i])
+            video.setAttribute("src", srcs[i]);
+          video.currentTime = 0;
+        } else {
+          video.pause();
+          video.classList.add("hidden");
+          video.removeAttribute("src");
+        }
+      }
+    };
+
+    // Video slut → strecket nollas (via setActive) och nästa startar.
+    const advance = () => {
+      setActive((current + 1) % items.length);
+      if (playing) startPlayback();
     };
 
     const tick = (ts: number) => {
-      if (!startTs) startTs = ts;
-      const p = Math.min((ts - startTs) / DURATION, 1);
-      paint(current, p * 100);
+      if (!playing) return;
+      if (!startTs) startTs = ts - elapsed;
+      elapsed = ts - startTs;
+      const p = Math.min(elapsed / DURATION, 1);
+      paint(p * 100);
       if (p >= 1) {
-        current = (current + 1) % items.length;
-        startTs = 0;
+        advance();
+        return;
       }
-      if (running) raf = requestAnimationFrame(tick);
-    };
-    const start = () => {
-      if (running || reduce) return;
-      running = true;
-      startTs = 0;
       raf = requestAnimationFrame(tick);
     };
-    const stop = () => {
-      running = false;
-      cancelAnimationFrame(raf);
-    };
-    const select = (i: number) => {
-      current = i;
-      startTs = 0;
-      paint(i, 0);
-      if (!reduce) start();
+
+    const startPlayback = () => {
+      if (isVideo()) {
+        video!.play().catch(() => {});
+      } else {
+        startTs = 0;
+        raf = requestAnimationFrame(tick);
+      }
     };
 
-    items.forEach((it, i) => it.addEventListener("click", () => select(i)));
-    paint(0, 0);
+    const play = () => {
+      if (playing) return;
+      playing = true;
+      updateIcons();
+      startPlayback();
+    };
+    const pause = () => {
+      if (!playing) return;
+      playing = false;
+      updateIcons();
+      if (isVideo()) video!.pause();
+      else cancelAnimationFrame(raf);
+    };
+    const togglePlay = () => {
+      if (playing) {
+        userPaused = true;
+        pause();
+      } else {
+        userPaused = false;
+        play();
+      }
+    };
+
+    // Videodrivna items: strecket speglar videons längd.
+    video?.addEventListener("timeupdate", () => {
+      if (isVideo() && video.duration)
+        paint((video.currentTime / video.duration) * 100);
+    });
+    video?.addEventListener("ended", advance);
+
+    // Klick på hela spelaren togglar; ikonen likaså (utan dubbeltrigga).
+    player.addEventListener("click", (e) => {
+      if ((e.target as HTMLElement).closest("[data-toggle]")) return;
+      togglePlay();
+    });
+    toggleBtn?.addEventListener("click", togglePlay);
+
+    items.forEach((it, i) =>
+      it.addEventListener("click", () => {
+        setActive(i);
+        if (!reduce) {
+          userPaused = false;
+          play();
+        }
+      }),
+    );
+
+    setActive(0);
+    updateIcons();
 
     if (reduce) return;
     if ("IntersectionObserver" in window) {
       const io = new IntersectionObserver(
-        ([e]) => (e.isIntersecting ? start() : stop()),
+        ([e]) => {
+          if (e.isIntersecting) {
+            if (!userPaused) play();
+          } else {
+            pause();
+          }
+        },
         { threshold: 0.4 },
       );
       io.observe(root);
     } else {
-      start();
+      play();
     }
   });
 </script>
