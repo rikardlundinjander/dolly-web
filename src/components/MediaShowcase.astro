@@ -238,6 +238,11 @@ const { title, body, items } = Astro.props;
 
     items.forEach((it, i) =>
       it.addEventListener("click", () => {
+        // Klick på redan aktiv item togglar play/paus istället för omstart.
+        if (i === current) {
+          togglePlay();
+          return;
+        }
         setActive(i);
         if (!reduce) {
           userPaused = false;
