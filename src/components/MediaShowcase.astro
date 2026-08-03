@@ -76,8 +76,19 @@ const { title, body, items } = Astro.props;
         </button>
       </div>
 
-      <!-- Väljare -->
-      <div class="grid-12 mt-10">
+      <!-- Mobil: en enda kvarliggande progress-linje under spelaren -->
+      <div
+        data-reveal
+        class="mt-6 block h-px w-full overflow-hidden bg-border md:hidden"
+      >
+        <span data-mobile-progress class="block h-full w-0 bg-text"></span>
+      </div>
+
+      <!-- Väljare — mobil: swipebar snap-karusell (som Meet Dolly); md+: 12-kol grid -->
+      <div
+        data-items
+        class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto overflow-y-hidden -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:mt-10 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
+      >
         {
           items.map((it, i) => (
             <button
@@ -87,15 +98,15 @@ const { title, body, items } = Astro.props;
               data-video-src={it.video ?? ""}
               data-image-src={it.image ?? ""}
               data-reveal
-              class="group cursor-pointer text-left md:col-span-4"
+              class="group w-10/12 shrink-0 cursor-pointer snap-start text-left md:col-span-4 md:w-auto"
               style={`--reveal-delay: ${i * 90}ms`}
             >
-              <span class="block h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong">
+              <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">
                 <span data-progress class="block h-full w-0 bg-text" />
               </span>
               <span
                 data-title
-                class="mt-4 block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+                class="block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:mt-4"
               >
                 {it.label}
               </span>
@@ -119,6 +130,9 @@ const { title, body, items } = Astro.props;
     const video = root.querySelector<HTMLVideoElement>("[data-video]");
     const image = root.querySelector<HTMLImageElement>("[data-image]");
     const label = root.querySelector<HTMLElement>("[data-player-label]");
+    const scroller = root.querySelector<HTMLElement>("[data-items]");
+    const mobileBar = root.querySelector<HTMLElement>("[data-mobile-progress]");
+    const mdQuery = matchMedia("(min-width: 768px)");
     const toggleBtn = root.querySelector<HTMLElement>("[data-toggle]");
     const iconPlay = root.querySelector<HTMLElement>("[data-icon-play]");
     const iconPause = root.querySelector<HTMLElement>("[data-icon-pause]");
@@ -143,10 +157,27 @@ const { title, body, items } = Astro.props;
     const isVideo = () => !!srcs[current] && !!video;
 
     // Endast aktiv item har vitt streck; övriga visar bara spårets botten.
+    // Mobil: den enda kvarliggande linjen under spelaren speglar aktiv video.
     const paint = (pct: number) => {
       bars.forEach(
         (b, idx) => (b.style.width = idx === current ? pct + "%" : "0%"),
       );
+      if (mobileBar) mobileBar.style.width = pct + "%";
+    };
+
+    // Mobil-karusell: snap-steg = kortbredd + gap (scroll-padding = sidmarginal).
+    const scrollStep = () => {
+      if (!scroller || !items[0]) return 0;
+      const gap = parseFloat(getComputedStyle(scroller).columnGap) || 0;
+      return items[0].offsetWidth + gap;
+    };
+    let suppressScrollUntil = 0;
+    const scrollToItem = (i: number) => {
+      if (!scroller || mdQuery.matches) return;
+      const left = i * scrollStep();
+      if (Math.abs(scroller.scrollLeft - left) < 2) return;
+      suppressScrollUntil = Date.now() + 700;
+      scroller.scrollTo({ left, behavior: "smooth" });
     };
 
     const updateIcons = () => {
@@ -189,6 +220,7 @@ const { title, body, items } = Astro.props;
           image.classList.add("hidden");
         }
       }
+      scrollToItem(i);
     };
 
     // Video slut → strecket nollas (via setActive) och nästa startar.
@@ -273,6 +305,36 @@ const { title, body, items } = Astro.props;
         }
       }),
     );
+
+    // Mobil: swipe i karusellen väljer item (debounce tills snappen landat;
+    // programmatiska scrollar spärras via suppressScrollUntil).
+    if (scroller) {
+      let scrollDebounce = 0;
+      scroller.addEventListener(
+        "scroll",
+        () => {
+          if (mdQuery.matches) return;
+          clearTimeout(scrollDebounce);
+          scrollDebounce = window.setTimeout(() => {
+            if (Date.now() < suppressScrollUntil) return;
+            const step = scrollStep();
+            if (!step) return;
+            const idx = Math.max(
+              0,
+              Math.min(items.length - 1, Math.round(scroller.scrollLeft / step)),
+            );
+            if (idx !== current) {
+              setActive(idx);
+              if (!reduce) {
+                userPaused = false;
+                play();
+              }
+            }
+          }, 120);
+        },
+        { passive: true },
+      );
+    }
 
     setActive(0);
     updateIcons();
