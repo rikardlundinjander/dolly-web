@@ -99,7 +99,6 @@ const { title, body, items } = Astro.props;
               data-image-src={it.image ?? ""}
               data-reveal
               class="group w-10/12 shrink-0 cursor-pointer snap-start text-left md:col-span-4 md:w-auto"
-              style={`--reveal-delay: ${i * 90}ms`}
             >
               <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">
                 <span data-progress class="block h-full w-0 bg-text" />
@@ -110,7 +109,10 @@ const { title, body, items } = Astro.props;
               >
                 {it.label}
               </span>
-              <span class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)]">
+              <span
+                data-body
+                class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+              >
                 {it.body}
               </span>
             </button>
@@ -142,6 +144,9 @@ const { title, body, items } = Astro.props;
     );
     const bars = items.map(
       (i) => i.querySelector<HTMLElement>("[data-progress]")!,
+    );
+    const bodies = items.map(
+      (i) => i.querySelector<HTMLElement>("[data-body]")!,
     );
     if (!items.length || !player) return;
 
@@ -193,8 +198,9 @@ const { title, body, items } = Astro.props;
       return items[0].offsetWidth + gap;
     };
     let suppressScrollUntil = 0;
+    let scrollDriven = false; // val som kommer FRÅN swipen ska inte auto-scrolla
     const scrollToItem = (i: number) => {
-      if (!scroller || mdQuery.matches) return;
+      if (!scroller || mdQuery.matches || scrollDriven) return;
       const step = scrollStep();
       if (!step) return;
       // Välj närmaste kandidat i strippen (klon eller riktig) så rörelsen
@@ -224,12 +230,19 @@ const { title, body, items } = Astro.props;
         (t, idx) =>
           (t.style.color = idx === i ? "var(--text)" : "var(--text-muted)"),
       );
-      // Spegla aktiv-färgen i klonerna (infinite-karusellen)
+      // Inaktiva brödtexter tonas ner ett steg extra
+      bodies.forEach(
+        (b, idx) =>
+          (b.style.color =
+            idx === i ? "var(--text-muted)" : "var(--text-subtle)"),
+      );
+      // Spegla aktiv-färgerna i klonerna (infinite-karusellen)
       cloneEls.forEach((c) => {
+        const on = Number(c.dataset.clone) === i;
         const t = c.querySelector<HTMLElement>("[data-title]");
-        if (t)
-          t.style.color =
-            Number(c.dataset.clone) === i ? "var(--text)" : "var(--text-muted)";
+        const b = c.querySelector<HTMLElement>("[data-body]");
+        if (t) t.style.color = on ? "var(--text)" : "var(--text-muted)";
+        if (b) b.style.color = on ? "var(--text-muted)" : "var(--text-subtle)";
       });
       paint(0);
       // Label bara när varken video eller bild finns för aktivt item.
@@ -343,32 +356,36 @@ const { title, body, items } = Astro.props;
       }),
     );
 
-    // Mobil: swipe i karusellen väljer item (debounce tills snappen landat;
-    // programmatiska scrollar spärras via suppressScrollUntil). Landar
-    // snappen i ett klon-set teleporteras positionen till mittsetet.
+    // Mobil: swipe väljer item DIREKT när närmsta snap-mål byts (halvvägs/
+    // vid släpp) — inte efter landning; annars känns det laggigt.
+    // Normaliseringen (teleport från klon-set till mittsetet) väntar dock
+    // tills snappen landat (debounce).
     if (scroller) {
       let scrollDebounce = 0;
       scroller.addEventListener(
         "scroll",
         () => {
           if (mdQuery.matches) return;
+          const step = scrollStep();
+          if (!step) return;
+          const s = Math.round(scroller.scrollLeft / step);
+          const idx = ((s % n) + n) % n;
+          if (Date.now() >= suppressScrollUntil && idx !== current) {
+            scrollDriven = true;
+            setActive(idx);
+            scrollDriven = false;
+            if (!reduce) {
+              userPaused = false;
+              play();
+            }
+          }
           clearTimeout(scrollDebounce);
           scrollDebounce = window.setTimeout(() => {
-            const step = scrollStep();
-            if (!step) return;
-            const s = Math.round(scroller.scrollLeft / step);
-            const idx = ((s % n) + n) % n;
-            if (Date.now() >= suppressScrollUntil && idx !== current) {
-              setActive(idx);
-              if (!reduce) {
-                userPaused = false;
-                play();
-              }
-            }
-            // Normalisera alltid tillbaka till mittsetet (osynligt hopp)
-            if (s < n || s >= 2 * n) {
+            // Normalisera tillbaka till mittsetet (osynligt hopp)
+            const sNow = Math.round(scroller.scrollLeft / step);
+            if (sNow < n || sNow >= 2 * n) {
               suppressScrollUntil = Date.now() + 200;
-              scroller.scrollLeft = (idx + n) * step;
+              scroller.scrollLeft = (((sNow % n) + n) % n + n) * step;
             }
           }, 120);
         },
