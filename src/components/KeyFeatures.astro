@@ -24,14 +24,13 @@ const features = [
     <p class="text-lg text-text sm:text-xl">Meet Dolly.</p>
     <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid -->
     <div
-      class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
+      class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto overflow-y-hidden -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
     >
       {
-        features.map((f, i) => (
+        features.map((f) => (
           <div
             data-reveal
             class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto"
-            style={`--reveal-delay: ${i * 90}ms`}
           >
             <div class="aspect-video w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
             <h3 class="mt-6 text-base text-text">{f.title}</h3>
