@@ -247,9 +247,11 @@ const { title, body, items } = Astro.props;
       if (video) {
         if (srcs[i]) {
           video.classList.remove("hidden");
-          if (video.getAttribute("src") !== srcs[i])
-            video.setAttribute("src", srcs[i]);
-          video.currentTime = 0;
+          if (video.getAttribute("src") !== srcs[i]) {
+            video.setAttribute("src", srcs[i]); // ny src laddar från 0
+          } else if (video.readyState > 0) {
+            video.currentTime = 0;
+          }
         } else {
           video.pause();
           video.classList.add("hidden");
@@ -328,6 +330,11 @@ const { title, body, items } = Astro.props;
     };
 
     video?.addEventListener("ended", advance);
+    // Snabb bläddring avbryter play()-anrop mitt i src-byten (grå ruta trots
+    // "spelande" läge) — återuppta så fort nya klippet kan spela.
+    video?.addEventListener("canplay", () => {
+      if (playing && isVideo() && video.paused) video.play().catch(() => {});
+    });
 
     // Klick på hela spelaren togglar; ikonen likaså (utan dubbeltrigga).
     player.addEventListener("click", (e) => {
@@ -375,14 +382,21 @@ const { title, body, items } = Astro.props;
             }
           }
           clearTimeout(scrollDebounce);
-          scrollDebounce = window.setTimeout(() => {
-            // Normalisera tillbaka till mittsetet (osynligt hopp)
-            const sNow = Math.round(scroller.scrollLeft / step);
+          const settle = () => {
+            // Teleportera först när snappen faktiskt landat — annars syns
+            // hoppet som ett flicker (positionen är mitt i snap-animeringen).
+            const sl = scroller.scrollLeft;
+            const sNow = Math.round(sl / step);
+            if (Math.abs(sl - sNow * step) > 2) {
+              scrollDebounce = window.setTimeout(settle, 80);
+              return;
+            }
             if (sNow < n || sNow >= 2 * n) {
               suppressScrollUntil = Date.now() + 200;
-              scroller.scrollLeft = (((sNow % n) + n) % n + n) * step;
+              scroller.scrollLeft = ((((sNow % n) + n) % n) + n) * step;
             }
-          }, 120);
+          };
+          scrollDebounce = window.setTimeout(settle, 120);
         },
         { passive: true },
       );

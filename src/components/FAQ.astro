@@ -71,6 +71,15 @@ const faqs = [
   </Container>
 </section>
 
+<style>
+  /* Mobil (ingen hover): öppnad item får samma fyllning som desktop-hovern */
+  @media (width < 40rem) {
+    details.faq[open] {
+      background-color: var(--surface);
+    }
+  }
+</style>
+
 <script>
   // Mjuk höjd-animering vid öppning/stängning (respekterar reduced-motion).
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
