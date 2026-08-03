@@ -1,26 +1,27 @@
 ---
 import Container from "./Container.astro";
 
-// Key features — 3-upp (bild + titel + text) på 12-kol-gridden (4 kol vardera).
+// "Meet Dolly." — appen i tre enkla steg (Record → Polish → Share).
+// 3-upp (bild + titel + text) på 12-kol-gridden; mobil snap-scroll.
 const features = [
   {
-    title: "Cinematic auto-zooms",
-    body: "Dolly watches your cursor and zooms in where it matters — automatically. Every zoom stays editable on the timeline.",
+    title: "Record",
+    body: "Screen, camera, mic — even your iPhone. One take is all it takes.",
   },
   {
-    title: "Beautiful by default.",
-    body: "Rounded corners, padding, and a soft shadow over a backdrop of your choice. Raw capture in, designed output out.",
+    title: "Polish",
+    body: "Zooms, backdrops and motion, added as you go. Still yours to edit.",
   },
   {
-    title: "All in one take. Even your iPhone.",
-    body: "Screen, camera, mic, system audio — even your iPhone. One take now, full control after.",
+    title: "Share",
+    body: "Export with presets for every platform. Seconds, not sessions.",
   },
 ];
 ---
 
 <section id="features" data-focus>
   <Container>
-    <p class="text-lg text-text sm:text-xl">Key features</p>
+    <p class="text-lg text-text sm:text-xl">Meet Dolly.</p>
     <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid -->
     <div
       class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
@@ -32,7 +33,7 @@ const features = [
             class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto"
             style={`--reveal-delay: ${i * 90}ms`}
           >
-            <div class="aspect-[3/2] w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
+            <div class="aspect-video w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
             <h3 class="mt-6 text-base text-text">{f.title}</h3>
             <p class="mt-2 text-sm text-text-muted">{f.body}</p>
           </div>
