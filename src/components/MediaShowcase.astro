@@ -147,6 +147,27 @@ const { title, body, items } = Astro.props;
 
     const srcs = items.map((i) => i.dataset.videoSrc || "");
     const imgSrcs = items.map((i) => i.dataset.imageSrc || "");
+
+    // Infinite mobil-karusell: klona item-setet före + efter (md:hidden).
+    // Strippen blir [kloner][riktiga][kloner]; när snappen landar i ett
+    // klon-set teleporteras scrollLeft osynligt till mittsetet.
+    const n = items.length;
+    const cloneEls: HTMLElement[] = [];
+    if (scroller && n > 1) {
+      const makeClone = (it: HTMLElement) => {
+        const c = it.cloneNode(true) as HTMLElement;
+        c.removeAttribute("data-item");
+        c.removeAttribute("data-reveal"); // kloner ska aldrig vara reveal-dolda
+        c.setAttribute("data-clone", it.dataset.index || "0");
+        c.classList.add("md:hidden");
+        cloneEls.push(c);
+        return c;
+      };
+      items.forEach((it) => scroller.appendChild(makeClone(it)));
+      [...items]
+        .reverse()
+        .forEach((it) => scroller.insertBefore(makeClone(it), scroller.firstChild));
+    }
     let current = 0;
     let playing = false;
     let userPaused = false; // manuell paus ska överleva scroll ut/in
@@ -174,7 +195,16 @@ const { title, body, items } = Astro.props;
     let suppressScrollUntil = 0;
     const scrollToItem = (i: number) => {
       if (!scroller || mdQuery.matches) return;
-      const left = i * scrollStep();
+      const step = scrollStep();
+      if (!step) return;
+      // Välj närmaste kandidat i strippen (klon eller riktig) så rörelsen
+      // alltid går kortaste vägen — sista → första fortsätter framåt.
+      const sNow = Math.round(scroller.scrollLeft / step);
+      let target = i + n;
+      for (const cand of [i, i + n, i + 2 * n]) {
+        if (Math.abs(cand - sNow) < Math.abs(target - sNow)) target = cand;
+      }
+      const left = target * step;
       if (Math.abs(scroller.scrollLeft - left) < 2) return;
       suppressScrollUntil = Date.now() + 700;
       scroller.scrollTo({ left, behavior: "smooth" });
@@ -194,6 +224,13 @@ const { title, body, items } = Astro.props;
         (t, idx) =>
           (t.style.color = idx === i ? "var(--text)" : "var(--text-muted)"),
       );
+      // Spegla aktiv-färgen i klonerna (infinite-karusellen)
+      cloneEls.forEach((c) => {
+        const t = c.querySelector<HTMLElement>("[data-title]");
+        if (t)
+          t.style.color =
+            Number(c.dataset.clone) === i ? "var(--text)" : "var(--text-muted)";
+      });
       paint(0);
       // Label bara när varken video eller bild finns för aktivt item.
       if (label)
@@ -307,7 +344,8 @@ const { title, body, items } = Astro.props;
     );
 
     // Mobil: swipe i karusellen väljer item (debounce tills snappen landat;
-    // programmatiska scrollar spärras via suppressScrollUntil).
+    // programmatiska scrollar spärras via suppressScrollUntil). Landar
+    // snappen i ett klon-set teleporteras positionen till mittsetet.
     if (scroller) {
       let scrollDebounce = 0;
       scroller.addEventListener(
@@ -316,28 +354,51 @@ const { title, body, items } = Astro.props;
           if (mdQuery.matches) return;
           clearTimeout(scrollDebounce);
           scrollDebounce = window.setTimeout(() => {
-            if (Date.now() < suppressScrollUntil) return;
             const step = scrollStep();
             if (!step) return;
-            const idx = Math.max(
-              0,
-              Math.min(items.length - 1, Math.round(scroller.scrollLeft / step)),
-            );
-            if (idx !== current) {
+            const s = Math.round(scroller.scrollLeft / step);
+            const idx = ((s % n) + n) % n;
+            if (Date.now() >= suppressScrollUntil && idx !== current) {
               setActive(idx);
               if (!reduce) {
                 userPaused = false;
                 play();
               }
             }
+            // Normalisera alltid tillbaka till mittsetet (osynligt hopp)
+            if (s < n || s >= 2 * n) {
+              suppressScrollUntil = Date.now() + 200;
+              scroller.scrollLeft = (idx + n) * step;
+            }
           }, 120);
         },
         { passive: true },
+      );
+
+      // Klick på klon = klick på originalet
+      cloneEls.forEach((c) =>
+        c.addEventListener("click", () => {
+          const i = Number(c.dataset.clone);
+          if (i === current) {
+            togglePlay();
+            return;
+          }
+          setActive(i);
+          if (!reduce) {
+            userPaused = false;
+            play();
+          }
+        }),
       );
     }
 
     setActive(0);
     updateIcons();
+
+    // Starta i mittsetet (riktiga items) så det finns kloner åt båda håll
+    if (scroller && n > 1 && !mdQuery.matches) {
+      scroller.scrollLeft = n * scrollStep();
+    }
 
     if (reduce) return;
     if ("IntersectionObserver" in window) {
