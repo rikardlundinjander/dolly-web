@@ -21,12 +21,15 @@ const features = [
 <section id="features" data-focus>
   <Container>
     <p class="text-lg text-text sm:text-xl">Key features</p>
-    <div class="grid-12 mt-8 gap-y-8 md:gap-y-[var(--grid-gutter)]">
+    <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid -->
+    <div
+      class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
+    >
       {
         features.map((f, i) => (
           <div
             data-reveal
-            class="group md:col-span-4"
+            class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto"
             style={`--reveal-delay: ${i * 90}ms`}
           >
             <div class="aspect-[3/2] w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
