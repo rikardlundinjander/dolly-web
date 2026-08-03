@@ -10,6 +10,7 @@ interface Item {
   label: string;
   body: string;
   video?: string; // mp4-URL; utelämnad = grå placeholder + timer
+  image?: string; // stillbild som placeholder (timer-driven progress)
 }
 interface Props {
   title: string;
@@ -34,6 +35,11 @@ const { title, body, items } = Astro.props;
         class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
+        <img
+          data-image
+          class="absolute inset-0 hidden h-full w-full object-cover"
+          alt=""
+        />
         <video
           data-video
           class="absolute inset-0 hidden h-full w-full object-cover"
@@ -77,6 +83,7 @@ const { title, body, items } = Astro.props;
               data-item
               data-index={i}
               data-video-src={it.video ?? ""}
+              data-image-src={it.image ?? ""}
               data-reveal
               class="group cursor-pointer text-left md:col-span-4"
               style={`--reveal-delay: ${i * 90}ms`}
@@ -108,6 +115,7 @@ const { title, body, items } = Astro.props;
   document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((root) => {
     const player = root.querySelector<HTMLElement>("[data-player]");
     const video = root.querySelector<HTMLVideoElement>("[data-video]");
+    const image = root.querySelector<HTMLImageElement>("[data-image]");
     const label = root.querySelector<HTMLElement>("[data-player-label]");
     const toggleBtn = root.querySelector<HTMLElement>("[data-toggle]");
     const iconPlay = root.querySelector<HTMLElement>("[data-icon-play]");
@@ -122,6 +130,7 @@ const { title, body, items } = Astro.props;
     if (!items.length || !player) return;
 
     const srcs = items.map((i) => i.dataset.videoSrc || "");
+    const imgSrcs = items.map((i) => i.dataset.imageSrc || "");
     let current = 0;
     let playing = false;
     let userPaused = false; // manuell paus ska överleva scroll ut/in
@@ -153,7 +162,10 @@ const { title, body, items } = Astro.props;
           (t.style.color = idx === i ? "var(--text)" : "var(--text-muted)"),
       );
       paint(0);
-      if (label) label.textContent = titles[i].textContent;
+      // Label bara när varken video eller bild finns för aktivt item.
+      if (label)
+        label.textContent =
+          srcs[i] || imgSrcs[i] ? "" : titles[i].textContent;
       if (video) {
         if (srcs[i]) {
           video.classList.remove("hidden");
@@ -164,6 +176,15 @@ const { title, body, items } = Astro.props;
           video.pause();
           video.classList.add("hidden");
           video.removeAttribute("src");
+        }
+      }
+      if (image) {
+        if (!srcs[i] && imgSrcs[i]) {
+          if (image.getAttribute("src") !== imgSrcs[i])
+            image.setAttribute("src", imgSrcs[i]);
+          image.classList.remove("hidden");
+        } else {
+          image.classList.add("hidden");
         }
       }
     };
