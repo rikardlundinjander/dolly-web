@@ -26,20 +26,18 @@ const editing = [
     <Nav />
     <!-- Hero -->
     <section class="text-center pt-[var(--space-4xl)] pb-[var(--space-2xl)]">
-      <Container>
+      <Container data-reveal>
         <img
           src="/dolly-logo-single.svg"
           alt="Dolly"
           class="mx-auto block h-8 w-8 [filter:invert(1)]"
         />
         <h1
-          data-reveal
           class="mx-auto mt-8 w-10/12 max-w-3xl text-3xl leading-[1.05] tracking-[-1px] text-text sm:w-auto sm:text-5xl"
         >
           Production-grade<br />screen demos.
         </h1>
         <p
-          data-reveal
           class="mx-auto mt-5 w-10/12 max-w-xl text-base text-text-muted sm:w-auto sm:text-lg"
         >
           Record, zoom, and polish screen recordings automatically.{" "}<br
@@ -49,8 +47,6 @@ const editing = [
 
         <!-- Hero-video -->
         <video
-          data-reveal
-          style="--reveal-delay: 150ms"
           class="aspect-video w-full rounded-xs bg-surface object-cover mt-[var(--space-2xl)] sm:mt-[var(--space-4xl)]"
           src="/videos/kinfolk-zoom.mp4"
           autoplay

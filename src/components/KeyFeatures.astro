@@ -20,7 +20,7 @@ const features = [
 ---
 
 <section id="features" data-focus>
-  <Container>
+  <Container data-reveal>
     <p class="text-lg text-text sm:text-xl">Meet Dolly.</p>
     <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid -->
     <div
@@ -28,10 +28,7 @@ const features = [
     >
       {
         features.map((f) => (
-          <div
-            data-reveal
-            class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto"
-          >
+          <div class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto">
             <div class="aspect-video w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
             <h3 class="mt-6 text-base text-text">{f.title}</h3>
             <p class="mt-2 text-sm text-text-muted pr-[var(--space-lg)]">

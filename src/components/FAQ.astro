@@ -33,19 +33,16 @@ const faqs = [
   data-focus
   class="pt-[var(--space-4xl)] pb-[var(--space-6xl)] md:pt-[var(--space-6xl)]"
 >
-  <Container>
-    <div data-reveal class="mx-auto max-w-xl text-center">
-      <h2 class="text-2xl text-text">Asked about Dolly.</h2>
+  <Container data-reveal>
+    <div class="mx-auto max-w-xl text-center">
+      <h2 class="text-xl text-text sm:text-2xl">Asked about Dolly.</h2>
     </div>
 
-    <div
-      data-reveal
-      class="mx-auto mt-12 flex max-w-2xl flex-col gap-1 md:mt-[var(--space-3xl)]"
-    >
+    <div class="mx-auto mt-12 flex max-w-2xl flex-col gap-1 md:mt-[var(--space-3xl)]">
       {
         faqs.map((item) => (
           <details class="faq group rounded-md transition-colors duration-[var(--duration-base)] hover:bg-surface">
-            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-lg text-text marker:content-none">
+            <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-base text-text marker:content-none sm:text-lg">
               {item.q}
               <svg
                 class="size-4 shrink-0 text-text-subtle transition-transform duration-[var(--duration-base)] group-open:rotate-180"
@@ -63,7 +60,7 @@ const faqs = [
               </svg>
             </summary>
             <div class="faq-panel overflow-hidden">
-              <p class="max-w-xl px-6 pb-6 text-base text-text-muted">
+              <p class="max-w-xl px-6 pb-6 text-sm text-text-muted sm:text-base">
                 {item.a}
               </p>
             </div>

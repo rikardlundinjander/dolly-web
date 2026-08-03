@@ -21,8 +21,8 @@ const { title, body, items } = Astro.props;
 ---
 
 <section data-focus class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
-  <Container>
-    <div data-reveal class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
+  <Container data-reveal>
+    <div class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
       <h2 class="text-xl text-text sm:text-4xl">{title}</h2>
       <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
         {body}
@@ -33,7 +33,6 @@ const { title, body, items } = Astro.props;
       <!-- Spelare -->
       <div
         data-player
-        data-reveal
         class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
@@ -77,10 +76,7 @@ const { title, body, items } = Astro.props;
       </div>
 
       <!-- Mobil: en enda kvarliggande progress-linje under spelaren -->
-      <div
-        data-reveal
-        class="mt-6 block h-px w-full overflow-hidden bg-border md:hidden"
-      >
+      <div class="mt-6 block h-px w-full overflow-hidden bg-border md:hidden">
         <span data-mobile-progress class="block h-full w-0 bg-text"></span>
       </div>
 
@@ -97,7 +93,6 @@ const { title, body, items } = Astro.props;
               data-index={i}
               data-video-src={it.video ?? ""}
               data-image-src={it.image ?? ""}
-              data-reveal
               class="group w-10/12 shrink-0 cursor-pointer snap-start text-left md:col-span-4 md:w-auto"
             >
               <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">

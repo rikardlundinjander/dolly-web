@@ -17,15 +17,15 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
   data-focus
   class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]"
 >
-  <Container>
-    <div data-reveal class="mx-auto w-10/12 text-center sm:w-auto">
+  <Container data-reveal>
+    <div class="mx-auto w-10/12 text-center sm:w-auto">
       <h2 class="text-xl text-text sm:text-4xl">Pay once. It's yours.</h2>
       <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
         {DESC}
       </p>
     </div>
 
-    <div data-reveal class="grid-12 mt-12 md:mt-[var(--space-3xl)]">
+    <div class="grid-12 mt-12 md:mt-[var(--space-3xl)]">
       {
         plans.map((plan, i) => (
           <a
