@@ -8,6 +8,7 @@ import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 const plans = [
   {
     name: "Single License",
+    desc: "For one person, everything included.",
     price: "$69",
     perSeat: false,
     renewal: "$39/year",
@@ -17,6 +18,7 @@ const plans = [
   },
   {
     name: "Team License",
+    desc: "For teams 3–10. Everything included.",
     price: "$49",
     perSeat: true,
     renewal: "$29/year",
@@ -52,7 +54,7 @@ const checks = (renewal: string) => [
           <a
             href={plan.href}
             class:list={[
-              "press group flex min-h-[31rem] flex-col rounded-md px-6 pt-8 pb-6 transition-colors duration-[var(--duration-base)] md:col-span-4",
+              "press group flex flex-col rounded-md px-6 pt-8 pb-6 transition-colors duration-[var(--duration-base)] sm:min-h-[31rem] md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
                 ? "bg-inverse-bg text-inverse-text hover:bg-neutral-50"
@@ -66,10 +68,10 @@ const checks = (renewal: string) => [
                 plan.featured ? "text-inverse-text-muted" : "text-text-muted",
               ]}
             >
-              {DESC}
+              {plan.desc}
             </p>
 
-            <div class="mt-auto flex items-start gap-1 pt-16">
+            <div class="mt-auto flex items-start gap-1 pt-8 sm:pt-16">
               <span class="text-4xl leading-none tracking-[-0.5px] sm:tracking-[-1px]">{plan.price}</span>
               {plan.perSeat && (
                 <span
@@ -85,7 +87,7 @@ const checks = (renewal: string) => [
               )}
             </div>
 
-            <ul class="mt-14 flex flex-col gap-3 text-sm">
+            <ul class="mt-7 flex flex-col gap-3 text-sm sm:mt-14">
               {checks(plan.renewal).map((c) => (
                 <li class="flex items-center gap-2.5">
                   <svg
