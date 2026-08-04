@@ -31,47 +31,6 @@ const {
   </body>
 </html>
 
-<script>
-  // Scroll-reveal: fade + rise när [data-reveal] kommer i vy (en gång).
-  const root = document.documentElement;
-  root.setAttribute("data-anim", "");
-  const els = document.querySelectorAll("[data-reveal]");
-  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (!reduce && "IntersectionObserver" in window) {
-    const io = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          if (e.isIntersecting) {
-            e.target.setAttribute("data-visible", "");
-            io.unobserve(e.target);
-          }
-      },
-      { rootMargin: "0px 0px -12% 0px", threshold: 0.05 },
-    );
-    els.forEach((el) => io.observe(el));
-  } else {
-    els.forEach((el) => el.setAttribute("data-visible", ""));
-  }
-
-  // Sektionsfokus: [data-focus] startar oskarp och skärps när sektionen
-  // når viewportens mittband — en gång; därefter förblir den skarp.
-  const focusEls = document.querySelectorAll("[data-focus]");
-  if (!reduce && "IntersectionObserver" in window) {
-    const focusIo = new IntersectionObserver(
-      (entries) => {
-        for (const e of entries)
-          if (e.isIntersecting) {
-            e.target.setAttribute("data-infocus", "");
-            focusIo.unobserve(e.target);
-          }
-      },
-      { rootMargin: "-20% 0px -20% 0px", threshold: 0 },
-    );
-    focusEls.forEach((el) => focusIo.observe(el));
-  } else {
-    focusEls.forEach((el) => el.setAttribute("data-infocus", ""));
-  }
-</script>
 
 <script>
   // Glare + tilt: följ pekaren över .glare/.tilt-ytor och uppdatera
@@ -111,4 +70,3 @@ const {
     });
   });
 </script>
-

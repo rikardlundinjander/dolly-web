@@ -20,8 +20,8 @@ interface Props {
 const { title, body, items } = Astro.props;
 ---
 
-<section data-focus class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
-  <Container data-reveal>
+<section class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
+  <Container>
     <div class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
       <h2 class="text-xl text-text sm:text-4xl">{title}</h2>
       <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
@@ -157,7 +157,6 @@ const { title, body, items } = Astro.props;
       const makeClone = (it: HTMLElement) => {
         const c = it.cloneNode(true) as HTMLElement;
         c.removeAttribute("data-item");
-        c.removeAttribute("data-reveal"); // kloner ska aldrig vara reveal-dolda
         c.setAttribute("data-clone", it.dataset.index || "0");
         c.classList.add("md:hidden");
         cloneEls.push(c);
