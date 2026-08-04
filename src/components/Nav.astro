@@ -1,10 +1,10 @@
 ---
 import Container from "./Container.astro";
-import { getDownloadUrl, BUY_SINGLE } from "../lib/links";
+import { getDownloadUrl } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo vänster, två knappar höger.
+// Buy now ankrar ner till pricing-sektionen (köpet sker via korten där).
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
-const BUY = BUY_SINGLE;
 ---
 
 <header class="sticky top-0 z-50">
@@ -30,7 +30,7 @@ const BUY = BUY_SINGLE;
         Download for Mac
       </a>
       <a
-        href={BUY}
+        href="/#pricing"
         class="press rounded-lg bg-btn-primary px-4 py-2 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
       >
         Buy now
