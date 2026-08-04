@@ -4,35 +4,28 @@ import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 
 // Pricing (redesign): två kort på gridden (4/12 kol vardera, centrerade).
 // Hela kortet är klickbart. Endast hover-states (inga 3d/holo-effekter).
-// Struktur: namn → beskrivning → pris → checklista → rund knapp.
+// Struktur: namn → ingress (bär villkoren) → pris → rund knapp.
 const plans = [
   {
     name: "Single License",
-    desc: "For one person, everything included.",
+    desc: "For one person, 2 devices. One-time purchase with 12 months of updates, yours forever, with an optional $39/year renewal.",
     price: "$69",
     perSeat: false,
-    renewal: "$39/year",
     cta: "Buy license",
     href: BUY_SINGLE,
     featured: true,
   },
   {
     name: "Team License",
-    desc: "For teams 3–10. Everything included.",
+    desc: "For teams 3–10. One-time purchase with 12 months of updates, yours forever, with an optional $29/year renewal.",
     price: "$49",
     perSeat: true,
-    renewal: "$29/year",
     cta: "Buy team license",
     href: BUY_TEAM,
     featured: false,
   },
 ];
 const DESC = "No subscription. One-time purchase with 12 months of updates included.";
-const checks = (renewal: string) => [
-  "One-time purchase – keep your version forever",
-  "12 months of updates & new features",
-  `Optional renewal: ${renewal}`,
-];
 ---
 
 <section
@@ -54,7 +47,7 @@ const checks = (renewal: string) => [
           <a
             href={plan.href}
             class:list={[
-              "press group flex flex-col rounded-md px-6 pt-8 pb-6 transition-colors duration-[var(--duration-base)] sm:min-h-[31rem] md:col-span-4",
+              "press group flex flex-col rounded-3xl px-6 pt-8 pb-6 transition-colors duration-[var(--duration-base)] md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
                 ? "bg-inverse-bg text-inverse-text hover:bg-neutral-50"
@@ -64,7 +57,7 @@ const checks = (renewal: string) => [
             <p class="text-lg">{plan.name}</p>
             <p
               class:list={[
-                "mt-3 max-w-xs text-base",
+                "mt-3 text-base",
                 plan.featured ? "text-inverse-text-muted" : "text-text-muted",
               ]}
             >
@@ -87,31 +80,9 @@ const checks = (renewal: string) => [
               )}
             </div>
 
-            <ul class="mt-7 flex flex-col gap-3 text-sm sm:mt-14">
-              {checks(plan.renewal).map((c) => (
-                <li class="flex items-center gap-2.5">
-                  <svg
-                    viewBox="0 0 16 16"
-                    fill="none"
-                    aria-hidden="true"
-                    class="size-3.5 shrink-0"
-                  >
-                    <path
-                      d="M3 8.5 6.5 12 13 4.5"
-                      stroke="currentColor"
-                      stroke-width="1.5"
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                    />
-                  </svg>
-                  {c}
-                </li>
-              ))}
-            </ul>
-
             <span
               class:list={[
-                "mt-12 block rounded-pill py-3.5 text-center text-sm transition-colors duration-[var(--duration-base)]",
+                "mt-8 block rounded-pill py-3.5 text-center text-sm transition-colors duration-[var(--duration-base)]",
                 plan.featured
                   ? "bg-btn-inverse text-btn-inverse-text hover:bg-btn-inverse-hover"
                   : "bg-btn-secondary text-text hover:bg-btn-secondary-hover",
