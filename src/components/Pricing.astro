@@ -2,14 +2,35 @@
 import Container from "./Container.astro";
 import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 
-// Pricing (redesign): två stora kort-knappar på gridden (4/12 kol vardera,
-// centrerade). Hela kortet är klickbart — hover-fill och press-skala.
-// Single = vit (invers yta), Team = mörk surface.
+// Pricing (redesign): två kort på gridden (4/12 kol vardera, centrerade).
+// Hela kortet är klickbart. Endast hover-states (inga 3d/holo-effekter).
+// Struktur: namn → beskrivning → pris → checklista → rund knapp.
 const plans = [
-  { name: "Single License", price: "$69", href: BUY_SINGLE, featured: true },
-  { name: "Team License", price: "$49", href: BUY_TEAM, featured: false },
+  {
+    name: "Single License",
+    price: "$69",
+    perSeat: false,
+    renewal: "$39/year",
+    cta: "Buy license",
+    href: BUY_SINGLE,
+    featured: true,
+  },
+  {
+    name: "Team License",
+    price: "$49",
+    perSeat: true,
+    renewal: "$29/year",
+    cta: "Buy team license",
+    href: BUY_TEAM,
+    featured: false,
+  },
 ];
 const DESC = "No subscription. One-time purchase with 12 months of updates included.";
+const checks = (renewal: string) => [
+  "Yours forever – the app never expires",
+  "12 months of updates & new features",
+  `Optional renewal: ${renewal}`,
+];
 ---
 
 <section
@@ -19,7 +40,7 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
 >
   <Container data-reveal>
     <div class="mx-auto w-10/12 text-center sm:w-auto">
-      <h2 class="text-xl text-text sm:text-4xl">Pay once. It's yours.</h2>
+      <h2 class="text-xl text-text tracking-[-0.5px] sm:text-4xl sm:tracking-[-1px]">Pay once. It's yours.</h2>
       <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
         {DESC}
       </p>
@@ -31,11 +52,11 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
           <a
             href={plan.href}
             class:list={[
-              "press tilt holo border-glare group flex min-h-[31rem] flex-col rounded-4xl px-6 pt-8 pb-6 md:col-span-4",
+              "press group flex min-h-[31rem] flex-col rounded-md px-6 pt-8 pb-6 transition-colors duration-[var(--duration-base)] md:col-span-4",
               i === 0 && "md:col-start-3",
               plan.featured
-                ? "bg-inverse-bg text-inverse-text [--holo-strength:var(--holo-strength-on-light)] [--holo-blend:multiply] [--border-glare-color:var(--border-glare-on-light)]"
-                : "bg-surface text-text transition-colors hover:bg-surface-hover",
+                ? "bg-inverse-bg text-inverse-text hover:bg-neutral-50"
+                : "bg-surface text-text hover:bg-surface-hover",
             ]}
           >
             <p class="text-lg">{plan.name}</p>
@@ -47,28 +68,54 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
             >
               {DESC}
             </p>
+
             <div class="mt-auto flex items-start gap-1 pt-16">
-              <span class="text-4xl leading-none">{plan.price}</span>
-              <span
-                class:list={[
-                  "text-base leading-none",
-                  plan.featured
-                    ? "text-inverse-text-muted"
-                    : "text-text-muted",
-                ]}
-              >
-                /seat
-              </span>
+              <span class="text-4xl leading-none tracking-[-0.5px] sm:tracking-[-1px]">{plan.price}</span>
+              {plan.perSeat && (
+                <span
+                  class:list={[
+                    "text-base leading-none",
+                    plan.featured
+                      ? "text-inverse-text-muted"
+                      : "text-text-muted",
+                  ]}
+                >
+                  /seat
+                </span>
+              )}
             </div>
+
+            <ul class="mt-14 flex flex-col gap-3 text-sm">
+              {checks(plan.renewal).map((c) => (
+                <li class="flex items-center gap-2.5">
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    aria-hidden="true"
+                    class="size-3.5 shrink-0"
+                  >
+                    <path
+                      d="M3 8.5 6.5 12 13 4.5"
+                      stroke="currentColor"
+                      stroke-width="1.5"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                  {c}
+                </li>
+              ))}
+            </ul>
+
             <span
               class:list={[
-                "mt-8 block rounded-xl py-3.5 text-center text-sm transition-colors duration-[var(--duration-base)]",
+                "mt-12 block rounded-pill py-3.5 text-center text-sm transition-colors duration-[var(--duration-base)]",
                 plan.featured
                   ? "bg-btn-inverse text-btn-inverse-text hover:bg-btn-inverse-hover"
                   : "bg-btn-secondary text-text hover:bg-btn-secondary-hover",
               ]}
             >
-              Buy license
+              {plan.cta}
             </span>
           </a>
         ))
