@@ -2,7 +2,9 @@
 import Container from "./Container.astro";
 
 // "Meet Dolly." — appen i tre enkla steg (Record → Polish → Share).
-// 3-upp (bild + titel + text) på 12-kol-gridden; mobil snap-scroll.
+// 3-upp (media + titel + text) på 12-kol-gridden; mobil snap-scroll.
+// Statisk sektion: inga hover-states. Steg med video autospelar i loop,
+// övriga visar en tom yta i samma färg som klippens bakgrund.
 const features = [
   {
     title: "Record",
@@ -11,6 +13,7 @@ const features = [
   {
     title: "Polish",
     body: "Zooms, backdrops and motion, added as you go. Still yours to edit.",
+    video: "/videos/polish.mp4",
   },
   {
     title: "Share",
@@ -28,8 +31,19 @@ const features = [
     >
       {
         features.map((f) => (
-          <div class="group w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto">
-            <div class="aspect-video w-full rounded-xs bg-surface transition-colors duration-[var(--duration-slow)] group-hover:bg-surface-elevated" />
+          <div class="w-10/12 shrink-0 snap-start md:col-span-4 md:w-auto">
+            {f.video ? (
+              <video
+                class="aspect-video w-full rounded-xs bg-surface-media object-cover"
+                src={f.video}
+                autoplay
+                muted
+                loop
+                playsinline
+              />
+            ) : (
+              <div class="aspect-video w-full rounded-xs bg-surface-media" />
+            )}
             <h3 class="mt-6 text-base text-text">{f.title}</h3>
             <p class="mt-2 text-sm text-text-muted pr-[var(--space-lg)]">
               {f.body}

@@ -35,6 +35,7 @@
   --color-neutral-900: #141414;
   --color-neutral-950: #0e0e0e;
   --color-neutral-1000: #090909;
+  --color-neutral-1100: #010101;  /* nästan svart — matchar videornas bakgrund */
 
   /* ---------- FÄRG: accent-skala (sparsam; blå) ---------- */
   --color-brand-50: #eef4ff;
@@ -133,6 +134,7 @@
   --bg: var(--color-neutral-1000);
   --surface: var(--color-neutral-900);
   --surface-hover: #151515; /* surface +4% lightness — hårfin hover */
+  --surface-media: var(--color-neutral-1100); /* mediaytor: samma som klippens bakgrund */
   --surface-elevated: var(--color-neutral-800);
   --text: var(--color-neutral-50);
   --text-muted: var(--color-neutral-400);
@@ -185,6 +187,7 @@
   --color-bg: var(--bg);
   --color-surface: var(--surface);
   --color-surface-hover: var(--surface-hover);
+  --color-surface-media: var(--surface-media);
   --color-surface-elevated: var(--surface-elevated);
   --color-text: var(--text);
   --color-text-muted: var(--text-muted);
