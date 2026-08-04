@@ -1,8 +1,8 @@
 ---
 import Container from "./Container.astro";
 
-// Footer (redesign) — layout som v1: varumärkesblock + länkkolumner + ©-rad.
-// Fixed bakom #page för footer-reveal. Dark-only, en vikt, tokens.
+// Footer (redesign) — varumärkesblock + länkkolumner + ©-rad.
+// Statisk, samma bakgrund som sidan, hårfin divider upptill.
 const cols = [
   {
     heading: "Product",
@@ -23,29 +23,20 @@ const cols = [
 ];
 ---
 
-<footer
-  class="fixed inset-x-0 bottom-0 z-0 bg-inverse-bg pt-28 pb-10 text-inverse-text"
->
+<footer class="border-t border-border bg-bg pt-16 pb-10 text-text">
   <Container class="flex flex-col gap-12 sm:flex-row sm:justify-between">
     <div class="max-w-xs">
       <a href="/" class="inline-flex items-center" aria-label="Dolly">
-        <img
-          src="/dolly-logo.svg"
-          alt="Dolly"
-          class="h-5 w-auto [filter:invert(1)]"
-        />
+        <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
       </a>
     </div>
     <div class="flex gap-16 text-sm">
       {
         cols.map((col) => (
-          <ul class="flex flex-col gap-3 text-inverse-text-muted">
+          <ul class="flex flex-col gap-3 text-text-muted">
             {col.links.map((link) => (
               <li>
-                <a
-                  href={link.href}
-                  class="transition-colors hover:text-inverse-text"
-                >
+                <a href={link.href} class="transition-colors hover:text-text">
                   {link.label}
                 </a>
               </li>
@@ -55,7 +46,7 @@ const cols = [
       }
     </div>
   </Container>
-  <Container class="mt-16 text-xs text-inverse-text-subtle">
+  <Container class="mt-16 text-xs text-text-subtle">
     <span>© Dolly 2026</span>
   </Container>
 </footer>
