@@ -20,12 +20,12 @@ const features = [
   {
     icon: "fit_screen",
     title: "Inset",
-    body: "Pull the frame inward without cropping what's inside it.",
+    body: "Pull the frame inward without cropping any of the content inside it.",
   },
   {
     icon: "rounded_corner",
     title: "Rounded corners",
-    body: "Match the radius to your brand — or square it off entirely.",
+    body: "Match the radius to your brand, or square the corners off entirely.",
   },
   {
     icon: "layers",
@@ -35,7 +35,7 @@ const features = [
   {
     icon: "motion_blur",
     title: "Motion blur",
-    body: "Fast pans and zooms stay smooth instead of stuttering.",
+    body: "Fast pans and zooms stay smooth instead of stuttering between frames.",
   },
   {
     icon: "center_focus_strong",
@@ -45,7 +45,7 @@ const features = [
   {
     icon: "mouse",
     title: "Cursor",
-    body: "Resize it, smooth its path, or hide it completely.",
+    body: "Resize it, smooth out its path, or hide the cursor from the take entirely.",
   },
   {
     icon: "aspect_ratio",
@@ -55,17 +55,17 @@ const features = [
   {
     icon: "crop",
     title: "Crop",
-    body: "Cut the frame down to the part that actually matters.",
+    body: "Cut the frame down to the part that matters, before or after recording.",
   },
   {
     icon: "chat_bubble",
     title: "Annotations",
-    body: "Text, arrows and highlights, placed on the timeline.",
+    body: "Text, arrows and highlights, placed anywhere along the timeline.",
   },
   {
     icon: "movie",
     title: "Export presets",
-    body: "Sized and encoded for wherever you're posting it.",
+    body: "Sized and encoded for wherever you're posting it, from Slack to YouTube.",
   },
 ] as const;
 ---
@@ -74,19 +74,19 @@ const features = [
   <Container>
     <h2 class="text-lg text-text sm:text-xl">Fine-tune everything.</h2>
 
+    <!-- Hover-kort som FAQ-items (utan öppet läge). Negativ marginal så
+         texten linjerar med gridden medan hover-ytan bleder ut. -->
     <div
-      class="mt-8 grid grid-cols-1 gap-x-[var(--grid-gutter)] gap-y-10 md:mt-12 md:grid-cols-12"
+      class="mt-8 -mx-6 grid grid-cols-1 gap-x-[var(--grid-gutter)] gap-y-1 md:mt-12 md:grid-cols-12"
     >
       {
         features.map((f) => (
-          <div class="md:col-span-4">
+          <div class="rounded-md px-6 py-5 transition-colors duration-[var(--duration-base)] hover:bg-surface md:col-span-4">
             <div class="flex items-center gap-2.5">
               <Icon name={f.icon} class="size-6 text-text" />
               <h3 class="text-base text-text">{f.title}</h3>
             </div>
-            <p class="mt-2 text-sm text-text-muted pr-[var(--space-lg)]">
-              {f.body}
-            </p>
+            <p class="mt-2 text-sm text-text-muted">{f.body}</p>
           </div>
         ))
       }
