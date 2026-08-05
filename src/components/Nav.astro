@@ -12,7 +12,7 @@ const menu = [
 ];
 ---
 
-<header class="sticky top-0 z-50">
+<header data-nav class="sticky top-0 z-50">
   <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant -->
   <div
     aria-hidden="true"
@@ -74,5 +74,60 @@ const menu = [
       color-mix(in srgb, var(--bg) 4%, transparent) 92%,
       transparent 100%
     );
+    transition: opacity var(--duration-base) var(--ease-out-quart);
+  }
+
+  /* Göms vid scroll ner, glider in vid scroll upp. Faden tonas bort helt
+     (den är högre än navet och skulle annars sticka ut under kanten). */
+  header[data-nav] {
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+  header[data-nav][data-hidden] {
+    transform: translateY(-100%);
+  }
+  header[data-nav][data-hidden] .nav-fade {
+    opacity: 0;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    header[data-nav],
+    .nav-fade {
+      transition: none;
+    }
   }
 </style>
+
+<script>
+  // Auto-hide: göm navet när man scrollar ner, visa vid scroll upp.
+  // Alltid synligt nära toppen. Tröskel mot jitter, rAF-throttlad.
+  const nav = document.querySelector<HTMLElement>("[data-nav]");
+  if (nav) {
+    const TOP = 80; // px från sidtoppen där navet alltid visas
+    const DELTA = 6; // minsta rörelse som räknas som riktningsbyte
+    let last = window.scrollY;
+    let ticking = false;
+
+    const update = () => {
+      const y = window.scrollY;
+      const diff = y - last;
+      if (y <= TOP) {
+        nav.removeAttribute("data-hidden");
+        last = y;
+      } else if (Math.abs(diff) > DELTA) {
+        nav.toggleAttribute("data-hidden", diff > 0);
+        last = y;
+      }
+      ticking = false;
+    };
+
+    addEventListener(
+      "scroll",
+      () => {
+        if (!ticking) {
+          ticking = true;
+          requestAnimationFrame(update);
+        }
+      },
+      { passive: true },
+    );
+  }
+</script>
