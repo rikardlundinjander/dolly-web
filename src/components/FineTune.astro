@@ -1,0 +1,95 @@
+---
+import Container from "./Container.astro";
+import Icon from "./Icon.astro";
+
+// "Fine-tune everything." — rationell verifiering före pricing: konkreta
+// funktioner i ett 3-kolumnsrutnät (ikon + rubrik + kort text).
+// Grund med 12 poster; plocka bort de som inte ska med.
+// Ikoner: Google Material Symbols (se Icon.astro för hur man lägger till fler).
+const features = [
+  {
+    icon: "wallpaper",
+    title: "Backdrops",
+    body: "Solid colors, gradients or your own image behind the frame.",
+  },
+  {
+    icon: "padding",
+    title: "Padding",
+    body: "Breathing room around the recording, adjustable to the pixel.",
+  },
+  {
+    icon: "fit_screen",
+    title: "Inset",
+    body: "Pull the frame inward without cropping what's inside it.",
+  },
+  {
+    icon: "rounded_corner",
+    title: "Rounded corners",
+    body: "Match the radius to your brand — or square it off entirely.",
+  },
+  {
+    icon: "layers",
+    title: "Shadow",
+    body: "Soft depth under the frame. Subtle by default, yours to dial in.",
+  },
+  {
+    icon: "motion_blur",
+    title: "Motion blur",
+    body: "Fast pans and zooms stay smooth instead of stuttering.",
+  },
+  {
+    icon: "center_focus_strong",
+    title: "Auto-zoom",
+    body: "Follows your cursor and zooms where it matters. Every zoom stays editable.",
+  },
+  {
+    icon: "mouse",
+    title: "Cursor",
+    body: "Resize it, smooth its path, or hide it completely.",
+  },
+  {
+    icon: "aspect_ratio",
+    title: "Aspect ratio",
+    body: "Landscape, square or vertical — switch without re-recording.",
+  },
+  {
+    icon: "crop",
+    title: "Crop",
+    body: "Cut the frame down to the part that actually matters.",
+  },
+  {
+    icon: "chat_bubble",
+    title: "Annotations",
+    body: "Text, arrows and highlights, placed on the timeline.",
+  },
+  {
+    icon: "movie",
+    title: "Export presets",
+    body: "Sized and encoded for wherever you're posting it.",
+  },
+] as const;
+---
+
+<section class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
+  <Container>
+    <h2 class="text-lg text-text sm:text-xl">Fine-tune everything.</h2>
+
+    <div
+      class="mt-8 grid grid-cols-1 gap-x-[var(--grid-gutter)] gap-y-10 md:mt-12 md:grid-cols-12"
+    >
+      {
+        features.map((f) => (
+          <div class="md:col-span-4">
+            <div class="flex items-center gap-2.5">
+              <Icon name={f.icon} class="size-[18px] text-text" />
+              <h3 class="text-base text-text">{f.title}</h3>
+            </div>
+            <p class="mt-2 text-sm text-text-muted pr-[var(--space-lg)]">
+              {f.body}
+            </p>
+          </div>
+        ))
+      }
+    </div>
+  </Container>
+</section>
