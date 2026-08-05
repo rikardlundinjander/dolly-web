@@ -2,9 +2,14 @@
 import Container from "./Container.astro";
 import { getDownloadUrl } from "../lib/links";
 
-// Mörk full-bredds-nav (redesign). Logo vänster, två knappar höger.
+// Mörk full-bredds-nav (redesign). Logo + ankarmeny vänster, knappar höger.
 // Buy now ankrar ner till pricing-sektionen (köpet sker via korten där).
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
+const menu = [
+  { label: "Features", href: "/#features" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "Use cases", href: "/#use-cases" },
+];
 ---
 
 <header class="sticky top-0 z-50">
@@ -15,13 +20,27 @@ const DMG = await getDownloadUrl(); // senaste DMG från appcasten
   >
   </div>
   <Container class="flex h-16 items-center justify-between">
-    <a
-      href="/"
-      class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
-      aria-label="Dolly"
-    >
-      <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
-    </a>
+    <div class="flex items-center gap-[var(--space-xl)]">
+      <a
+        href="/"
+        class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+        aria-label="Dolly"
+      >
+        <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
+      </a>
+      <nav class="hidden items-center gap-[var(--space-md)] sm:flex">
+        {
+          menu.map((item) => (
+            <a
+              href={item.href}
+              class="text-base text-text transition-colors duration-[var(--duration-base)] hover:text-text-muted"
+            >
+              {item.label}
+            </a>
+          ))
+        }
+      </nav>
+    </div>
     <div class="flex items-center gap-2">
       <a
         href={DMG}
