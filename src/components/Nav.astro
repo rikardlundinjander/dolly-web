@@ -12,14 +12,15 @@ const menu = [
 ];
 ---
 
-<header data-nav class="sticky top-0 z-50">
-  <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant -->
-  <div
-    aria-hidden="true"
-    class="nav-fade pointer-events-none absolute inset-x-0 top-0 -z-10 h-[200%]"
-  >
-  </div>
-  <Container class="flex h-16 items-center justify-between">
+<header class="sticky top-0 z-50">
+  <div data-nav class="relative">
+    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant -->
+    <div
+      aria-hidden="true"
+      class="nav-fade pointer-events-none absolute inset-x-0 top-0 -z-10 h-[200%]"
+    >
+    </div>
+    <Container class="flex h-16 items-center justify-between">
     <div class="flex items-center gap-[var(--space-xl)]">
       <a
         href="/"
@@ -54,8 +55,9 @@ const menu = [
       >
         Buy now
       </a>
-    </div>
-  </Container>
+      </div>
+    </Container>
+  </div>
 </header>
 
 <style>
@@ -79,17 +81,25 @@ const menu = [
 
   /* Göms vid scroll ner, glider in vid scroll upp. Faden tonas bort helt
      (den är högre än navet och skulle annars sticka ut under kanten). */
-  header[data-nav] {
+  /* translate3d i båda lägena + will-change håller wrappern på ett eget
+     compositor-lager. Safari räknar annars om sticky-positionen per frame
+     när transformen sitter på själva sticky-elementet. */
+  [data-nav] {
+    transform: translate3d(0, 0, 0);
+    will-change: transform;
     transition: transform var(--duration-base) var(--ease-out-quart);
   }
-  header[data-nav][data-hidden] {
-    transform: translateY(-100%);
+  [data-nav][data-hidden] {
+    transform: translate3d(0, -100%, 0);
   }
-  header[data-nav][data-hidden] .nav-fade {
+  [data-nav][data-hidden] .nav-fade {
     opacity: 0;
   }
+  .nav-fade {
+    will-change: opacity;
+  }
   @media (prefers-reduced-motion: reduce) {
-    header[data-nav],
+    [data-nav],
     .nav-fade {
       transition: none;
     }
