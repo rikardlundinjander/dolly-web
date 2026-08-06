@@ -68,11 +68,24 @@ const features = [
     body: "Sized and encoded for wherever you're posting it, from Slack to YouTube.",
   },
 ] as const;
+
+// TODO: sätt det faktiska antalet innan publicering.
+const SETTING_COUNT = "40+";
 ---
 
 <section class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
   <Container>
-    <h2 class="text-lg text-text sm:text-xl">Fine-tune everything.</h2>
+    <div class="mx-auto w-10/12 text-center sm:w-auto sm:max-w-xl">
+      <h2
+        class="text-xl text-text tracking-[-0.5px] sm:text-4xl sm:tracking-[-1px]"
+      >
+        Fine-tune everything.
+      </h2>
+      <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
+        {SETTING_COUNT} settings behind every recording. Adjust the details that
+        matter to you and leave the rest to Dolly.
+      </p>
+    </div>
 
     <!-- Statiska poster. Negativ marginal så ikon/rubrik linjerar med
          sektionsrubriken trots kortens vänsterpadding. -->
