@@ -65,8 +65,13 @@ const audiences = [
      roterade) och glider ut på rad. Slot bär entrén, kortet bär hovern —
      två lager så transformerna inte krockar. Endast desktop; på mobil är
      raden en scrollbar karusell. */
-  .stack-card {
-    transition: transform var(--duration-base) var(--ease-out-quart);
+  .stack-card,
+  .stack-card h3,
+  .stack-card p {
+    transition:
+      transform var(--duration-base) var(--ease-out-quart),
+      background-color var(--duration-base) var(--ease-out-quart),
+      color var(--duration-base) var(--ease-out-quart);
   }
   @media (min-width: 768px) {
     @media (prefers-reduced-motion: no-preference) {
@@ -83,6 +88,13 @@ const audiences = [
     @media (hover: hover) {
       .stack-card:hover {
         transform: translateY(var(--hy)) rotate(var(--hr));
+        background-color: var(--inverse-bg);
+      }
+      .stack-card:hover h3 {
+        color: var(--inverse-text);
+      }
+      .stack-card:hover p {
+        color: var(--inverse-text-muted);
       }
     }
   }
