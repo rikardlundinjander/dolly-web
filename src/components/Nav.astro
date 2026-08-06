@@ -12,7 +12,7 @@ const menu = [
 ];
 ---
 
-<header class="sticky top-0 z-50">
+<header class="fixed inset-x-0 top-0 z-50">
   <div data-nav class="relative">
     <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant -->
     <div
@@ -45,7 +45,7 @@ const menu = [
     <div class="flex items-center gap-2">
       <a
         href={DMG}
-        class="press hidden rounded-pill bg-btn-secondary px-4 py-2 text-sm text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover sm:block"
+        class="press hidden rounded-pill bg-btn-secondary px-4 py-2 text-sm text-text transition-colors hover:bg-btn-secondary-hover sm:block"
       >
         Download for Mac
       </a>
@@ -112,7 +112,7 @@ const menu = [
   const nav = document.querySelector<HTMLElement>("[data-nav]");
   if (nav) {
     const TOP = 80; // px från sidtoppen där navet alltid visas
-    const DELTA = 6; // minsta rörelse som räknas som riktningsbyte
+    const DELTA = 12; // minsta rörelse som räknas som riktningsbyte
     let last = window.scrollY;
     let ticking = false;
 
