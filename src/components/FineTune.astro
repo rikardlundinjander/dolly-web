@@ -74,14 +74,14 @@ const features = [
   <Container>
     <h2 class="text-lg text-text sm:text-xl">Fine-tune everything.</h2>
 
-    <!-- Hover-kort som FAQ-items (utan öppet läge). Negativ marginal så
-         texten linjerar med gridden medan hover-ytan bleder ut. -->
+    <!-- Statiska poster. Negativ marginal så ikon/rubrik linjerar med
+         sektionsrubriken trots kortens vänsterpadding. -->
     <div
       class="mt-8 -mx-6 grid grid-cols-1 gap-x-[var(--grid-gutter)] gap-y-1 md:mt-12 md:grid-cols-12"
     >
       {
         features.map((f) => (
-          <div class="rounded-md py-5 pl-6 pr-14 transition-colors duration-[var(--duration-base)] hover:bg-surface md:col-span-4">
+          <div class="rounded-md py-5 pl-6 pr-14 md:col-span-4">
             <div class="flex items-center gap-2.5">
               <Icon name={f.icon} class="size-6 text-text" />
               <h3 class="text-base text-text">{f.title}</h3>

@@ -40,11 +40,9 @@ const audiences = [
     >
       {
         audiences.map((a) => (
-          <div class="w-10/12 shrink-0 snap-start md:col-span-3 md:w-auto">
-            <h3 class="text-base text-text">{a.title}</h3>
-            <p class="mt-2 text-sm text-text-muted pr-[var(--space-lg)]">
-              {a.body}
-            </p>
+          <div class="flex w-10/12 shrink-0 snap-start flex-col justify-between gap-12 rounded-xl bg-surface p-6 md:col-span-3 md:min-h-52 md:w-auto">
+            <h3 class="text-base text-text sm:text-lg">{a.title}</h3>
+            <p class="text-sm text-text-muted">{a.body}</p>
           </div>
         ))
       }
