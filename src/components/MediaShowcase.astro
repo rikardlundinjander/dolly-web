@@ -30,10 +30,11 @@ const { title, body, items } = Astro.props;
     </div>
 
     <div data-showcase class="mt-14 md:mt-[var(--space-3xl)]">
-      <!-- Spelare -->
+      <!-- Spelare: två videolager som korsfadar, så bytet aldrig blinkar
+           till en tom ruta och övergången blir mjuk. -->
       <div
         data-player
-        class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface"
+        class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface-media"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
         <img
@@ -43,23 +44,31 @@ const { title, body, items } = Astro.props;
         />
         <video
           data-video
-          class="absolute inset-0 hidden h-full w-full object-cover"
+          data-layer="0"
+          class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[var(--duration-slow)]"
           muted
           playsinline
-          preload="metadata"></video>
-        <!-- Play/pause vid hover -->
+          preload="auto"></video>
+        <video
+          data-video
+          data-layer="1"
+          class="absolute inset-0 h-full w-full object-cover opacity-0 transition-opacity duration-[var(--duration-slow)]"
+          muted
+          playsinline
+          preload="auto"></video>
+        <!-- Play/pause centrerat i ramen -->
         <button
           type="button"
           data-toggle
           aria-label="Play or pause"
-          class="absolute right-4 bottom-4 z-10 flex size-10 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text opacity-0 backdrop-blur-md transition-opacity duration-[var(--duration-base)] group-hover:opacity-100"
+          class="absolute top-1/2 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text backdrop-blur-md transition-opacity duration-[var(--duration-base)] data-[playing]:opacity-0 data-[playing]:group-hover:opacity-100"
         >
           <svg
             data-icon-play
             viewBox="0 0 16 16"
             fill="currentColor"
             aria-hidden="true"
-            class="size-4"
+            class="size-5"
           >
             <path d="M5 3.2v9.6L12.5 8 5 3.2z"></path>
           </svg>
@@ -68,7 +77,7 @@ const { title, body, items } = Astro.props;
             viewBox="0 0 16 16"
             fill="currentColor"
             aria-hidden="true"
-            class="hidden size-4"
+            class="hidden size-5"
           >
             <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z"></path>
           </svg>
@@ -124,7 +133,11 @@ const { title, body, items } = Astro.props;
 
   document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((root) => {
     const player = root.querySelector<HTMLElement>("[data-player]");
-    const video = root.querySelector<HTMLVideoElement>("[data-video]");
+    const layers = [
+      ...root.querySelectorAll<HTMLVideoElement>("[data-video]"),
+    ];
+    let front = 0; // vilket lager som visas just nu
+    const video = () => layers[front];
     const image = root.querySelector<HTMLImageElement>("[data-image]");
     const label = root.querySelector<HTMLElement>("[data-player-label]");
     const scroller = root.querySelector<HTMLElement>("[data-items]");
@@ -174,7 +187,7 @@ const { title, body, items } = Astro.props;
     let startTs = 0;
     let elapsed = 0;
 
-    const isVideo = () => !!srcs[current] && !!video;
+    const isVideo = () => !!srcs[current] && layers.length > 0;
 
     // Endast aktiv item har vitt streck; övriga visar bara spårets botten.
     // Mobil: den enda kvarliggande linjen under spelaren speglar aktiv video.
@@ -213,6 +226,9 @@ const { title, body, items } = Astro.props;
     const updateIcons = () => {
       iconPlay?.classList.toggle("hidden", playing);
       iconPause?.classList.toggle("hidden", !playing);
+      // Knappen ligger kvar synlig i pausat läge; under uppspelning tonas
+      // den bort och kommer fram vid hover.
+      toggleBtn?.toggleAttribute("data-playing", playing);
     };
 
     const setActive = (i: number) => {
@@ -243,18 +259,37 @@ const { title, body, items } = Astro.props;
       if (label)
         label.textContent =
           srcs[i] || imgSrcs[i] ? "" : titles[i].textContent;
-      if (video) {
+      if (layers.length) {
         if (srcs[i]) {
-          video.classList.remove("hidden");
-          if (video.getAttribute("src") !== srcs[i]) {
-            video.setAttribute("src", srcs[i]); // ny src laddar från 0
-          } else if (video.readyState > 0) {
-            video.currentTime = 0;
+          const cur = layers[front];
+          // Redan rätt klipp i framlagret: spola bara tillbaka.
+          if (cur.getAttribute("src") === srcs[i]) {
+            if (cur.readyState > 0) cur.currentTime = 0;
+            cur.style.opacity = "1";
+          } else {
+            // Ladda i baklagret och byt först när det har bildinnehåll,
+            // så rutan aldrig blinkar tom och övergången blir mjuk.
+            const next = layers[(front + 1) % layers.length];
+            const reveal = () => {
+              next.style.opacity = "1";
+              cur.style.opacity = "0";
+              front = (front + 1) % layers.length;
+              window.setTimeout(() => {
+                if (layers[front] !== cur) cur.pause();
+              }, 400);
+              if (playing) next.play().catch(() => {});
+            };
+            next.removeAttribute("src");
+            next.setAttribute("src", srcs[i]);
+            next.currentTime = 0;
+            if (next.readyState >= 2) reveal();
+            else next.addEventListener("loadeddata", reveal, { once: true });
           }
         } else {
-          video.pause();
-          video.classList.add("hidden");
-          video.removeAttribute("src");
+          layers.forEach((v) => {
+            v.pause();
+            v.style.opacity = "0";
+          });
         }
       }
       if (image) {
@@ -280,8 +315,8 @@ const { title, body, items } = Astro.props;
     const tick = (ts: number) => {
       if (!playing) return;
       if (isVideo()) {
-        if (video!.duration)
-          paint((video!.currentTime / video!.duration) * 100);
+        const v = video();
+        if (v.duration) paint((v.currentTime / v.duration) * 100);
       } else {
         if (!startTs) startTs = ts - elapsed;
         elapsed = ts - startTs;
@@ -298,7 +333,7 @@ const { title, body, items } = Astro.props;
     const startPlayback = () => {
       cancelAnimationFrame(raf); // aldrig mer än en loop
       if (isVideo()) {
-        video!.play().catch(() => {});
+        video().play().catch(() => {});
       } else {
         startTs = 0;
       }
@@ -316,7 +351,7 @@ const { title, body, items } = Astro.props;
       playing = false;
       updateIcons();
       cancelAnimationFrame(raf);
-      if (isVideo()) video!.pause();
+      if (isVideo()) video().pause();
     };
     const togglePlay = () => {
       if (playing) {
@@ -328,11 +363,14 @@ const { title, body, items } = Astro.props;
       }
     };
 
-    video?.addEventListener("ended", advance);
-    // Snabb bläddring avbryter play()-anrop mitt i src-byten (grå ruta trots
-    // "spelande" läge) — återuppta så fort nya klippet kan spela.
-    video?.addEventListener("canplay", () => {
-      if (playing && isVideo() && video.paused) video.play().catch(() => {});
+    layers.forEach((v) => {
+      v.addEventListener("ended", () => {
+        if (v === video()) advance();
+      });
+      // Snabba byten kan avbryta play(); återuppta när klippet är redo.
+      v.addEventListener("canplay", () => {
+        if (playing && v === video() && v.paused) v.play().catch(() => {});
+      });
     });
 
     // Klick på hela spelaren togglar; ikonen likaså (utan dubbeltrigga).
@@ -350,10 +388,7 @@ const { title, body, items } = Astro.props;
           return;
         }
         setActive(i);
-        if (!reduce) {
-          userPaused = false;
-          play();
-        }
+        if (!reduce && playing) userPaused = false;
       }),
     );
 
@@ -426,20 +461,23 @@ const { title, body, items } = Astro.props;
     }
 
     if (reduce) return;
+    // Ingen autostart: uppspelningen börjar när besökaren trycker play.
+    // Observern pausar när sektionen lämnar vyn och återupptar bara om
+    // uppspelningen redan var igång.
     if ("IntersectionObserver" in window) {
+      let wasPlaying = false;
       const io = new IntersectionObserver(
         ([e]) => {
           if (e.isIntersecting) {
-            if (!userPaused) play();
+            if (wasPlaying && !userPaused) play();
           } else {
+            wasPlaying = playing;
             pause();
           }
         },
         { threshold: 0.4 },
       );
       io.observe(root);
-    } else {
-      play();
     }
   });
 </script>

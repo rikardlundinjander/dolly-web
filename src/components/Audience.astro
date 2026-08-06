@@ -15,7 +15,7 @@ const audiences = [
   },
   {
     title: "Product teams",
-    body: "Async updates, bug reports and reviews — a two-minute video instead of a meeting.",
+    body: "Async updates, bug reports and reviews. A two-minute video instead of a meeting.",
   },
   {
     title: "Educators & creators",
@@ -24,7 +24,10 @@ const audiences = [
 ];
 ---
 
-<section id="use-cases" class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
+<section
+  id="use-cases"
+  class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)] [overflow-x:clip] [overflow-y:visible]"
+>
   <Container>
     <div class="mx-auto w-10/12 text-center sm:w-auto sm:max-w-xl">
       <h2
@@ -34,18 +37,78 @@ const audiences = [
       </h2>
     </div>
 
-    <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid -->
+    <!-- Mobil: horisontell snap-scroll (bleder till skärmkant); md+: 12-kol grid.
+         På desktop startar korten i en roterad hög och lägger sig på rad. -->
     <div
+      data-stack
       class="mt-12 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto overflow-y-hidden -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:grid md:grid-cols-12 md:overflow-visible md:px-0 md:mt-[var(--space-3xl)]"
     >
       {
-        audiences.map((a) => (
-          <div class="flex w-10/12 shrink-0 snap-start flex-col justify-between gap-12 rounded-xl bg-surface p-6 md:col-span-3 md:min-h-52 md:w-auto">
-            <h3 class="text-base text-text sm:text-lg">{a.title}</h3>
-            <p class="text-sm text-text-muted">{a.body}</p>
+        audiences.map((a, i) => (
+          <div
+            class="stack-slot w-10/12 shrink-0 snap-start md:col-span-3 md:w-auto"
+            style={`--i: ${i}; --r: ${[-8, -3, 4, 9][i % 4]}deg; z-index: ${audiences.length - i}`}
+          >
+            <div class="stack-card flex h-full flex-col justify-between gap-12 rounded-xl bg-surface p-6 md:min-h-52">
+              <h3 class="text-base text-text sm:text-lg">{a.title}</h3>
+              <p class="text-sm text-text-muted">{a.body}</p>
+            </div>
           </div>
         ))
       }
     </div>
   </Container>
 </section>
+
+<style>
+  /* Entré: korten ligger i en hög (förskjutna till kort 0:s plats, lätt
+     roterade) och glider ut på rad. Slot bär entrén, kortet bär hovern —
+     två lager så transformerna inte krockar. Endast desktop; på mobil är
+     raden en scrollbar karusell. */
+  .stack-card {
+    transition: transform var(--duration-base) var(--ease-out-quart);
+  }
+  @media (min-width: 768px) {
+    @media (prefers-reduced-motion: no-preference) {
+      .stack-slot {
+        transform: translateX(calc((-100% - var(--grid-gutter)) * var(--i)))
+          rotate(var(--r));
+        transition: transform 700ms var(--ease-out-expo);
+        transition-delay: calc(var(--i) * 70ms);
+      }
+      [data-stack][data-in] .stack-slot {
+        transform: none;
+      }
+    }
+    @media (hover: hover) {
+      .stack-card:hover {
+        transform: translateY(-0.5rem) rotate(-2deg);
+      }
+    }
+  }
+</style>
+
+<script>
+  // Fäll ut högen när sektionen kommer i vy (en gång).
+  const stacks = document.querySelectorAll<HTMLElement>("[data-stack]");
+  if (stacks.length) {
+    if (
+      matchMedia("(prefers-reduced-motion: reduce)").matches ||
+      !("IntersectionObserver" in window)
+    ) {
+      stacks.forEach((el) => el.setAttribute("data-in", ""));
+    } else {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries)
+            if (e.isIntersecting) {
+              e.target.setAttribute("data-in", "");
+              io.unobserve(e.target);
+            }
+        },
+        { threshold: 0.25 },
+      );
+      stacks.forEach((el) => io.observe(el));
+    }
+  }
+</script>
