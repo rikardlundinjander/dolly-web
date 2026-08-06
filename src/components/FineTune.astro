@@ -8,19 +8,19 @@ import Icon from "./Icon.astro";
 // Ikoner: Google Material Symbols (se Icon.astro för hur man lägger till fler).
 const features = [
   {
-    icon: "wallpaper",
-    title: "Backdrops",
-    body: "Solid colors, gradients or your own image behind the frame.",
+    icon: "colors",
+    title: "Backgrounds",
+    body: "Solid colors, gradients, your own image, or a fully transparent background.",
   },
   {
-    icon: "padding",
+    icon: "picture_in_picture_center",
     title: "Padding",
-    body: "Breathing room around the recording, adjustable to the pixel.",
+    body: "Breathing room around the recording, set as a percentage of the frame.",
   },
   {
-    icon: "fit_screen",
-    title: "Inset",
-    body: "Pull the frame inward without cropping any of the content inside it.",
+    icon: "activity_zone",
+    title: "Mask",
+    body: "Highlight what matters, or blur the parts that should stay private.",
   },
   {
     icon: "rounded_corner",
@@ -43,9 +43,9 @@ const features = [
     body: "Follows your cursor and zooms where it matters. Every zoom stays editable.",
   },
   {
-    icon: "mouse",
+    icon: "arrow_selector_tool",
     title: "Cursor",
-    body: "Resize it, smooth out its path, or hide the cursor from the take entirely.",
+    body: "Resize it, smooth its path, swap it for a dot, or hide it from the take.",
   },
   {
     icon: "aspect_ratio",
@@ -60,12 +60,12 @@ const features = [
   {
     icon: "chat_bubble",
     title: "Annotations",
-    body: "Text, arrows and highlights, placed anywhere along the timeline.",
+    body: "Place text anywhere along the timeline, for the moments that need a label.",
   },
   {
-    icon: "movie",
-    title: "Export presets",
-    body: "Sized and encoded for wherever you're posting it, from Slack to YouTube.",
+    icon: "line_end_circle",
+    title: "Intros and outros",
+    body: "Open and close with an animation, from a preset or your own bezier curve.",
   },
 ] as const;
 
