@@ -12,12 +12,9 @@ const menu = [
 ];
 ---
 
-<header class="pointer-events-none fixed inset-x-0 top-0 z-50">
-  <div data-nav class="relative h-32">
-    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant.
-         Fyller wrappern så att en enda transform gömmer nav + fade. -->
-    <div aria-hidden="true" class="nav-fade absolute inset-0"></div>
-    <Container class="pointer-events-auto relative flex h-16 items-center justify-between">
+<header class="fixed inset-x-0 top-0 z-50">
+  <div data-nav class="bg-bg">
+    <Container class="flex h-16 items-center justify-between">
     <div class="flex items-center gap-[var(--space-xl)]">
       <a
         href="/"
@@ -58,26 +55,8 @@ const menu = [
 </header>
 
 <style>
-  /* Smoothstep-profil (9 steg) istället för linjär tvåstegsfade —
-     samma höjd, men utfasningen accelererar/bromsar mjukt. */
-  .nav-fade {
-    background: linear-gradient(
-      to bottom,
-      var(--bg) 0%,
-      color-mix(in srgb, var(--bg) 96%, transparent) 12%,
-      color-mix(in srgb, var(--bg) 87%, transparent) 25%,
-      color-mix(in srgb, var(--bg) 71%, transparent) 40%,
-      color-mix(in srgb, var(--bg) 50%, transparent) 55%,
-      color-mix(in srgb, var(--bg) 29%, transparent) 70%,
-      color-mix(in srgb, var(--bg) 13%, transparent) 82%,
-      color-mix(in srgb, var(--bg) 4%, transparent) 92%,
-      transparent 100%
-    );
-  }
-
-  /* Göms vid scroll ner, glider in vid scroll upp. Wrappern är lika hög som
-     faden, så EN transform räcker: ingen opacity-animering och inget extra
-     lager att komponera per frame (det tappade frames i Safari). */
+  /* Göms vid scroll ner, glider in vid scroll upp. Solid yta och en enda
+     animerad egenskap (transform) — billigast möjliga för compositorn. */
   [data-nav] {
     transform: translate3d(0, 0, 0);
     will-change: transform;
