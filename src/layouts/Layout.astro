@@ -33,6 +33,27 @@ const {
 
 
 <script>
+  // Pausa autoplay-videor utanför vyn. Annars fortsätter hero- och
+  // Polish-klippen dekoda genom hela sidan, vilket kostar frames under
+  // scroll (märks tydligast i Safari). Showcase-spelarna sköter sig själva.
+  const autoplayVideos =
+    document.querySelectorAll<HTMLVideoElement>("video[autoplay]");
+  if (autoplayVideos.length && "IntersectionObserver" in window) {
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          const v = e.target as HTMLVideoElement;
+          if (e.isIntersecting) v.play().catch(() => {});
+          else v.pause();
+        }
+      },
+      { rootMargin: "100px" },
+    );
+    autoplayVideos.forEach((v) => io.observe(v));
+  }
+</script>
+
+<script>
   // Glare + tilt: följ pekaren över .glare/.tilt-ytor och uppdatera
   // CSS-vars (--glare-x/y, --tilt-x/y). Effekterna ligger i global.css.
   const MAX_TILT = 2; // grader åt varje håll
