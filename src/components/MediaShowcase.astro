@@ -34,7 +34,7 @@ const { title, body, items } = Astro.props;
            till en tom ruta och övergången blir mjuk. -->
       <div
         data-player
-        class="group relative flex aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface-media"
+        class="group relative hidden aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface-media md:flex"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
         <img
@@ -84,42 +84,86 @@ const { title, body, items } = Astro.props;
         </button>
       </div>
 
-      <!-- Mobil: en enda kvarliggande progress-linje under spelaren -->
-      <div class="mt-6 block h-px w-full overflow-hidden bg-border md:hidden">
-        <span data-mobile-progress class="block h-full w-0 bg-text"></span>
-      </div>
-
-      <!-- Väljare — mobil: swipebar snap-karusell (som Meet Dolly); md+: 12-kol grid -->
+      <!-- Mobil: staplade block med egen spelare. Desktop: väljare i 12-kol grid. -->
       <div
         data-items
-        class="mt-8 flex snap-x snap-mandatory gap-[var(--grid-gutter)] overflow-x-auto overflow-y-hidden -mx-[var(--gutter-page)] px-[var(--gutter-page)] scroll-px-[var(--gutter-page)] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden md:mx-0 md:mt-10 md:grid md:grid-cols-12 md:overflow-visible md:px-0"
+        class="flex flex-col gap-12 md:mt-10 md:grid md:grid-cols-12 md:gap-[var(--grid-gutter)]"
       >
         {
           items.map((it, i) => (
-            <button
-              type="button"
-              data-item
-              data-index={i}
-              data-video-src={it.video ?? ""}
-              data-image-src={it.image ?? ""}
-              class="group w-10/12 shrink-0 cursor-pointer snap-start text-left md:col-span-4 md:w-auto"
+            <div
+              data-item-wrap
+              class="flex flex-col md:col-span-4 md:contents"
             >
-              <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">
-                <span data-progress class="block h-full w-0 bg-text" />
-              </span>
-              <span
-                data-title
-                class="block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:mt-4"
+              {/* Mobil: egen videoruta per block */}
+              <div
+                data-mobile-player
+                data-src={it.video ?? ""}
+                class="group relative mb-5 flex aspect-video w-full items-center justify-center overflow-hidden rounded-xs bg-surface-media md:hidden"
               >
-                {it.label}
-              </span>
-              <span
-                data-body
-                class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+                {it.video && (
+                  <video
+                    data-mobile-video
+                    class="absolute inset-0 h-full w-full object-cover"
+                    muted
+                    playsinline
+                    preload="none"
+                  />
+                )}
+                {it.video && (
+                  <button
+                    type="button"
+                    data-mobile-toggle
+                    aria-label={`Play ${it.label}`}
+                    class="absolute top-1/2 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text backdrop-blur-md transition-opacity duration-[var(--duration-base)] data-[playing]:opacity-0"
+                  >
+                    <svg
+                      data-m-play
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      class="size-5"
+                    >
+                      <path d="M5 3.2v9.6L12.5 8 5 3.2z" />
+                    </svg>
+                    <svg
+                      data-m-pause
+                      viewBox="0 0 16 16"
+                      fill="currentColor"
+                      aria-hidden="true"
+                      class="hidden size-5"
+                    >
+                      <path d="M4.5 3h2.4v10H4.5zM9.1 3h2.4v10H9.1z" />
+                    </svg>
+                  </button>
+                )}
+              </div>
+
+              <button
+                type="button"
+                data-item
+                data-index={i}
+                data-video-src={it.video ?? ""}
+                data-image-src={it.image ?? ""}
+                class="group cursor-default text-left md:col-span-4 md:cursor-pointer"
               >
-                {it.body}
-              </span>
-            </button>
+                <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">
+                  <span data-progress class="block h-full w-0 bg-text" />
+                </span>
+                <span
+                  data-title
+                  class="block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:mt-4"
+                >
+                  {it.label}
+                </span>
+                <span
+                  data-body
+                  class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+                >
+                  {it.body}
+                </span>
+              </button>
+            </div>
           ))
         }
       </div>
@@ -131,6 +175,77 @@ const { title, body, items } = Astro.props;
   const DURATION = 5000; // ms — fallback-"videolängd" för placeholder-items
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
+  // Mobil: varje block har en egen spelare. Klippet hämtas först när
+  // blocket närmar sig vyn (preload="none" + IntersectionObserver), och
+  // spelas bara på användarens initiativ.
+  const mobilePlayers = document.querySelectorAll<HTMLElement>(
+    "[data-mobile-player]",
+  );
+  if (mobilePlayers.length) {
+    const arm = (wrap: HTMLElement) => {
+      const v = wrap.querySelector<HTMLVideoElement>("[data-mobile-video]");
+      const src = wrap.dataset.src;
+      if (!v || !src) return;
+      if (!v.getAttribute("src")) {
+        v.setAttribute("src", src);
+        v.load();
+      }
+    };
+    if ("IntersectionObserver" in window) {
+      const io = new IntersectionObserver(
+        (entries) => {
+          for (const e of entries) {
+            const wrap = e.target as HTMLElement;
+            const v = wrap.querySelector<HTMLVideoElement>(
+              "[data-mobile-video]",
+            );
+            if (e.isIntersecting) arm(wrap);
+            else v?.pause();
+          }
+        },
+        { rootMargin: "200px" },
+      );
+      mobilePlayers.forEach((w) => io.observe(w));
+    } else {
+      mobilePlayers.forEach(arm);
+    }
+
+    mobilePlayers.forEach((wrap) => {
+      const v = wrap.querySelector<HTMLVideoElement>("[data-mobile-video]");
+      const btn = wrap.querySelector<HTMLElement>("[data-mobile-toggle]");
+      if (!v || !btn) return;
+      const play = wrap.querySelector<HTMLElement>("[data-m-play]");
+      const pause = wrap.querySelector<HTMLElement>("[data-m-pause]");
+      const sync = () => {
+        play?.classList.toggle("hidden", !v.paused);
+        pause?.classList.toggle("hidden", v.paused);
+        btn.toggleAttribute("data-playing", !v.paused);
+      };
+      const toggle = () => {
+        const firstTouch = !v.getAttribute("src");
+        arm(wrap);
+        if (!v.paused) {
+          v.pause();
+          return;
+        }
+        // Direkt försök behåller kopplingen till användargesten (iOS),
+        // canplay fångar upp om klippet inte hunnit ladda vid första klicket.
+        const tryPlay = () => v.play().catch(() => {});
+        tryPlay();
+        if (firstTouch || v.readyState < 2)
+          v.addEventListener("canplay", tryPlay, { once: true });
+      };
+      wrap.addEventListener("click", toggle);
+      v.addEventListener("play", sync);
+      v.addEventListener("pause", sync);
+      v.addEventListener("ended", () => {
+        v.currentTime = 0;
+        sync();
+      });
+      sync();
+    });
+  }
+
   document.querySelectorAll<HTMLElement>("[data-showcase]").forEach((root) => {
     const player = root.querySelector<HTMLElement>("[data-player]");
     const layers = [
@@ -140,8 +255,6 @@ const { title, body, items } = Astro.props;
     const video = () => layers[front];
     const image = root.querySelector<HTMLImageElement>("[data-image]");
     const label = root.querySelector<HTMLElement>("[data-player-label]");
-    const scroller = root.querySelector<HTMLElement>("[data-items]");
-    const mobileBar = root.querySelector<HTMLElement>("[data-mobile-progress]");
     const mdQuery = matchMedia("(min-width: 768px)");
     const toggleBtn = root.querySelector<HTMLElement>("[data-toggle]");
     const iconPlay = root.querySelector<HTMLElement>("[data-icon-play]");
@@ -161,25 +274,6 @@ const { title, body, items } = Astro.props;
     const srcs = items.map((i) => i.dataset.videoSrc || "");
     const imgSrcs = items.map((i) => i.dataset.imageSrc || "");
 
-    // Infinite mobil-karusell: klona item-setet före + efter (md:hidden).
-    // Strippen blir [kloner][riktiga][kloner]; när snappen landar i ett
-    // klon-set teleporteras scrollLeft osynligt till mittsetet.
-    const n = items.length;
-    const cloneEls: HTMLElement[] = [];
-    if (scroller && n > 1) {
-      const makeClone = (it: HTMLElement) => {
-        const c = it.cloneNode(true) as HTMLElement;
-        c.removeAttribute("data-item");
-        c.setAttribute("data-clone", it.dataset.index || "0");
-        c.classList.add("md:hidden");
-        cloneEls.push(c);
-        return c;
-      };
-      items.forEach((it) => scroller.appendChild(makeClone(it)));
-      [...items]
-        .reverse()
-        .forEach((it) => scroller.insertBefore(makeClone(it), scroller.firstChild));
-    }
     let current = 0;
     let playing = false;
     let userPaused = false; // manuell paus ska överleva scroll ut/in
@@ -195,33 +289,8 @@ const { title, body, items } = Astro.props;
       bars.forEach(
         (b, idx) => (b.style.width = idx === current ? pct + "%" : "0%"),
       );
-      if (mobileBar) mobileBar.style.width = pct + "%";
     };
 
-    // Mobil-karusell: snap-steg = kortbredd + gap (scroll-padding = sidmarginal).
-    const scrollStep = () => {
-      if (!scroller || !items[0]) return 0;
-      const gap = parseFloat(getComputedStyle(scroller).columnGap) || 0;
-      return items[0].offsetWidth + gap;
-    };
-    let suppressScrollUntil = 0;
-    let scrollDriven = false; // val som kommer FRÅN swipen ska inte auto-scrolla
-    const scrollToItem = (i: number) => {
-      if (!scroller || mdQuery.matches || scrollDriven) return;
-      const step = scrollStep();
-      if (!step) return;
-      // Välj närmaste kandidat i strippen (klon eller riktig) så rörelsen
-      // alltid går kortaste vägen — sista → första fortsätter framåt.
-      const sNow = Math.round(scroller.scrollLeft / step);
-      let target = i + n;
-      for (const cand of [i, i + n, i + 2 * n]) {
-        if (Math.abs(cand - sNow) < Math.abs(target - sNow)) target = cand;
-      }
-      const left = target * step;
-      if (Math.abs(scroller.scrollLeft - left) < 2) return;
-      suppressScrollUntil = Date.now() + 700;
-      scroller.scrollTo({ left, behavior: "smooth" });
-    };
 
     const updateIcons = () => {
       iconPlay?.classList.toggle("hidden", playing);
@@ -246,14 +315,6 @@ const { title, body, items } = Astro.props;
           (b.style.color =
             idx === i ? "var(--text-muted)" : "var(--text-subtle)"),
       );
-      // Spegla aktiv-färgerna i klonerna (infinite-karusellen)
-      cloneEls.forEach((c) => {
-        const on = Number(c.dataset.clone) === i;
-        const t = c.querySelector<HTMLElement>("[data-title]");
-        const b = c.querySelector<HTMLElement>("[data-body]");
-        if (t) t.style.color = on ? "var(--text)" : "var(--text-muted)";
-        if (b) b.style.color = on ? "var(--text-muted)" : "var(--text-subtle)";
-      });
       paint(0);
       // Label bara när varken video eller bild finns för aktivt item.
       if (label)
@@ -311,7 +372,6 @@ const { title, body, items } = Astro.props;
           image.classList.add("hidden");
         }
       }
-      scrollToItem(i);
     };
 
     // Video slut → strecket nollas (via setActive) och nästa startar.
@@ -400,78 +460,16 @@ const { title, body, items } = Astro.props;
           togglePlay();
           return;
         }
+        if (!mdQuery.matches) return; // på mobil har varje block egen spelare
         setActive(i);
         if (!reduce && playing) userPaused = false;
       }),
     );
 
-    // Mobil: swipe väljer item DIREKT när närmsta snap-mål byts (halvvägs/
-    // vid släpp) — inte efter landning; annars känns det laggigt.
-    // Normaliseringen (teleport från klon-set till mittsetet) väntar dock
-    // tills snappen landat (debounce).
-    if (scroller) {
-      let scrollDebounce = 0;
-      scroller.addEventListener(
-        "scroll",
-        () => {
-          if (mdQuery.matches) return;
-          const step = scrollStep();
-          if (!step) return;
-          const s = Math.round(scroller.scrollLeft / step);
-          const idx = ((s % n) + n) % n;
-          if (Date.now() >= suppressScrollUntil && idx !== current) {
-            scrollDriven = true;
-            setActive(idx);
-            scrollDriven = false;
-            if (!reduce) {
-              userPaused = false;
-              play();
-            }
-          }
-          clearTimeout(scrollDebounce);
-          const settle = () => {
-            // Teleportera först när snappen faktiskt landat — annars syns
-            // hoppet som ett flicker (positionen är mitt i snap-animeringen).
-            const sl = scroller.scrollLeft;
-            const sNow = Math.round(sl / step);
-            if (Math.abs(sl - sNow * step) > 2) {
-              scrollDebounce = window.setTimeout(settle, 80);
-              return;
-            }
-            if (sNow < n || sNow >= 2 * n) {
-              suppressScrollUntil = Date.now() + 200;
-              scroller.scrollLeft = ((((sNow % n) + n) % n) + n) * step;
-            }
-          };
-          scrollDebounce = window.setTimeout(settle, 120);
-        },
-        { passive: true },
-      );
-
-      // Klick på klon = klick på originalet
-      cloneEls.forEach((c) =>
-        c.addEventListener("click", () => {
-          const i = Number(c.dataset.clone);
-          if (i === current) {
-            togglePlay();
-            return;
-          }
-          setActive(i);
-          if (!reduce) {
-            userPaused = false;
-            play();
-          }
-        }),
-      );
-    }
 
     setActive(0);
     updateIcons();
 
-    // Starta i mittsetet (riktiga items) så det finns kloner åt båda håll
-    if (scroller && n > 1 && !mdQuery.matches) {
-      scroller.scrollLeft = n * scrollStep();
-    }
 
     if (reduce) return;
     // Ingen autostart: uppspelningen börjar när besökaren trycker play.
