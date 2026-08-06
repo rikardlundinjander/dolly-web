@@ -12,15 +12,12 @@ const menu = [
 ];
 ---
 
-<header class="fixed inset-x-0 top-0 z-50">
-  <div data-nav class="relative">
-    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant -->
-    <div
-      aria-hidden="true"
-      class="nav-fade pointer-events-none absolute inset-x-0 top-0 -z-10 h-[200%]"
-    >
-    </div>
-    <Container class="flex h-16 items-center justify-between">
+<header class="pointer-events-none fixed inset-x-0 top-0 z-50">
+  <div data-nav class="relative h-32">
+    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant.
+         Fyller wrappern så att en enda transform gömmer nav + fade. -->
+    <div aria-hidden="true" class="nav-fade absolute inset-0"></div>
+    <Container class="pointer-events-auto relative flex h-16 items-center justify-between">
     <div class="flex items-center gap-[var(--space-xl)]">
       <a
         href="/"
@@ -76,31 +73,23 @@ const menu = [
       color-mix(in srgb, var(--bg) 4%, transparent) 92%,
       transparent 100%
     );
-    transition: opacity var(--duration-base) var(--ease-out-quart);
   }
 
-  /* Göms vid scroll ner, glider in vid scroll upp. Faden tonas bort helt
-     (den är högre än navet och skulle annars sticka ut under kanten). */
-  /* translate3d i båda lägena + will-change håller wrappern på ett eget
-     compositor-lager. Safari räknar annars om sticky-positionen per frame
-     när transformen sitter på själva sticky-elementet. */
+  /* Göms vid scroll ner, glider in vid scroll upp. Wrappern är lika hög som
+     faden, så EN transform räcker: ingen opacity-animering och inget extra
+     lager att komponera per frame (det tappade frames i Safari). */
   [data-nav] {
     transform: translate3d(0, 0, 0);
     will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     transition: transform var(--duration-base) var(--ease-out-quart);
   }
   [data-nav][data-hidden] {
     transform: translate3d(0, -100%, 0);
   }
-  [data-nav][data-hidden] .nav-fade {
-    opacity: 0;
-  }
-  .nav-fade {
-    will-change: opacity;
-  }
   @media (prefers-reduced-motion: reduce) {
-    [data-nav],
-    .nav-fade {
+    [data-nav] {
       transition: none;
     }
   }
