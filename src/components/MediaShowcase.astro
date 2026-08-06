@@ -267,10 +267,16 @@ const { title, body, items } = Astro.props;
             if (cur.readyState > 0) cur.currentTime = 0;
             cur.style.opacity = "1";
           } else {
-            // Ladda i baklagret och byt först när det har bildinnehåll,
-            // så rutan aldrig blinkar tom och övergången blir mjuk.
+            // Ladda i baklagret och korsfada när det har bildinnehåll.
+            // iOS laddar inte video utan användargest, så loadeddata kan
+            // dröja eller utebli: visa lagret ändå efter en kort stund,
+            // annars blir rutan stående tom.
             const next = layers[(front + 1) % layers.length];
+            const nothingShownYet = !cur.getAttribute("src");
+            let revealed = false;
             const reveal = () => {
+              if (revealed) return;
+              revealed = true;
               next.style.opacity = "1";
               cur.style.opacity = "0";
               front = (front + 1) % layers.length;
@@ -281,9 +287,13 @@ const { title, body, items } = Astro.props;
             };
             next.removeAttribute("src");
             next.setAttribute("src", srcs[i]);
-            next.currentTime = 0;
-            if (next.readyState >= 2) reveal();
-            else next.addEventListener("loadeddata", reveal, { once: true });
+            next.load(); // iOS börjar annars inte hämta alls
+            // Första klippet har inget att korsfada från: visa direkt.
+            if (nothingShownYet || next.readyState >= 2) reveal();
+            else {
+              next.addEventListener("loadeddata", reveal, { once: true });
+              window.setTimeout(reveal, 700);
+            }
           }
         } else {
           layers.forEach((v) => {
@@ -333,7 +343,10 @@ const { title, body, items } = Astro.props;
     const startPlayback = () => {
       cancelAnimationFrame(raf); // aldrig mer än en loop
       if (isVideo()) {
-        video().play().catch(() => {});
+        const v = video();
+        v.style.opacity = "1"; // säkerhetsnät om laddningen dröjt
+        if (v.readyState === 0) v.load();
+        v.play().catch(() => {});
       } else {
         startTs = 0;
       }
