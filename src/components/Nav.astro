@@ -99,6 +99,7 @@ const menu = [
   // Auto-hide: göm navet när man scrollar ner, visa vid scroll upp.
   // Alltid synligt nära toppen. Tröskel mot jitter, rAF-throttlad.
   const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const desktop = matchMedia("(min-width: 768px)");
   if (nav) {
     const TOP = 80; // px från sidtoppen där navet alltid visas
     const DELTA = 12; // minsta rörelse som räknas som riktningsbyte
@@ -106,6 +107,12 @@ const menu = [
     let ticking = false;
 
     const update = () => {
+      // Navet ligger kvar på mobil; auto-hide gäller bara desktop.
+      if (!desktop.matches) {
+        nav.removeAttribute("data-hidden");
+        ticking = false;
+        return;
+      }
       const y = window.scrollY;
       const diff = y - last;
       if (y <= TOP) {
@@ -117,6 +124,10 @@ const menu = [
       }
       ticking = false;
     };
+
+    desktop.addEventListener("change", () => {
+      if (!desktop.matches) nav.removeAttribute("data-hidden");
+    });
 
     addEventListener(
       "scroll",

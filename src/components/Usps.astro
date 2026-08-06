@@ -1,0 +1,93 @@
+---
+import Container from "./Container.astro";
+import Icon from "./Icon.astro";
+
+// Tre USP:ar direkt under hero-videon. Desktop: centrerad rad.
+// Mobil: autorullande loop (marquee) som bleder till skärmkanterna.
+const usps = [
+  { icon: "schedule", label: "7-day free trial" },
+  { icon: "sell", label: "One-time purchase" },
+  { icon: "lock", label: "Everything stays on your Mac" },
+] as const;
+---
+
+<section class="pt-[var(--space-2xl)] md:pt-[var(--space-3xl)]">
+  <!-- Desktop: statisk rad -->
+  <Container class="hidden md:block">
+    <ul class="flex items-center justify-center gap-[var(--space-xl)]">
+      {
+        usps.map((u) => (
+          <li class="flex items-center gap-2.5 text-base whitespace-nowrap text-text">
+            <Icon name={u.icon} class="size-5" />
+            {u.label}
+          </li>
+        ))
+      }
+    </ul>
+  </Container>
+
+  <!-- Mobil: marquee. Innehållet dubbleras så loopen blir sömlös. -->
+  <div class="marquee md:hidden" aria-hidden="true">
+    <div class="marquee-track">
+      {
+        [0, 1].map(() => (
+          <ul class="marquee-group flex items-center gap-[var(--space-xl)] pr-[var(--space-xl)]">
+            {usps.map((u) => (
+              <li class="flex items-center gap-2.5 text-base whitespace-nowrap text-text">
+                <Icon name={u.icon} class="size-5" />
+                {u.label}
+              </li>
+            ))}
+          </ul>
+        ))
+      }
+    </div>
+  </div>
+
+  <!-- Samma innehåll läsbart för skärmläsare utan dubblering -->
+  <ul class="sr-only md:hidden">
+    {usps.map((u) => <li>{u.label}</li>)}
+  </ul>
+</section>
+
+<style>
+  .marquee {
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--gutter-page),
+      #000 calc(100% - var(--gutter-page)),
+      transparent
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      #000 var(--gutter-page),
+      #000 calc(100% - var(--gutter-page)),
+      transparent
+    );
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 18s linear infinite;
+  }
+  @keyframes marquee {
+    from {
+      transform: translate3d(0, 0, 0);
+    }
+    to {
+      /* Exakt en grupp = sömlös skarv */
+      transform: translate3d(-50%, 0, 0);
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .marquee-track {
+      animation: none;
+    }
+    .marquee {
+      overflow-x: auto;
+    }
+  }
+</style>

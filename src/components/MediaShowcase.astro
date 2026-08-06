@@ -16,11 +16,12 @@ interface Props {
   title: string;
   body: string;
   items: Item[];
+  id?: string;
 }
-const { title, body, items } = Astro.props;
+const { title, body, items, id } = Astro.props;
 ---
 
-<section class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
+<section id={id} class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
   <Container>
     <div class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
       <h2 class="text-xl text-text sm:text-4xl">{title}</h2>

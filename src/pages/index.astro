@@ -3,14 +3,16 @@ import Layout from "../layouts/Layout.astro";
 import Container from "../components/Container.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
-import KeyFeatures from "../components/KeyFeatures.astro";
+import Usps from "../components/Usps.astro";
 import MediaShowcase from "../components/MediaShowcase.astro";
 import Audience from "../components/Audience.astro";
 import FineTune from "../components/FineTune.astro";
 import Pricing from "../components/Pricing.astro";
 import FAQ from "../components/FAQ.astro";
+import { getDownloadUrl } from "../lib/links";
 
 // REDESIGN. Media = grå placeholders. Copy engelsk.
+const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const recording = [
   { label: "Screen & window", body: "Capture your whole display, a single window, or a region at full resolution.", video: "/videos/screen-and-window.mp4" },
   { label: "Camera & mic", body: "Add a webcam bubble and crisp audio. Anchor it anywhere, resize on the fly." },
@@ -47,6 +49,13 @@ const editing = [
           />Natively and locally on your Mac.
         </p>
 
+        <a
+          href={DMG}
+          class="press mt-8 inline-block rounded-pill bg-btn-primary px-6 py-3 text-base text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        >
+          Start 7-day trial
+        </a>
+
         <!-- Hero-video -->
         <video
           class="aspect-video w-full rounded-xs bg-surface object-cover mt-[var(--space-2xl)] sm:mt-[var(--space-4xl)]"
@@ -59,11 +68,12 @@ const editing = [
       </Container>
     </section>
 
-    <!-- Key features -->
-    <KeyFeatures />
+    <!-- USP-rad -->
+    <Usps />
 
     <!-- Recording -->
     <MediaShowcase
+      id="features"
       title="All in one take."
       body="Screen, camera, mic, system audio, even your iPhone. One take, zero setup."
       items={recording}
