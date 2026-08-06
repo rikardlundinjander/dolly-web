@@ -47,7 +47,7 @@ const audiences = [
         audiences.map((a, i) => (
           <div
             class="stack-slot w-10/12 shrink-0 snap-start md:col-span-3 md:w-auto"
-            style={`--i: ${i}; --r: ${[-8, -3, 4, 9][i % 4]}deg; z-index: ${audiences.length - i}`}
+            style={`--o: ${(audiences.length - 1) / 2 - i}; --d: ${Math.abs((audiences.length - 1) / 2 - i)}; --r: ${[-8, -3, 4, 9][i % 4]}deg; --hr: ${[-3, 2.5, -2, 3][i % 4]}deg; --hy: ${[-1.25, -1, -1.25, -1][i % 4]}rem; z-index: ${i < audiences.length / 2 ? i : audiences.length - i}`}
           >
             <div class="stack-card flex h-full flex-col justify-between gap-12 rounded-xl bg-surface p-6 md:min-h-52">
               <h3 class="text-base text-text sm:text-lg">{a.title}</h3>
@@ -71,10 +71,10 @@ const audiences = [
   @media (min-width: 768px) {
     @media (prefers-reduced-motion: no-preference) {
       .stack-slot {
-        transform: translateX(calc((-100% - var(--grid-gutter)) * var(--i)))
+        transform: translateX(calc((100% + var(--grid-gutter)) * var(--o)))
           rotate(var(--r));
         transition: transform 700ms var(--ease-out-expo);
-        transition-delay: calc(var(--i) * 70ms);
+        transition-delay: calc(var(--d) * 90ms);
       }
       [data-stack][data-in] .stack-slot {
         transform: none;
@@ -82,7 +82,7 @@ const audiences = [
     }
     @media (hover: hover) {
       .stack-card:hover {
-        transform: translateY(-0.5rem) rotate(-2deg);
+        transform: translateY(var(--hy)) rotate(var(--hr));
       }
     }
   }
