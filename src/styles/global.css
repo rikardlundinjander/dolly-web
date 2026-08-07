@@ -37,7 +37,10 @@
   --color-neutral-950: #0e0e0e;
   --color-neutral-1000: #090909;
 
-  /* ---------- FÄRG: accent-skala (sparsam; blå) ---------- */
+  /* ---------- FÄRG: accent-skala (sparsam; blå) ----------
+     Används i dag bara via --accent på legal-sidornas länkar. Skalan
+     ligger kvar komplett så en framtida accentfärg har steg att välja
+     mellan i stället för att någon hårdkodar en hex. */
   --color-brand-50: #eef4ff;
   --color-brand-100: #dbe7ff;
   --color-brand-200: #bcd3ff;
@@ -54,7 +57,15 @@
   --font-display: "KH Teka", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
-  /* Typskala (full skala, inte bara det som används) + line-heights */
+  /* Typskala (full skala, inte bara det som används) + line-heights.
+     Responsiva par som används i dag (mobil → desktop):
+       hero-rubrik      text-3xl → sm:text-5xl    36 → 56
+       sektionsrubrik   text-xl  → sm:text-4xl    24 → 44
+       FAQ-rubrik       text-xl  → sm:text-2xl    24 → 32
+       ingress          text-base → sm:text-lg    16 → 18
+       brödtext         text-sm                   14
+     Brytpunkten är sm (640px) för typografi och md (768px) för layout:
+     texten får skala tidigare än kolumnerna. */
   --text-2xs: 0.6875rem;   /* 11 */
   --text-2xs--line-height: 1.4;
   --text-xs: 0.75rem;      /* 12 */
@@ -109,6 +120,20 @@
   --space-5xl: 12rem;    /* 192 */
   --space-6xl: 16rem;    /* 256 */
 
+  /* ---------- RYTM: responsiva par (mobil → desktop) ----------
+     Stora avstånd ska andas olika på liten och stor skärm. Värdena byter
+     vid md (768px) i :root nedan; här ligger bara mobilvärdet som default.
+     Använd dessa för sektionsrytm och blockavstånd — inte för detaljer
+     under ~32px, där Tailwinds numeriska skala (mt-2, gap-3) räcker.
+
+       pt-flow-xs    8 → 16
+       pt-flow-sm   16 → 32     luft under hero-videon
+       pt-flow-md   32 → 64
+       pt-flow-lg   48 → 96     sektionsrubrik → innehåll
+       pt-flow-xl   64 → 128    hero-CTA → video
+       pt-flow-2xl 128 → 256    mellan sektioner
+     ============================================================= */
+
   /* ---------- LAYOUT / GRID ---------- */
   --container-max: 83rem;   /* 1328px — skissens innehållsbredd */
   --grid-gutter: 1rem;      /* 16px — kolumn-gap på desktop */
@@ -130,6 +155,15 @@
 /* ---------- 2. SEMANTIK (dark-only) ---------- */
 :root {
   color-scheme: dark;
+
+  /* Rytm-par: mobilvärden (desktop längre ned i media-frågan) */
+  --pair-xs: 0.5rem;
+  --pair-sm: 1rem;
+  --pair-md: 2rem;
+  --pair-lg: 3rem;
+  --pair-xl: 4rem;
+  --pair-2xl: 8rem;
+
 
   --bg: var(--color-neutral-1000);
   --surface: var(--color-neutral-900);
@@ -182,6 +216,18 @@
   --border-glare-on-light: rgba(0, 0, 0, 0.25);
 }
 
+/* Rytm-par: desktopvärden */
+@media (min-width: 768px) {
+  :root {
+    --pair-xs: 1rem;
+    --pair-sm: 2rem;
+    --pair-md: 4rem;
+    --pair-lg: 6rem;
+    --pair-xl: 8rem;
+    --pair-2xl: 16rem;
+  }
+}
+
 /* ---------- 3. EXPONERA SEMANTIK SOM UTILITIES ---------- */
 @theme inline {
   --color-bg: var(--bg);
@@ -209,6 +255,17 @@
   --color-btn-inverse: var(--btn-inverse-bg);
   --color-btn-inverse-hover: var(--btn-inverse-bg-hover);
   --color-btn-inverse-text: var(--btn-inverse-text);
+
+  /* Rytm-paren som spacing-utilities: pt-flow-lg, mt-flow-2xl, gap-flow-md …
+     OBS: flow-prefixet är nödvändigt. Utan det skuggar namnen (sm, md, lg,
+     xl) Tailwinds container-skala, och max-w-xl skulle lösas till 64px
+     i stället för 576px. */
+  --spacing-flow-xs: var(--pair-xs);
+  --spacing-flow-sm: var(--pair-sm);
+  --spacing-flow-md: var(--pair-md);
+  --spacing-flow-lg: var(--pair-lg);
+  --spacing-flow-xl: var(--pair-xl);
+  --spacing-flow-2xl: var(--pair-2xl);
 }
 
 /* ---------- Bas ---------- */

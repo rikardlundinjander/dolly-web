@@ -21,7 +21,7 @@ interface Props {
 const { title, body, items, id } = Astro.props;
 ---
 
-<section id={id} class="pt-[var(--space-4xl)] md:pt-[var(--space-6xl)]">
+<section id={id} class="pt-flow-2xl">
   <Container>
     <div class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
       <h2 class="text-xl text-text sm:text-4xl">{title}</h2>
@@ -30,7 +30,7 @@ const { title, body, items, id } = Astro.props;
       </p>
     </div>
 
-    <div data-showcase class="mt-14 md:mt-[var(--space-3xl)]">
+    <div data-showcase class="mt-flow-lg">
       <!-- Spelare: två videolager som korsfadar, så bytet aldrig blinkar
            till en tom ruta och övergången blir mjuk. -->
       <div
