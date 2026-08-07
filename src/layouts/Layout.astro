@@ -111,6 +111,38 @@ const jsonLd = {
 </script>
 
 <script>
+  // Självläkande nedladdningslänk: [data-download] får sin href vid BYGGE,
+  // så en app-release efter senaste sajtbygget skulle annars fortsätta peka
+  // på en gammal DMG. Här hämtas appcasten i browsern och länkarna pekas om
+  // vid behov. Byggets värde är fallback (fungerar utan JS).
+  const links =
+    document.querySelectorAll<HTMLAnchorElement>("a[data-download]");
+  if (links.length) {
+    fetch("https://updates.heydolly.app/appcast.xml", { cache: "no-store" })
+      .then((r) => (r.ok ? r.text() : Promise.reject(r.status)))
+      .then((xml) => {
+        // Para ihop varje <sparkle:version> med närmast följande
+        // .dmg-enclosure och ta den högsta versionen (= senaste releasen).
+        const re =
+          /<sparkle:version>(\d+)<\/sparkle:version>[\s\S]*?<enclosure[^>]*?url="([^"]+?\.dmg)"/g;
+        let best: { version: number; url: string } | null = null;
+        for (const m of xml.matchAll(re)) {
+          const version = parseInt(m[1], 10);
+          if (!best || version > best.version) best = { version, url: m[2] };
+        }
+        if (best) {
+          for (const a of links) {
+            if (a.href !== best.url) a.href = best.url;
+          }
+        }
+      })
+      .catch(() => {
+        /* offline eller feed nere → behåll byggets länk */
+      });
+  }
+</script>
+
+<script>
   // Glare + tilt: följ pekaren över .glare/.tilt-ytor och uppdatera
   // CSS-vars (--glare-x/y, --tilt-x/y). Effekterna ligger i global.css.
   const MAX_TILT = 2; // grader åt varje håll
