@@ -198,12 +198,6 @@
   --inverse-text-muted: var(--color-neutral-500);
   --inverse-text-subtle: var(--color-neutral-400);
 
-  /* Ambient ljuskälla bakom hero-videon */
-  --hero-glow: rgba(255, 255, 255, 0.22);
-
-  /* Ljusgloria bakom ljusa knappar på mörk botten */
-  --btn-glow: rgba(255, 255, 255, 0.45);
-  --btn-glow-wide: rgba(255, 255, 255, 0.22);
 
   /* Knapp på invers (ljus) yta = mörk fyllning */
   --btn-inverse-bg: var(--color-neutral-1000);
@@ -340,20 +334,27 @@ body {
   }
 }
 
-/* Glow: mjuk ljusgloria vid hover. För ljusa knappar mot mörk botten.
-   Två lager box-shadow (tät + vid) ger djup utan extra element, och
-   box-shadow är billigt för compositorn. */
+/* CTA-pilen: två identiska pilar staplade i cirkeln. Vid hover glider den
+   första ut åt höger och den andra in från vänster.
+   Övergången deklareras BARA i :hover-regeln — då snappar pilarna tillbaka
+   utan animering när pekaren lämnar, alltså ingen baklängesrörelse. Att
+   återställningen inte syns beror på att pilarna är identiska: pil två i
+   mitten ser exakt ut som pil ett i mitten. */
+.cta-arrow {
+  grid-area: 1 / 1;
+}
+.cta-arrow:last-child {
+  transform: translateX(-200%);
+}
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-  .glow {
-    transition:
-      box-shadow var(--duration-slow) var(--ease-out-quart),
-      background-color var(--duration-base) var(--ease-out-quart),
-      transform var(--duration-fast) var(--ease-out-quart);
+  .cta:hover .cta-arrow {
+    transition: transform var(--duration-slow) var(--ease-out-quart);
   }
-  .glow:hover {
-    box-shadow:
-      0 0 20px -2px var(--btn-glow),
-      0 0 56px -8px var(--btn-glow-wide);
+  .cta:hover .cta-arrow:first-child {
+    transform: translateX(200%);
+  }
+  .cta:hover .cta-arrow:last-child {
+    transform: translateX(0);
   }
 }
 
@@ -480,55 +481,3 @@ body {
 /* Ambient ljus bakom hero-videon: ger djup åt den svarta ytan. Andas
    långsamt via opacity + scale; ingen blur-filter, eftersom en radial
    gradient redan är mjuk och filter kostar mer att animera. */
-/* Aura runt hero-videon. Ligger exakt på videons box och suddas ut, så
-   ljuset läcker ut runt kanterna i stället för att gömma sig bakom den
-   opaka videon (en radial gradient bakom videon syns inte alls). */
-  /* CTA-pilen: två identiska pilar staplade i cirkeln. Vid hover glider den
-     första ut åt höger och den andra in från vänster.
-     Övergången deklareras BARA i :hover-regeln — då snappar pilarna tillbaka
-     utan animering när pekaren lämnar, alltså ingen baklängesrörelse. Att
-     återställningen inte syns beror på att pilarna är identiska: pil två i
-     mitten ser exakt ut som pil ett i mitten. */
-  .cta-arrow {
-    grid-area: 1 / 1;
-  }
-  .cta-arrow:last-child {
-    transform: translateX(-200%);
-  }
-  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
-    .cta:hover .cta-arrow {
-      transition: transform var(--duration-slow) var(--ease-out-quart);
-    }
-    .cta:hover .cta-arrow:first-child {
-      transform: translateX(200%);
-    }
-    .cta:hover .cta-arrow:last-child {
-      transform: translateX(0);
-    }
-  }
-
-.hero-glow {
-  position: absolute;
-  inset: 0;
-  z-index: -1;
-  pointer-events: none;
-  background: var(--hero-glow);
-  filter: blur(56px);
-}
-@media (prefers-reduced-motion: no-preference) {
-  .hero-glow {
-    /* Bara opacity andas — blurren rastreras en gång och animeringen
-       stannar på compositorn. Skalning hade tvingat om-rastrering av en
-       stor suddad yta varje bildruta. */
-    animation: hero-breathe 9s ease-in-out infinite;
-  }
-  @keyframes hero-breathe {
-    0%,
-    100% {
-      opacity: 0.55;
-    }
-    50% {
-      opacity: 1;
-    }
-  }
-}

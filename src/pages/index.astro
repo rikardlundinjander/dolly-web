@@ -30,7 +30,7 @@ const editing = [
   <div id="page" class="pt-16">
     <Nav />
     <!-- Hero -->
-    <section class="text-center pt-flow-xl [overflow-x:clip] [overflow-y:visible]">
+    <section class="text-center pt-flow-xl">
       <Container>
         <img
           src="/dolly-logo-single.svg"
@@ -64,17 +64,13 @@ const editing = [
           </span>
         </a>
 
-        <!-- Hero-video med ambient ljus bakom -->
-        <div class="relative isolate mt-flow-xl">
-          <div class="hero-glow" aria-hidden="true"></div>
-          <video
-            class="hero-video aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover"
-            src="/videos/dolly-hero-2.mp4"
-            autoplay
-            muted
-            loop
-            playsinline></video>
-        </div>
+        <video
+          class="hero-video mt-flow-xl aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover"
+          src="/videos/dolly-hero-2.mp4"
+          autoplay
+          muted
+          loop
+          playsinline></video>
       </Container>
     </section>
 
