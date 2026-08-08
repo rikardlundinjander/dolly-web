@@ -82,6 +82,18 @@ const menu = [
 </header>
 
 <style>
+  /* Iscensättning i tre steg i stället för allt på en gång:
+       1. det som inte följer med tonas bort
+       2. logo och knapp glider ihop mot mitten
+       3. glaset lägger sig på
+     Bakvägen spelas sekvensen baklänges. Därför står transition i BÅDA
+     tillstånden — den som gäller är alltid destinationens. */
+  :root {
+    --nav-t-fade: 140ms; /* steg 1 */
+    --nav-t-morph: 380ms; /* steg 2 */
+    --nav-t-glass: 280ms; /* steg 3 */
+  }
+
   /* Smoothstep-profil (9 steg) istället för linjär tvåstegsfade —
      samma höjd, men utfasningen accelererar/bromsar mjukt. */
   .nav-fade {
@@ -97,15 +109,16 @@ const menu = [
       color-mix(in srgb, var(--bg) 4%, transparent) 92%,
       transparent 100%
     );
-    transition: opacity var(--duration-slow) var(--ease-out-quart);
+    /* tillbaka: sist av allt */
+    transition: opacity var(--nav-t-fade) linear
+      calc(var(--nav-t-glass) + var(--nav-t-morph));
   }
 
   /* Baren går från full bredd till orbens bredd via max-width, och glaset
-     (inset-0) hugger den utan egen positionering. Orbens bredd kan inte
-     uttryckas i CSS — den beror på logotypens och knappens storlek — så
-     scriptet mäter den en gång och skriver den till --orb-w. fit-content
-     duger inte: en krympbar spacer räknas inte in i max-content, så baren
-     hade kollapsat runt innehållet redan i vidläget. */
+     (inset-0) hugger den utan egen positionering. Orbens bredd beror på
+     logotypens och knappens mått, så scriptet mäter den en gång och skriver
+     den till --orb-w. fit-content duger inte: en krympbar spacer räknas inte
+     in i max-content, så baren hade kollapsat runt innehållet i vidläget. */
   .nav-bar {
     width: 100%;
     max-width: 100%;
@@ -113,17 +126,19 @@ const menu = [
     padding: 0;
     transform: translate3d(0, 0, 0);
     transition:
-      max-width var(--duration-slow) var(--ease-out-quart),
-      height var(--duration-slow) var(--ease-out-quart),
-      padding var(--duration-slow) var(--ease-out-quart),
-      transform var(--duration-slow) var(--ease-out-quart);
+      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
+      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
+      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
+      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass);
   }
+
+  /* Spacern växer i båda lägena och trycker alltid knappen mot högerkanten.
+     Luckan i orb-läget sätts med min-width, inte med en fast flex-basis:
+     med fast basis stod knappen kvar intill logotypen med tom yta efter sig
+     under hela morfen, eftersom inget annat kunde fylla ut baren. */
   .nav-spacer {
     flex: 1 1 0;
-  }
-  /* Mätläge: sluttillståndet utan mellanliggande animering */
-  [data-measuring] * {
-    transition: none !important;
+    min-width: 0;
   }
 
   /* 1fr → 0fr viker ihop bredden utan att vi behöver mäta något.
@@ -131,51 +146,99 @@ const menu = [
   .nav-collapse {
     grid-template-columns: 1fr;
     transition:
-      grid-template-columns var(--duration-slow) var(--ease-out-quart),
-      opacity var(--duration-base) var(--ease-out-quart);
+      grid-template-columns var(--nav-t-morph) var(--ease-out-quart)
+        var(--nav-t-glass),
+      opacity var(--nav-t-fade) linear
+        calc(var(--nav-t-glass) + var(--nav-t-morph));
   }
   .nav-collapse > * {
     min-width: 0;
     overflow: hidden;
-    transition: padding var(--duration-slow) var(--ease-out-quart);
+    transition: padding var(--nav-t-morph) var(--ease-out-quart)
+      var(--nav-t-glass);
+  }
+
+  /* Glaset. Eget lager bakom innehållet som bara tonas in — backdrop-filtret
+     självt ligger still, det är dyrt att interpolera och hackar i Safari.
+     Tre lager: grundbrytning (blur/saturate + ljus uppifrån), specular
+     highlight (::before) och en brytningskant (::after) där bakgrunden är
+     extra suddad och ljusare, vilket är det som läser som glastjocklek. */
+  .nav-glass {
+    background:
+      linear-gradient(
+        to bottom,
+        rgba(255, 255, 255, 0.1) 0%,
+        rgba(255, 255, 255, 0.03) 45%,
+        rgba(255, 255, 255, 0) 62%,
+        rgba(255, 255, 255, 0.05) 100%
+      ),
+      color-mix(in srgb, var(--bg) 38%, transparent);
+    -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(1.08);
+    backdrop-filter: blur(20px) saturate(190%) brightness(1.08);
+    box-shadow:
+      inset 0 1px 0.5px rgba(255, 255, 255, 0.4),
+      inset 0 -1px 0.5px rgba(255, 255, 255, 0.12),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+      0 1px 2px rgba(0, 0, 0, 0.35),
+      0 18px 40px -14px rgba(0, 0, 0, 0.65);
+    opacity: 0;
+    /* tillbaka: först av allt */
+    transition: opacity var(--nav-t-glass) var(--ease-out-quart) 0ms;
+    will-change: opacity;
+  }
+  .nav-glass::before,
+  .nav-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+  /* Specular: ljuset kommer snett uppifrån vänster */
+  .nav-glass::before {
+    background: radial-gradient(
+      120% 100% at 18% -25%,
+      rgba(255, 255, 255, 0.22),
+      rgba(255, 255, 255, 0) 55%
+    );
+  }
+  /* Brytningskant: bara ringen syns, via två masker som tar ut varandra */
+  .nav-glass::after {
+    padding: 7px;
+    -webkit-backdrop-filter: blur(6px) brightness(1.35) saturate(1.5);
+    backdrop-filter: blur(6px) brightness(1.35) saturate(1.5);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+  }
+
+  /* --- Orb-läget --------------------------------------------------- */
+  [data-orb] .nav-fade {
+    opacity: 0;
+    transition: opacity var(--nav-t-fade) linear 0ms; /* steg 1 */
+  }
+  [data-orb] .nav-collapse {
+    grid-template-columns: 0fr;
+    opacity: 0;
+    transition:
+      grid-template-columns var(--nav-t-morph) var(--ease-out-quart)
+        var(--nav-t-fade),
+      opacity var(--nav-t-fade) linear 0ms;
   }
   /* Med border-box sätter padding en golvbredd som överlever 0fr-kolumnen,
      så luckan blir bredare än spacern. Nolla den när innehållet viks ihop. */
   [data-orb] .nav-collapse > * {
     padding: 0;
-  }
-
-  /* Glaset. Eget lager bakom innehållet som tonas in — då animeras bara
-     opacity, inte backdrop-filtret självt (det är dyrt att interpolera och
-     hackar i Safari). */
-  .nav-glass {
-    background: color-mix(in srgb, var(--bg) 45%, transparent);
-    -webkit-backdrop-filter: blur(24px) saturate(180%);
-    backdrop-filter: blur(24px) saturate(180%);
-    box-shadow:
-      /* specular topp + rim: kanten fångar ljus som en glaskant */
-      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
-      inset 0 -10px 24px -14px rgba(255, 255, 255, 0.14),
-      0 12px 32px -8px rgba(0, 0, 0, 0.5);
-    opacity: 0;
-    transition: opacity var(--duration-slow) var(--ease-out-quart);
-    will-change: opacity;
-  }
-
-  [data-orb] .nav-fade {
-    opacity: 0;
+    transition: padding var(--nav-t-morph) var(--ease-out-quart)
+      var(--nav-t-fade);
   }
   [data-orb] .nav-spacer {
-    flex: 0 0 var(--space-xl);
-  }
-  [data-orb] .nav-collapse {
-    grid-template-columns: 0fr;
-    opacity: 0;
-  }
-  [data-orb] .nav-glass {
-    opacity: 1;
-    pointer-events: auto;
+    min-width: var(--space-xl);
   }
   /* Luft innanför glaskanten, och orben lägger sig strax under skärmkanten
      i stället för att sitta klistrad mot den. */
@@ -184,14 +247,36 @@ const menu = [
     height: 3.5rem;
     padding-inline: 1.25rem 0.5rem;
     transform: translate3d(0, 8px, 0);
+    transition:
+      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
+      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
+      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
+      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade);
+  }
+  [data-orb] .nav-glass {
+    opacity: 1;
+    pointer-events: auto;
+    /* steg 3, med lite överlapp mot morfen så det inte känns hackigt */
+    transition: opacity var(--nav-t-glass) var(--ease-out-quart)
+      calc(var(--nav-t-fade) + var(--nav-t-morph) - 60ms);
+  }
+
+  /* Mätläge: sluttillståndet utan mellanliggande animering */
+  [data-measuring] * {
+    transition: none !important;
   }
 
   @media (prefers-reduced-motion: reduce) {
     .nav-fade,
     .nav-bar,
-    .nav-spacer,
     .nav-collapse,
-    .nav-glass {
+    .nav-collapse > *,
+    .nav-glass,
+    [data-orb] .nav-fade,
+    [data-orb] .nav-bar,
+    [data-orb] .nav-collapse,
+    [data-orb] .nav-collapse > *,
+    [data-orb] .nav-glass {
       transition: none;
     }
   }
