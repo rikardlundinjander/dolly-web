@@ -29,7 +29,7 @@ const editing = [
   <div id="page" class="pt-16">
     <Nav />
     <!-- Hero -->
-    <section class="text-center pt-flow-xl">
+    <section class="text-center pt-flow-xl [overflow-x:clip] [overflow-y:visible]">
       <Container>
         <img
           src="/dolly-logo-single.svg"
@@ -52,20 +52,22 @@ const editing = [
         <a
           href={DMG}
           data-download
-          class="press glow mt-8 inline-block rounded-pill bg-btn-primary px-6 py-3 text-base text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+          class="press glow magnetic mt-8 inline-block rounded-pill bg-btn-primary px-6 py-3 text-base text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
         >
           Start 7-day trial
         </a>
 
-        <!-- Hero-video -->
-        <video
-          class="hero-video aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover mt-flow-xl"
-          src="/videos/dolly-hero-2.mp4"
-          autoplay
-          muted
-          loop
-          playsinline
-        ></video>
+        <!-- Hero-video med ambient ljus bakom -->
+        <div class="relative isolate mt-flow-xl">
+          <div class="hero-glow" aria-hidden="true"></div>
+          <video
+            class="hero-video aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover"
+            src="/videos/dolly-hero-2.mp4"
+            autoplay
+            muted
+            loop
+            playsinline></video>
+        </div>
       </Container>
     </section>
 

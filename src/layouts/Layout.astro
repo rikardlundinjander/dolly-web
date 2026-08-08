@@ -146,9 +146,12 @@ const jsonLd = {
   // Glare + tilt: följ pekaren över .glare/.tilt-ytor och uppdatera
   // CSS-vars (--glare-x/y, --tilt-x/y). Effekterna ligger i global.css.
   const MAX_TILT = 2; // grader åt varje håll
+  const MAX_PULL = 6; // px som ett magnetiskt element dras mot pekaren
   const tiltReduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   document
-    .querySelectorAll<HTMLElement>(".glare, .tilt, .holo, .border-glare")
+    .querySelectorAll<HTMLElement>(
+      ".glare, .tilt, .holo, .border-glare, .magnetic",
+    )
     .forEach((el) => {
       el.addEventListener("pointermove", (e) => {
         const r = el.getBoundingClientRect();
@@ -167,6 +170,16 @@ const jsonLd = {
           ((x / r.width) * 100).toFixed(1) + "%",
         );
       }
+      if (el.classList.contains("magnetic") && !tiltReduce) {
+        el.style.setProperty(
+          "--mag-x",
+          (x / r.width - 0.5) * 2 * MAX_PULL + "px",
+        );
+        el.style.setProperty(
+          "--mag-y",
+          (y / r.height - 0.5) * 2 * MAX_PULL + "px",
+        );
+      }
       if (el.classList.contains("tilt") && !tiltReduce) {
         const nx = x / r.width - 0.5;
         const ny = y / r.height - 0.5;
@@ -177,6 +190,8 @@ const jsonLd = {
     el.addEventListener("pointerleave", () => {
       el.style.setProperty("--tilt-x", "0deg");
       el.style.setProperty("--tilt-y", "0deg");
+      el.style.setProperty("--mag-x", "0px");
+      el.style.setProperty("--mag-y", "0px");
     });
   });
 </script>

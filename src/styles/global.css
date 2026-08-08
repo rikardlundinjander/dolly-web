@@ -198,6 +198,9 @@
   --inverse-text-muted: var(--color-neutral-500);
   --inverse-text-subtle: var(--color-neutral-400);
 
+  /* Ambient ljuskälla bakom hero-videon */
+  --hero-glow: rgba(255, 255, 255, 0.13);
+
   /* Ljusgloria bakom ljusa knappar på mörk botten */
   --btn-glow: rgba(255, 255, 255, 0.45);
   --btn-glow-wide: rgba(255, 255, 255, 0.22);
@@ -319,6 +322,21 @@ body {
   }
   .press:active {
     transform: scale(0.97);
+  }
+}
+
+/* Magnetisk: elementet dras några pixlar mot pekaren och glider tillbaka
+   när den lämnar. Positionen sätts av samma pekarscript som glare/tilt.
+   Kombineras med .press — därav den egna :active-regeln, annars skulle
+   press-skalan slå ut förflyttningen. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .magnetic {
+    transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0);
+    transition: transform var(--duration-base) var(--ease-out-quart);
+    will-change: transform;
+  }
+  .press.magnetic:active {
+    transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0) scale(0.97);
   }
 }
 
@@ -456,5 +474,36 @@ body {
       rotateY(var(--tilt-y, 0deg));
     transition: transform var(--duration-base) var(--ease-out-quart);
     will-change: transform;
+  }
+}
+
+/* Ambient ljus bakom hero-videon: ger djup åt den svarta ytan. Andas
+   långsamt via opacity + scale; ingen blur-filter, eftersom en radial
+   gradient redan är mjuk och filter kostar mer att animera. */
+.hero-glow {
+  position: absolute;
+  inset: -18% -12% -12%;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(
+    50% 50% at 50% 50%,
+    var(--hero-glow) 0%,
+    transparent 70%
+  );
+}
+@media (prefers-reduced-motion: no-preference) {
+  .hero-glow {
+    animation: hero-breathe 9s ease-in-out infinite;
+  }
+  @keyframes hero-breathe {
+    0%,
+    100% {
+      opacity: 0.65;
+      transform: scale(1);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.05);
+    }
   }
 }
