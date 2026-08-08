@@ -3,7 +3,7 @@ import Container from "./Container.astro";
 import { getDownloadUrl } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo + ankarmeny vänster, knappar höger.
-// Vid scroll krymper den till en glasorb med bara logo och Buy now — se
+// Vid scroll krymper den till en orb med bara logo och Buy now — se
 // [data-orb] längre ned. Buy now ankrar ner till pricing-sektionen.
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const menu = [
@@ -24,7 +24,7 @@ const menu = [
            över sidan ätit klick och hover på innehållet under. -->
       <div class="nav-bar pointer-events-none relative flex h-full items-center">
         <div
-          class="nav-glass pointer-events-none absolute inset-0 rounded-pill"
+          class="nav-orb-bg pointer-events-none absolute inset-0 rounded-pill"
           aria-hidden="true"
         >
         </div>
@@ -85,13 +85,13 @@ const menu = [
   /* Iscensättning i tre steg i stället för allt på en gång:
        1. det som inte följer med tonas bort
        2. logo och knapp glider ihop mot mitten
-       3. glaset lägger sig på
+       3. plattan tonas in
      Bakvägen spelas sekvensen baklänges. Därför står transition i BÅDA
      tillstånden — den som gäller är alltid destinationens. */
   :root {
     --nav-t-fade: 140ms; /* steg 1 */
     --nav-t-morph: 380ms; /* steg 2 */
-    --nav-t-glass: 280ms; /* steg 3 */
+    --nav-t-orb: 280ms; /* steg 3 */
   }
 
   /* Smoothstep-profil (9 steg) istället för linjär tvåstegsfade —
@@ -111,10 +111,10 @@ const menu = [
     );
     /* tillbaka: sist av allt */
     transition: opacity var(--nav-t-fade) linear
-      calc(var(--nav-t-glass) + var(--nav-t-morph));
+      calc(var(--nav-t-orb) + var(--nav-t-morph));
   }
 
-  /* Baren går från full bredd till orbens bredd via max-width, och glaset
+  /* Baren går från full bredd till orbens bredd via max-width, och plattan
      (inset-0) hugger den utan egen positionering. Orbens bredd beror på
      logotypens och knappens mått, så scriptet mäter den en gång och skriver
      den till --orb-w. fit-content duger inte: en krympbar spacer räknas inte
@@ -126,10 +126,10 @@ const menu = [
     padding: 0;
     transform: translate3d(0, 0, 0);
     transition:
-      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
-      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
-      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass),
-      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-glass);
+      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
+      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
+      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
+      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb);
   }
 
   /* Spacern växer i båda lägena och trycker alltid knappen mot högerkanten.
@@ -147,74 +147,28 @@ const menu = [
     grid-template-columns: 1fr;
     transition:
       grid-template-columns var(--nav-t-morph) var(--ease-out-quart)
-        var(--nav-t-glass),
+        var(--nav-t-orb),
       opacity var(--nav-t-fade) linear
-        calc(var(--nav-t-glass) + var(--nav-t-morph));
+        calc(var(--nav-t-orb) + var(--nav-t-morph));
   }
   .nav-collapse > * {
     min-width: 0;
     overflow: hidden;
     transition: padding var(--nav-t-morph) var(--ease-out-quart)
-      var(--nav-t-glass);
+      var(--nav-t-orb);
   }
 
-  /* Glaset. Eget lager bakom innehållet som bara tonas in — backdrop-filtret
-     självt ligger still, det är dyrt att interpolera och hackar i Safari.
-     Tre lager: grundbrytning (blur/saturate + ljus uppifrån), specular
-     highlight (::before) och en brytningskant (::after) där bakgrunden är
-     extra suddad och ljusare, vilket är det som läser som glastjocklek. */
-  .nav-glass {
-    background:
-      linear-gradient(
-        to bottom,
-        rgba(255, 255, 255, 0.1) 0%,
-        rgba(255, 255, 255, 0.03) 45%,
-        rgba(255, 255, 255, 0) 62%,
-        rgba(255, 255, 255, 0.05) 100%
-      ),
-      color-mix(in srgb, var(--bg) 38%, transparent);
-    -webkit-backdrop-filter: blur(20px) saturate(190%) brightness(1.08);
-    backdrop-filter: blur(20px) saturate(190%) brightness(1.08);
-    box-shadow:
-      inset 0 1px 0.5px rgba(255, 255, 255, 0.4),
-      inset 0 -1px 0.5px rgba(255, 255, 255, 0.12),
-      inset 0 0 0 1px rgba(255, 255, 255, 0.05),
-      0 1px 2px rgba(0, 0, 0, 0.35),
-      0 18px 40px -14px rgba(0, 0, 0, 0.65);
+  /* Orbens platta: semitransparent bakgrund + blur, inget mer. Eget lager
+     bakom innehållet som bara tonas in — backdrop-filtret självt ligger
+     still, det är dyrt att interpolera och hackar i Safari. */
+  .nav-orb-bg {
+    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    -webkit-backdrop-filter: blur(20px);
+    backdrop-filter: blur(20px);
     opacity: 0;
     /* tillbaka: först av allt */
-    transition: opacity var(--nav-t-glass) var(--ease-out-quart) 0ms;
+    transition: opacity var(--nav-t-orb) var(--ease-out-quart) 0ms;
     will-change: opacity;
-  }
-  .nav-glass::before,
-  .nav-glass::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    pointer-events: none;
-  }
-  /* Specular: ljuset kommer snett uppifrån vänster */
-  .nav-glass::before {
-    background: radial-gradient(
-      120% 100% at 18% -25%,
-      rgba(255, 255, 255, 0.22),
-      rgba(255, 255, 255, 0) 55%
-    );
-  }
-  /* Brytningskant: bara ringen syns, via två masker som tar ut varandra */
-  .nav-glass::after {
-    padding: 7px;
-    -webkit-backdrop-filter: blur(6px) brightness(1.35) saturate(1.5);
-    backdrop-filter: blur(6px) brightness(1.35) saturate(1.5);
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
   }
 
   /* --- Orb-läget --------------------------------------------------- */
@@ -240,7 +194,7 @@ const menu = [
   [data-orb] .nav-spacer {
     min-width: var(--space-xl);
   }
-  /* Luft innanför glaskanten, och orben lägger sig strax under skärmkanten
+  /* Luft innanför orbens kant, och den lägger sig strax under skärmkanten
      i stället för att sitta klistrad mot den. */
   [data-orb] .nav-bar {
     max-width: var(--orb-w, 18rem);
@@ -253,11 +207,11 @@ const menu = [
       padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
       transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade);
   }
-  [data-orb] .nav-glass {
+  [data-orb] .nav-orb-bg {
     opacity: 1;
     pointer-events: auto;
     /* steg 3, med lite överlapp mot morfen så det inte känns hackigt */
-    transition: opacity var(--nav-t-glass) var(--ease-out-quart)
+    transition: opacity var(--nav-t-orb) var(--ease-out-quart)
       calc(var(--nav-t-fade) + var(--nav-t-morph) - 60ms);
   }
 
@@ -271,19 +225,19 @@ const menu = [
     .nav-bar,
     .nav-collapse,
     .nav-collapse > *,
-    .nav-glass,
+    .nav-orb-bg,
     [data-orb] .nav-fade,
     [data-orb] .nav-bar,
     [data-orb] .nav-collapse,
     [data-orb] .nav-collapse > *,
-    [data-orb] .nav-glass {
+    [data-orb] .nav-orb-bg {
       transition: none;
     }
   }
 </style>
 
 <script>
-  // Full nav nära toppen, glasorb när man har scrollat förbi. Positionsstyrt,
+  // Full nav nära toppen, orb när man har scrollat förbi. Positionsstyrt,
   // inte riktningsstyrt: menyn ska inte försvinna, den ska byta skepnad.
   // Orben är desktop-only — på mobil finns varken meny eller Download att
   // vika ihop, så raden ser likadan ut i båda lägena.
