@@ -3,8 +3,8 @@ import Container from "./Container.astro";
 import { getDownloadUrl } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo + ankarmeny vänster, knappar höger.
-// Vid scroll krymper den till en orb med bara logo och Buy now — se
-// [data-orb] längre ned. Buy now ankrar ner till pricing-sektionen.
+// Vid scroll åker hela raden upp ur bild och en kompakt orb med logo och
+// Buy now åker in ovanifrån. Buy now ankrar ner till pricing-sektionen.
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const menu = [
   { label: "Features", href: "/#features" },
@@ -15,33 +15,24 @@ const menu = [
 
 <header class="pointer-events-none fixed inset-x-0 top-0 z-50">
   <div data-nav class="relative h-32">
-    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård
-         kant. Tonas bort i orb-läget så orben ligger fritt över innehållet. -->
-    <div aria-hidden="true" class="nav-fade absolute inset-0"></div>
-    <Container class="relative h-16">
-      <!-- Raden är bredare än orben men aldrig bredare än sidan. Klickytorna
-           ligger på barnen, inte på raden: annars hade en osynlig remsa tvärs
-           över sidan ätit klick och hover på innehållet under. -->
-      <div class="nav-bar pointer-events-none relative flex h-full items-center">
-        <div
-          class="nav-orb-bg pointer-events-none absolute inset-0 rounded-pill"
-          aria-hidden="true"
-        >
-        </div>
-
-        <a
-          href="/"
-          data-nav-logo
-          class="pointer-events-auto relative flex shrink-0 items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
-          aria-label="Dolly"
-        >
-          <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
-        </a>
-
-        <div class="nav-collapse hidden shrink-0 sm:grid">
-          <nav
-            class="pointer-events-auto flex items-center gap-[var(--space-md)] pl-[var(--space-xl)]"
+    <!-- Full nav. Fade-gradienten ligger inuti wrappern, så en enda transform
+         tar med sig både raden och faden ur bild. -->
+    <div data-nav-full class="absolute inset-0">
+      <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan
+           hård kant. -->
+      <div aria-hidden="true" class="nav-fade absolute inset-0"></div>
+      <Container
+        class="pointer-events-auto relative flex h-16 items-center justify-between"
+      >
+        <div class="flex items-center gap-[var(--space-xl)]">
+          <a
+            href="/"
+            class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+            aria-label="Dolly"
           >
+            <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
+          </a>
+          <nav class="hidden items-center gap-[var(--space-md)] sm:flex">
             {
               menu.map((item) => (
                 <a
@@ -54,49 +45,68 @@ const menu = [
             }
           </nav>
         </div>
-
-        <div class="nav-spacer"></div>
-
-        <div class="nav-collapse hidden shrink-0 sm:grid">
-          <div class="pr-2">
-            <a
-              href={DMG}
-              data-download
-              class="press pointer-events-auto block rounded-pill bg-btn-secondary px-4 py-2 text-sm whitespace-nowrap text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover"
-            >
-              Download for Mac
-            </a>
-          </div>
+        <div class="flex items-center gap-2">
+          <a
+            href={DMG}
+            data-download
+            class="press hidden rounded-pill bg-btn-secondary px-4 py-2 text-sm text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover sm:block"
+          >
+            Download for Mac
+          </a>
+          <a
+            href="/#pricing"
+            class="press rounded-pill bg-btn-primary px-4 py-2 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+          >
+            Buy now
+          </a>
         </div>
+      </Container>
+    </div>
 
+    <!-- Orben. Egen rad ovanpå, centrerad. Wrappern sköter centreringen så
+         orbens transform bara behöver hantera in- och utåkningen. -->
+    <div
+      class="pointer-events-none absolute inset-x-0 top-2 flex justify-center"
+    >
+      <div
+        class="nav-orb pointer-events-auto flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5"
+      >
+        <a
+          href="/"
+          class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+          aria-label="Dolly"
+        >
+          <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
+        </a>
         <a
           href="/#pricing"
-          data-nav-buy
-          class="press pointer-events-auto relative shrink-0 rounded-pill bg-btn-primary px-4 py-2 text-sm whitespace-nowrap text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+          class="press rounded-pill bg-btn-primary px-4 py-2 text-sm whitespace-nowrap text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
         >
           Buy now
         </a>
       </div>
-    </Container>
+    </div>
   </div>
 </header>
 
 <style>
-  /* Iscensättning i tre steg i stället för allt på en gång:
-       1. det som inte följer med tonas bort
-       2. logo och knapp glider ihop mot mitten
-       3. plattan tonas in
-     Bakvägen spelas sekvensen baklänges. Därför står transition i BÅDA
-     tillstånden — den som gäller är alltid destinationens. */
+  /* Sekvens: den fulla raden åker upp ur bild, sedan kommer orben in
+     ovanifrån med lite överlapp så det inte uppstår en död lucka.
+     Bakvägen spelas samma sekvens baklänges — därför står transition i
+     BÅDA tillstånden, den som gäller är alltid destinationens.
+
+     visibility växlas i samma veva som rörelsen, så bara det som syns går
+     att tabba till eller läsa upp. Annars ligger båda uppsättningarna
+     länkar kvar för tangentbord och skärmläsare. */
   :root {
-    --nav-t-fade: 140ms; /* steg 1 */
-    --nav-t-morph: 380ms; /* steg 2 */
-    --nav-t-orb: 280ms; /* steg 3 */
+    --nav-t-out: 300ms; /* det som lämnar */
+    --nav-t-in: 340ms; /* det som kommer */
+    --nav-t-overlap: 180ms; /* när inflytten börjar */
   }
 
-  /* Smoothstep-profil (9 steg) istället för linjär tvåstegsfade —
-     samma höjd, men utfasningen accelererar/bromsar mjukt. */
   .nav-fade {
+    /* Smoothstep-profil (9 steg) istället för linjär tvåstegsfade —
+       samma höjd, men utfasningen accelererar/bromsar mjukt. */
     background: linear-gradient(
       to bottom,
       var(--bg) 0%,
@@ -109,128 +119,56 @@ const menu = [
       color-mix(in srgb, var(--bg) 4%, transparent) 92%,
       transparent 100%
     );
-    /* tillbaka: sist av allt */
-    transition: opacity var(--nav-t-fade) linear
-      calc(var(--nav-t-orb) + var(--nav-t-morph));
   }
 
-  /* Baren går från full bredd till orbens bredd via max-width, och plattan
-     (inset-0) hugger den utan egen positionering. Orbens bredd beror på
-     logotypens och knappens mått, så scriptet mäter den en gång och skriver
-     den till --orb-w. fit-content duger inte: en krympbar spacer räknas inte
-     in i max-content, så baren hade kollapsat runt innehållet i vidläget. */
-  .nav-bar {
-    width: 100%;
-    max-width: 100%;
-    margin-inline: auto;
-    padding: 0;
+  /* Full nav — kommer in sist på vägen tillbaka */
+  [data-nav-full] {
     transform: translate3d(0, 0, 0);
+    visibility: visible;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
     transition:
-      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
-      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
-      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb),
-      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-orb);
+      transform var(--nav-t-in) var(--ease-out-quart) var(--nav-t-overlap),
+      visibility 0s linear var(--nav-t-overlap);
   }
-
-  /* Spacern växer i båda lägena och trycker alltid knappen mot högerkanten.
-     Luckan i orb-läget sätts med min-width, inte med en fast flex-basis:
-     med fast basis stod knappen kvar intill logotypen med tom yta efter sig
-     under hela morfen, eftersom inget annat kunde fylla ut baren. */
-  .nav-spacer {
-    flex: 1 1 0;
-    min-width: 0;
-  }
-
-  /* 1fr → 0fr viker ihop bredden utan att vi behöver mäta något.
-     Barnet klipper sitt innehåll så texten inte radbryts på vägen ut. */
-  .nav-collapse {
-    grid-template-columns: 1fr;
+  [data-orb] [data-nav-full] {
+    transform: translate3d(0, -100%, 0);
+    visibility: hidden;
     transition:
-      grid-template-columns var(--nav-t-morph) var(--ease-out-quart)
-        var(--nav-t-orb),
-      opacity var(--nav-t-fade) linear
-        calc(var(--nav-t-orb) + var(--nav-t-morph));
-  }
-  .nav-collapse > * {
-    min-width: 0;
-    overflow: hidden;
-    transition: padding var(--nav-t-morph) var(--ease-out-quart)
-      var(--nav-t-orb);
+      transform var(--nav-t-out) var(--ease-out-quart) 0ms,
+      visibility 0s linear var(--nav-t-out);
   }
 
-  /* Orbens platta: semitransparent bakgrund + blur, inget mer. Eget lager
-     bakom innehållet som bara tonas in — backdrop-filtret självt ligger
-     still, det är dyrt att interpolera och hackar i Safari. */
-  .nav-orb-bg {
+  /* Orben: semitransparent platta med blur, inget glas */
+  .nav-orb {
     background: color-mix(in srgb, var(--bg) 55%, transparent);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
-    opacity: 0;
-    /* tillbaka: först av allt */
-    transition: opacity var(--nav-t-orb) var(--ease-out-quart) 0ms;
-    will-change: opacity;
-  }
-
-  /* --- Orb-läget --------------------------------------------------- */
-  [data-orb] .nav-fade {
-    opacity: 0;
-    transition: opacity var(--nav-t-fade) linear 0ms; /* steg 1 */
-  }
-  [data-orb] .nav-collapse {
-    grid-template-columns: 0fr;
-    opacity: 0;
+    /* -180% av 52px lyfter den väl ovanför skärmkanten */
+    transform: translate3d(0, -180%, 0);
+    visibility: hidden;
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    /* går ut först på vägen tillbaka */
     transition:
-      grid-template-columns var(--nav-t-morph) var(--ease-out-quart)
-        var(--nav-t-fade),
-      opacity var(--nav-t-fade) linear 0ms;
+      transform var(--nav-t-out) var(--ease-out-quart) 0ms,
+      visibility 0s linear var(--nav-t-out);
   }
-  /* Med border-box sätter padding en golvbredd som överlever 0fr-kolumnen,
-     så luckan blir bredare än spacern. Nolla den när innehållet viks ihop. */
-  [data-orb] .nav-collapse > * {
-    padding: 0;
-    transition: padding var(--nav-t-morph) var(--ease-out-quart)
-      var(--nav-t-fade);
-  }
-  [data-orb] .nav-spacer {
-    min-width: var(--space-xl);
-  }
-  /* Luft innanför orbens kant, och den lägger sig strax under skärmkanten
-     i stället för att sitta klistrad mot den. */
-  [data-orb] .nav-bar {
-    max-width: var(--orb-w, 18rem);
-    height: 3.5rem;
-    padding-inline: 1.25rem 0.5rem;
-    transform: translate3d(0, 8px, 0);
+  [data-orb] .nav-orb {
+    transform: translate3d(0, 0, 0);
+    visibility: visible;
     transition:
-      max-width var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
-      height var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
-      padding var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade),
-      transform var(--nav-t-morph) var(--ease-out-quart) var(--nav-t-fade);
-  }
-  [data-orb] .nav-orb-bg {
-    opacity: 1;
-    pointer-events: auto;
-    /* steg 3, med lite överlapp mot morfen så det inte känns hackigt */
-    transition: opacity var(--nav-t-orb) var(--ease-out-quart)
-      calc(var(--nav-t-fade) + var(--nav-t-morph) - 60ms);
-  }
-
-  /* Mätläge: sluttillståndet utan mellanliggande animering */
-  [data-measuring] * {
-    transition: none !important;
+      transform var(--nav-t-in) var(--ease-out-quart) var(--nav-t-overlap),
+      visibility 0s linear var(--nav-t-overlap);
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .nav-fade,
-    .nav-bar,
-    .nav-collapse,
-    .nav-collapse > *,
-    .nav-orb-bg,
-    [data-orb] .nav-fade,
-    [data-orb] .nav-bar,
-    [data-orb] .nav-collapse,
-    [data-orb] .nav-collapse > *,
-    [data-orb] .nav-orb-bg {
+    [data-nav-full],
+    [data-orb] [data-nav-full],
+    .nav-orb,
+    [data-orb] .nav-orb {
       transition: none;
     }
   }
@@ -238,35 +176,14 @@ const menu = [
 
 <script>
   // Full nav nära toppen, orb när man har scrollat förbi. Positionsstyrt,
-  // inte riktningsstyrt: menyn ska inte försvinna, den ska byta skepnad.
-  // Orben är desktop-only — på mobil finns varken meny eller Download att
-  // vika ihop, så raden ser likadan ut i båda lägena.
+  // inte riktningsstyrt: orben ska vara ett stabilt läge, inte något som
+  // blinkar fram och tillbaka när man byter scrollriktning.
+  // Desktop-only — på mobil finns ingen meny att byta bort.
   const nav = document.querySelector<HTMLElement>("[data-nav]");
-  const bar = document.querySelector<HTMLElement>(".nav-bar");
   const desktop = matchMedia("(min-width: 768px)");
-  if (nav && bar) {
+  if (nav) {
     const TOP = 80; // px från sidtoppen där hela navet visas
     let ticking = false;
-
-    // Mät orbens bredd genom att kort slå på orb-läget med max-content och
-    // transitions avstängda. CSS:en förblir sanningskällan för måtten -
-    // alternativet vore att spegla padding och lucka som konstanter här.
-    let measuring = false;
-    const measure = () => {
-      if (measuring) return;
-      measuring = true;
-      const wasOrb = nav.hasAttribute("data-orb");
-      nav.setAttribute("data-measuring", "");
-      nav.setAttribute("data-orb", "");
-      bar.style.maxWidth = "max-content";
-      const w = bar.getBoundingClientRect().width;
-      bar.style.maxWidth = "";
-      if (!wasOrb) nav.removeAttribute("data-orb");
-      nav.offsetWidth; // tvinga omräkning innan transitions slås på igen
-      nav.removeAttribute("data-measuring");
-      nav.style.setProperty("--orb-w", Math.ceil(w) + "px");
-      measuring = false;
-    };
 
     const update = () => {
       nav.toggleAttribute("data-orb", desktop.matches && scrollY > TOP);
@@ -274,15 +191,6 @@ const menu = [
     };
 
     desktop.addEventListener("change", update);
-    addEventListener("resize", measure, { passive: true });
-    // Logotypens svg och webfonten landar efter första målningen, och innan
-    // dess mäter vi en orb som är för smal. Observera de två elementen som
-    // faktiskt bestämmer bredden i stället för att gissa när de är klara.
-    const ro = new ResizeObserver(measure);
-    document
-      .querySelectorAll("[data-nav-logo], [data-nav-buy]")
-      .forEach((el) => ro.observe(el));
-    measure();
     addEventListener(
       "scroll",
       () => {
