@@ -3,7 +3,8 @@ import Container from "./Container.astro";
 import { getDownloadUrl } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo + ankarmeny vänster, knappar höger.
-// Buy now ankrar ner till pricing-sektionen (köpet sker via korten där).
+// Vid scroll krymper den till en glasorb med bara logo och Buy now — se
+// [data-orb] längre ned. Buy now ankrar ner till pricing-sektionen.
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const menu = [
   { label: "Features", href: "/#features" },
@@ -14,45 +15,67 @@ const menu = [
 
 <header class="pointer-events-none fixed inset-x-0 top-0 z-50">
   <div data-nav class="relative h-32">
-    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård kant.
-         Fyller wrappern så att en enda transform gömmer nav + fade. -->
+    <!-- Fade-gradient: bg → transparent med easing-steg, mjukt tak utan hård
+         kant. Tonas bort i orb-läget så orben ligger fritt över innehållet. -->
     <div aria-hidden="true" class="nav-fade absolute inset-0"></div>
-    <Container class="pointer-events-auto relative flex h-16 items-center justify-between">
-    <div class="flex items-center gap-[var(--space-xl)]">
-      <a
-        href="/"
-        class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
-        aria-label="Dolly"
-      >
-        <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
-      </a>
-      <nav class="hidden items-center gap-[var(--space-md)] sm:flex">
-        {
-          menu.map((item) => (
+    <Container class="relative h-16">
+      <!-- Raden är bredare än orben men aldrig bredare än sidan. Klickytorna
+           ligger på barnen, inte på raden: annars hade en osynlig remsa tvärs
+           över sidan ätit klick och hover på innehållet under. -->
+      <div class="nav-bar pointer-events-none relative flex h-full items-center">
+        <div
+          class="nav-glass pointer-events-none absolute inset-0 rounded-pill"
+          aria-hidden="true"
+        >
+        </div>
+
+        <a
+          href="/"
+          data-nav-logo
+          class="pointer-events-auto relative flex shrink-0 items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+          aria-label="Dolly"
+        >
+          <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
+        </a>
+
+        <div class="nav-collapse hidden shrink-0 sm:grid">
+          <nav
+            class="pointer-events-auto flex items-center gap-[var(--space-md)] pl-[var(--space-xl)]"
+          >
+            {
+              menu.map((item) => (
+                <a
+                  href={item.href}
+                  class="text-base text-text transition-colors duration-[var(--duration-base)] hover:text-text-muted"
+                >
+                  {item.label}
+                </a>
+              ))
+            }
+          </nav>
+        </div>
+
+        <div class="nav-spacer"></div>
+
+        <div class="nav-collapse hidden shrink-0 sm:grid">
+          <div class="pr-2">
             <a
-              href={item.href}
-              class="text-base text-text transition-colors duration-[var(--duration-base)] hover:text-text-muted"
+              href={DMG}
+              data-download
+              class="press pointer-events-auto block rounded-pill bg-btn-secondary px-4 py-2 text-sm whitespace-nowrap text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover"
             >
-              {item.label}
+              Download for Mac
             </a>
-          ))
-        }
-      </nav>
-    </div>
-    <div class="flex items-center gap-2">
-      <a
-        href={DMG}
-        data-download
-        class="press hidden rounded-pill bg-btn-secondary px-4 py-2 text-sm text-text backdrop-blur-md transition-colors hover:bg-btn-secondary-hover sm:block"
-      >
-        Download for Mac
-      </a>
-      <a
-        href="/#pricing"
-        class="press rounded-pill bg-btn-primary px-4 py-2 text-sm text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-      >
-        Buy now
-      </a>
+          </div>
+        </div>
+
+        <a
+          href="/#pricing"
+          data-nav-buy
+          class="press pointer-events-auto relative shrink-0 rounded-pill bg-btn-primary px-4 py-2 text-sm whitespace-nowrap text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+        >
+          Buy now
+        </a>
       </div>
     </Container>
   </div>
@@ -74,62 +97,153 @@ const menu = [
       color-mix(in srgb, var(--bg) 4%, transparent) 92%,
       transparent 100%
     );
+    transition: opacity var(--duration-slow) var(--ease-out-quart);
   }
 
-  /* Göms vid scroll ner, glider in vid scroll upp. Wrappern är lika hög som
-     faden, så EN transform räcker: ingen opacity-animering och inget extra
-     lager att komponera per frame (det tappade frames i Safari). */
-  [data-nav] {
+  /* Baren går från full bredd till orbens bredd via max-width, och glaset
+     (inset-0) hugger den utan egen positionering. Orbens bredd kan inte
+     uttryckas i CSS — den beror på logotypens och knappens storlek — så
+     scriptet mäter den en gång och skriver den till --orb-w. fit-content
+     duger inte: en krympbar spacer räknas inte in i max-content, så baren
+     hade kollapsat runt innehållet redan i vidläget. */
+  .nav-bar {
+    width: 100%;
+    max-width: 100%;
+    margin-inline: auto;
+    padding: 0;
     transform: translate3d(0, 0, 0);
-    will-change: transform;
-    backface-visibility: hidden;
-    -webkit-backface-visibility: hidden;
-    transition: transform var(--duration-base) var(--ease-out-quart);
+    transition:
+      max-width var(--duration-slow) var(--ease-out-quart),
+      height var(--duration-slow) var(--ease-out-quart),
+      padding var(--duration-slow) var(--ease-out-quart),
+      transform var(--duration-slow) var(--ease-out-quart);
   }
-  [data-nav][data-hidden] {
-    transform: translate3d(0, -100%, 0);
+  .nav-spacer {
+    flex: 1 1 0;
   }
+  /* Mätläge: sluttillståndet utan mellanliggande animering */
+  [data-measuring] * {
+    transition: none !important;
+  }
+
+  /* 1fr → 0fr viker ihop bredden utan att vi behöver mäta något.
+     Barnet klipper sitt innehåll så texten inte radbryts på vägen ut. */
+  .nav-collapse {
+    grid-template-columns: 1fr;
+    transition:
+      grid-template-columns var(--duration-slow) var(--ease-out-quart),
+      opacity var(--duration-base) var(--ease-out-quart);
+  }
+  .nav-collapse > * {
+    min-width: 0;
+    overflow: hidden;
+    transition: padding var(--duration-slow) var(--ease-out-quart);
+  }
+  /* Med border-box sätter padding en golvbredd som överlever 0fr-kolumnen,
+     så luckan blir bredare än spacern. Nolla den när innehållet viks ihop. */
+  [data-orb] .nav-collapse > * {
+    padding: 0;
+  }
+
+  /* Glaset. Eget lager bakom innehållet som tonas in — då animeras bara
+     opacity, inte backdrop-filtret självt (det är dyrt att interpolera och
+     hackar i Safari). */
+  .nav-glass {
+    background: color-mix(in srgb, var(--bg) 45%, transparent);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
+    backdrop-filter: blur(24px) saturate(180%);
+    box-shadow:
+      /* specular topp + rim: kanten fångar ljus som en glaskant */
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.18),
+      inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+      inset 0 -10px 24px -14px rgba(255, 255, 255, 0.14),
+      0 12px 32px -8px rgba(0, 0, 0, 0.5);
+    opacity: 0;
+    transition: opacity var(--duration-slow) var(--ease-out-quart);
+    will-change: opacity;
+  }
+
+  [data-orb] .nav-fade {
+    opacity: 0;
+  }
+  [data-orb] .nav-spacer {
+    flex: 0 0 var(--space-xl);
+  }
+  [data-orb] .nav-collapse {
+    grid-template-columns: 0fr;
+    opacity: 0;
+  }
+  [data-orb] .nav-glass {
+    opacity: 1;
+    pointer-events: auto;
+  }
+  /* Luft innanför glaskanten, och orben lägger sig strax under skärmkanten
+     i stället för att sitta klistrad mot den. */
+  [data-orb] .nav-bar {
+    max-width: var(--orb-w, 18rem);
+    height: 3.5rem;
+    padding-inline: 1.25rem 0.5rem;
+    transform: translate3d(0, 8px, 0);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    [data-nav] {
+    .nav-fade,
+    .nav-bar,
+    .nav-spacer,
+    .nav-collapse,
+    .nav-glass {
       transition: none;
     }
   }
 </style>
 
 <script>
-  // Auto-hide: göm navet när man scrollar ner, visa vid scroll upp.
-  // Alltid synligt nära toppen. Tröskel mot jitter, rAF-throttlad.
+  // Full nav nära toppen, glasorb när man har scrollat förbi. Positionsstyrt,
+  // inte riktningsstyrt: menyn ska inte försvinna, den ska byta skepnad.
+  // Orben är desktop-only — på mobil finns varken meny eller Download att
+  // vika ihop, så raden ser likadan ut i båda lägena.
   const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const bar = document.querySelector<HTMLElement>(".nav-bar");
   const desktop = matchMedia("(min-width: 768px)");
-  if (nav) {
-    const TOP = 80; // px från sidtoppen där navet alltid visas
-    const DELTA = 12; // minsta rörelse som räknas som riktningsbyte
-    let last = window.scrollY;
+  if (nav && bar) {
+    const TOP = 80; // px från sidtoppen där hela navet visas
     let ticking = false;
 
+    // Mät orbens bredd genom att kort slå på orb-läget med max-content och
+    // transitions avstängda. CSS:en förblir sanningskällan för måtten -
+    // alternativet vore att spegla padding och lucka som konstanter här.
+    let measuring = false;
+    const measure = () => {
+      if (measuring) return;
+      measuring = true;
+      const wasOrb = nav.hasAttribute("data-orb");
+      nav.setAttribute("data-measuring", "");
+      nav.setAttribute("data-orb", "");
+      bar.style.maxWidth = "max-content";
+      const w = bar.getBoundingClientRect().width;
+      bar.style.maxWidth = "";
+      if (!wasOrb) nav.removeAttribute("data-orb");
+      nav.offsetWidth; // tvinga omräkning innan transitions slås på igen
+      nav.removeAttribute("data-measuring");
+      nav.style.setProperty("--orb-w", Math.ceil(w) + "px");
+      measuring = false;
+    };
+
     const update = () => {
-      // Navet ligger kvar på mobil; auto-hide gäller bara desktop.
-      if (!desktop.matches) {
-        nav.removeAttribute("data-hidden");
-        ticking = false;
-        return;
-      }
-      const y = window.scrollY;
-      const diff = y - last;
-      if (y <= TOP) {
-        nav.removeAttribute("data-hidden");
-        last = y;
-      } else if (Math.abs(diff) > DELTA) {
-        nav.toggleAttribute("data-hidden", diff > 0);
-        last = y;
-      }
+      nav.toggleAttribute("data-orb", desktop.matches && scrollY > TOP);
       ticking = false;
     };
 
-    desktop.addEventListener("change", () => {
-      if (!desktop.matches) nav.removeAttribute("data-hidden");
-    });
-
+    desktop.addEventListener("change", update);
+    addEventListener("resize", measure, { passive: true });
+    // Logotypens svg och webfonten landar efter första målningen, och innan
+    // dess mäter vi en orb som är för smal. Observera de två elementen som
+    // faktiskt bestämmer bredden i stället för att gissa när de är klara.
+    const ro = new ResizeObserver(measure);
+    document
+      .querySelectorAll("[data-nav-logo], [data-nav-buy]")
+      .forEach((el) => ro.observe(el));
+    measure();
     addEventListener(
       "scroll",
       () => {
@@ -140,5 +254,6 @@ const menu = [
       },
       { passive: true },
     );
+    update();
   }
 </script>
