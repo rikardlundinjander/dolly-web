@@ -112,7 +112,14 @@ const editing = [
   @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .hero-video {
-        animation: hero-scale-in linear both;
+        /* Longhand, inte kortformen: minifieraren slår annars ihop till
+           'animation: … view()', och animation-timeline ingår inte i
+           animation-shorthand. Då tappas tidslinjen i prod-bygget medan
+           dev (osminifierat) ser rätt ut. */
+        animation-name: hero-scale-in;
+        animation-duration: 1ms; /* ignoreras av scroll-tidslinjen */
+        animation-timing-function: linear;
+        animation-fill-mode: both;
         animation-timeline: view();
         animation-range: entry 15% entry 95%;
         transform-origin: center center;
