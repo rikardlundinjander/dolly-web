@@ -198,6 +198,10 @@
   --inverse-text-muted: var(--color-neutral-500);
   --inverse-text-subtle: var(--color-neutral-400);
 
+  /* Ljusgloria bakom ljusa knappar på mörk botten */
+  --btn-glow: rgba(255, 255, 255, 0.45);
+  --btn-glow-wide: rgba(255, 255, 255, 0.22);
+
   /* Knapp på invers (ljus) yta = mörk fyllning */
   --btn-inverse-bg: var(--color-neutral-1000);
   --btn-inverse-bg-hover: var(--color-neutral-800);
@@ -315,6 +319,23 @@ body {
   }
   .press:active {
     transform: scale(0.97);
+  }
+}
+
+/* Glow: mjuk ljusgloria vid hover. För ljusa knappar mot mörk botten.
+   Två lager box-shadow (tät + vid) ger djup utan extra element, och
+   box-shadow är billigt för compositorn. */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+  .glow {
+    transition:
+      box-shadow var(--duration-slow) var(--ease-out-quart),
+      background-color var(--duration-base) var(--ease-out-quart),
+      transform var(--duration-fast) var(--ease-out-quart);
+  }
+  .glow:hover {
+    box-shadow:
+      0 0 20px -2px var(--btn-glow),
+      0 0 56px -8px var(--btn-glow-wide);
   }
 }
 
