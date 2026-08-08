@@ -35,7 +35,7 @@ const { title, body, items, id } = Astro.props;
            till en tom ruta och övergången blir mjuk. -->
       <div
         data-player
-        class="group relative hidden aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-xs bg-surface-media md:flex"
+        class="group relative hidden aspect-video w-full cursor-pointer items-center justify-center overflow-hidden rounded-md md:rounded-xl bg-surface-media md:flex"
       >
         <span data-player-label class="text-sm text-text-subtle"></span>
         <img
@@ -100,7 +100,7 @@ const { title, body, items, id } = Astro.props;
               <div
                 data-mobile-player
                 data-src={it.video ?? ""}
-                class="group relative mb-5 flex aspect-video w-full items-center justify-center overflow-hidden rounded-xs bg-surface-media md:hidden"
+                class="group relative mb-5 flex aspect-video w-full items-center justify-center overflow-hidden rounded-md md:rounded-xl bg-surface-media md:hidden"
               >
                 {it.video && (
                   <video
