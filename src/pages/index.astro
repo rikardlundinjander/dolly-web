@@ -59,7 +59,7 @@ const editing = [
 
         <!-- Hero-video -->
         <video
-          class="aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover mt-flow-xl"
+          class="hero-video aspect-video w-full rounded-md md:rounded-xl bg-surface object-cover mt-flow-xl"
           src="/videos/dolly-hero-2.mp4"
           autoplay
           muted
@@ -102,3 +102,30 @@ const editing = [
 
   <Footer />
 </Layout>
+
+<style>
+  /* Hero-videon skalar upp till sin slutstorlek när man scrollar.
+     Scroll-driven CSS-animation: körs på compositorn utan scroll-lyssnare,
+     till skillnad från en JS-variant. Endast desktop, och bara i browsers
+     som stöder animation-timeline — annars visas videon direkt i slutläget
+     (scale 1), vilket är exakt dagens utseende. */
+  @media (min-width: 768px) and (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .hero-video {
+        animation: hero-scale-in linear both;
+        animation-timeline: view();
+        animation-range: entry 15% entry 95%;
+        transform-origin: center center;
+        will-change: transform;
+      }
+      @keyframes hero-scale-in {
+        from {
+          transform: scale(0.9);
+        }
+        to {
+          transform: scale(1);
+        }
+      }
+    }
+  }
+</style>
