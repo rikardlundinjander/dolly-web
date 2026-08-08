@@ -483,6 +483,30 @@ body {
 /* Aura runt hero-videon. Ligger exakt på videons box och suddas ut, så
    ljuset läcker ut runt kanterna i stället för att gömma sig bakom den
    opaka videon (en radial gradient bakom videon syns inte alls). */
+  /* CTA-pilen: två identiska pilar staplade i cirkeln. Vid hover glider den
+     första ut åt höger och den andra in från vänster.
+     Övergången deklareras BARA i :hover-regeln — då snappar pilarna tillbaka
+     utan animering när pekaren lämnar, alltså ingen baklängesrörelse. Att
+     återställningen inte syns beror på att pilarna är identiska: pil två i
+     mitten ser exakt ut som pil ett i mitten. */
+  .cta-arrow {
+    grid-area: 1 / 1;
+  }
+  .cta-arrow:last-child {
+    transform: translateX(-200%);
+  }
+  @media (hover: hover) and (prefers-reduced-motion: no-preference) {
+    .cta:hover .cta-arrow {
+      transition: transform var(--duration-slow) var(--ease-out-quart);
+    }
+    .cta:hover .cta-arrow:first-child {
+      transform: translateX(200%);
+    }
+    .cta:hover .cta-arrow:last-child {
+      transform: translateX(0);
+    }
+  }
+
 .hero-glow {
   position: absolute;
   inset: 0;

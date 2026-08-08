@@ -1,6 +1,7 @@
 ---
 import Layout from "../layouts/Layout.astro";
 import Container from "../components/Container.astro";
+import Icon from "../components/Icon.astro";
 import Nav from "../components/Nav.astro";
 import Footer from "../components/Footer.astro";
 import Usps from "../components/Usps.astro";
@@ -52,9 +53,15 @@ const editing = [
         <a
           href={DMG}
           data-download
-          class="press magnetic mt-8 inline-block rounded-pill bg-btn-primary px-6 py-3 text-base text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+          class="cta press magnetic mt-8 inline-flex items-center gap-3 rounded-pill bg-btn-primary py-1.5 pr-1.5 pl-6 text-base text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
         >
           Start 7-day trial
+          <span
+            class="grid size-9 place-items-center overflow-hidden rounded-full bg-btn-primary-text text-btn-primary"
+          >
+            <Icon name="arrow_forward" class="cta-arrow size-[18px]" />
+            <Icon name="arrow_forward" class="cta-arrow size-[18px]" />
+          </span>
         </a>
 
         <!-- Hero-video med ambient ljus bakom -->
