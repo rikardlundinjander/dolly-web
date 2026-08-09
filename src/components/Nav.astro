@@ -3,8 +3,14 @@ import Container from "./Container.astro";
 import { getDownloadUrl } from "../lib/links";
 
 // Mörk full-bredds-nav (redesign). Logo + ankarmeny vänster, knappar höger.
-// Vid scroll åker hela raden upp ur bild och en kompakt orb med logo och
-// Buy now åker in ovanifrån. Buy now ankrar ner till pricing-sektionen.
+// Två oberoende lägen vid scroll: raden åker upp ur bild tidigt, och längre
+// ned kommer en kompakt orb med logo och Buy now in ovanifrån. Däremellan
+// syns inget nav. Buy now ankrar ner till pricing-sektionen.
+interface Props {
+  /** Orben behövs bara på sidor med långt innehåll (startsidan). */
+  orb?: boolean;
+}
+const { orb = true } = Astro.props;
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const menu = [
   { label: "Features", href: "/#features" },
@@ -63,45 +69,43 @@ const menu = [
       </Container>
     </div>
 
-    <!-- Orben. Egen rad ovanpå, centrerad. Wrappern sköter centreringen så
-         orbens transform bara behöver hantera in- och utåkningen. -->
-    <div
-      class="pointer-events-none absolute inset-x-0 top-2 flex justify-center"
-    >
-      <div
-        class="nav-orb pointer-events-auto flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5"
-      >
-        <a
-          href="/"
-          class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
-          aria-label="Dolly"
-        >
-          <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
-        </a>
-        <a
-          href="/#pricing"
-          class="press rounded-pill bg-btn-primary px-4 py-2 text-sm whitespace-nowrap text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
-        >
-          Buy now
-        </a>
-      </div>
-    </div>
+    {
+      /* Orben. Egen rad ovanpå, centrerad. Wrappern sköter centreringen så
+         orbens transform bara behöver hantera in- och utåkningen. */
+      orb && (
+        <div class="pointer-events-none absolute inset-x-0 top-2 flex justify-center">
+          <div class="nav-orb pointer-events-auto flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5">
+            <a
+              href="/"
+              class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
+              aria-label="Dolly"
+            >
+              <img src="/dolly-logo.svg" alt="Dolly" class="h-5 w-auto" />
+            </a>
+            <a
+              href="/#pricing"
+              class="press rounded-pill bg-btn-primary px-4 py-2 text-sm whitespace-nowrap text-btn-primary-text transition-colors hover:bg-btn-primary-hover"
+            >
+              Buy now
+            </a>
+          </div>
+        </div>
+      )
+    }
   </div>
 </header>
 
 <style>
-  /* Sekvens: den fulla raden åker upp ur bild, sedan kommer orben in
-     ovanifrån med lite överlapp så det inte uppstår en död lucka.
-     Bakvägen spelas samma sekvens baklänges — därför står transition i
-     BÅDA tillstånden, den som gäller är alltid destinationens.
+  /* Två oberoende lägen, inte en sekvens: [data-hidden] tar bort raden strax
+     under sidtoppen, [data-orb] hämtar in orben långt senare. Däremellan
+     finns inget nav, så de behöver inte vänta in varandra.
 
-     visibility växlas i samma veva som rörelsen, så bara det som syns går
-     att tabba till eller läsa upp. Annars ligger båda uppsättningarna
-     länkar kvar för tangentbord och skärmläsare. */
+     visibility växlas i takt med rörelsen, så bara det som syns går att
+     tabba till eller läsa upp. Annars ligger båda uppsättningarna länkar
+     kvar för tangentbord och skärmläsare. */
   :root {
-    --nav-t-out: 300ms; /* det som lämnar */
-    --nav-t-in: 340ms; /* det som kommer */
-    --nav-t-overlap: 180ms; /* när inflytten börjar */
+    --nav-t-out: 300ms;
+    --nav-t-in: 340ms;
   }
 
   .nav-fade {
@@ -121,7 +125,6 @@ const menu = [
     );
   }
 
-  /* Full nav — kommer in sist på vägen tillbaka */
   [data-nav-full] {
     transform: translate3d(0, 0, 0);
     visibility: visible;
@@ -129,20 +132,19 @@ const menu = [
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
     transition:
-      transform var(--nav-t-in) var(--ease-out-quart) var(--nav-t-overlap),
-      visibility 0s linear var(--nav-t-overlap);
+      transform var(--nav-t-in) var(--ease-out-quart),
+      visibility 0s linear 0s;
   }
-  [data-orb] [data-nav-full] {
+  [data-hidden] [data-nav-full] {
     transform: translate3d(0, -100%, 0);
     visibility: hidden;
     transition:
-      transform var(--nav-t-out) var(--ease-out-quart) 0ms,
+      transform var(--nav-t-out) var(--ease-out-quart),
       visibility 0s linear var(--nav-t-out);
   }
 
   /* Orben: mörkgrå platta med blur, inget glas. Ljusare än sidbakgrunden
-     så den läser som ett eget lager även när den ligger över mörkt
-     innehåll — mot sidbakgrundens svarta hade den försvunnit. */
+     så den läser som ett eget lager även över mörkt innehåll. */
   .nav-orb {
     background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
     -webkit-backdrop-filter: blur(20px);
@@ -153,22 +155,21 @@ const menu = [
     will-change: transform;
     backface-visibility: hidden;
     -webkit-backface-visibility: hidden;
-    /* går ut först på vägen tillbaka */
     transition:
-      transform var(--nav-t-out) var(--ease-out-quart) 0ms,
+      transform var(--nav-t-out) var(--ease-out-quart),
       visibility 0s linear var(--nav-t-out);
   }
   [data-orb] .nav-orb {
     transform: translate3d(0, 0, 0);
     visibility: visible;
     transition:
-      transform var(--nav-t-in) var(--ease-out-quart) var(--nav-t-overlap),
-      visibility 0s linear var(--nav-t-overlap);
+      transform var(--nav-t-in) var(--ease-out-quart),
+      visibility 0s linear 0s;
   }
 
   @media (prefers-reduced-motion: reduce) {
     [data-nav-full],
-    [data-orb] [data-nav-full],
+    [data-hidden] [data-nav-full],
     .nav-orb,
     [data-orb] .nav-orb {
       transition: none;
@@ -177,22 +178,58 @@ const menu = [
 </style>
 
 <script>
-  // Full nav nära toppen, orb när man har scrollat förbi. Positionsstyrt,
-  // inte riktningsstyrt: orben ska vara ett stabilt läge, inte något som
-  // blinkar fram och tillbaka när man byter scrollriktning.
-  // Desktop-only — på mobil finns ingen meny att byta bort.
+  // Positionsstyrt, inte riktningsstyrt: lägena ska vara stabila och inte
+  // blinka fram och tillbaka när man byter scrollriktning.
+  //   > TOP              → raden åker upp ur bild
+  //   > data-nav-trigger → orben kommer in
+  // Desktop-only; på mobil ligger raden kvar hela vägen.
   const nav = document.querySelector<HTMLElement>("[data-nav]");
+  const orb = document.querySelector<HTMLElement>(".nav-orb");
+  // Sidan pekar ut var orben ska komma: när elementet med data-nav-trigger
+  // har passerat skärmens överkant.
+  const trigger = document.querySelector<HTMLElement>("[data-nav-trigger]");
   const desktop = matchMedia("(min-width: 768px)");
   if (nav) {
-    const TOP = 80; // px från sidtoppen där hela navet visas
+    const TOP = 80; // px från sidtoppen där raden lämnar
+    const HYST = 48; // hysteres, annars kan orben blinka vid tröskeln
+    let triggerY = Infinity; // utan trigger kommer orben aldrig
     let ticking = false;
 
+    // offsetTop-kedjan, inte getBoundingClientRect: hero-videon skalas av en
+    // scroll-driven animation och rect:en följer transformen.
+    const measure = () => {
+      if (!trigger) return;
+      let y = trigger.offsetHeight;
+      let node: HTMLElement | null = trigger;
+      while (node) {
+        y += node.offsetTop;
+        node = node.offsetParent as HTMLElement | null;
+      }
+      triggerY = y;
+    };
+
     const update = () => {
-      nav.toggleAttribute("data-orb", desktop.matches && scrollY > TOP);
+      // Raden lämnar bara där orben finns som ersättare. På sidor utan orb
+      // (de juridiska) ligger den kvar — annars försvinner navet vid 80px
+      // och kommer aldrig tillbaka förrän man scrollat upp igen.
+      const wide = desktop.matches && !!orb;
+      nav.toggleAttribute("data-hidden", wide && scrollY > TOP);
+      if (orb) {
+        const on = nav.hasAttribute("data-orb");
+        const past = scrollY > (on ? triggerY - HYST : triggerY);
+        nav.toggleAttribute("data-orb", wide && past);
+      }
       ticking = false;
     };
 
+    const remeasure = () => {
+      measure();
+      update();
+    };
+
     desktop.addEventListener("change", update);
+    addEventListener("resize", remeasure, { passive: true });
+    addEventListener("load", remeasure);
     addEventListener(
       "scroll",
       () => {
@@ -203,6 +240,6 @@ const menu = [
       },
       { passive: true },
     );
-    update();
+    remeasure();
   }
 </script>
