@@ -149,6 +149,8 @@ const menu = [
     background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
+    /* Blur-plattan är grundläget och det som syns om WebGL saknas.
+       Lyckas liquidGL tar den över och plattan kopplas bort. */
     /* -180% av 52px lyfter den väl ovanför skärmkanten */
     transform: translate3d(0, -180%, 0);
     visibility: hidden;
@@ -165,6 +167,12 @@ const menu = [
     transition:
       transform var(--nav-t-in) var(--ease-out-quart),
       visibility 0s linear 0s;
+  }
+
+  .nav-orb[data-gl] {
+    background: none;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -241,5 +249,58 @@ const menu = [
       { passive: true },
     );
     remeasure();
+  }
+</script>
+
+<script>
+  // Liquid glass i orben (liquidGL, MIT). Biblioteket rasteriserar sidan till
+  // en WebGL-textur och bryter den bakom elementet — därav den riktiga
+  // förvrängningen som backdrop-filter inte kan ge.
+  //
+  // Laddas dynamiskt och bara där orben finns, så de juridiska sidorna
+  // slipper ~130 kB JS. Misslyckas något ligger CSS-blurren kvar.
+  const orb = document.querySelector<HTMLElement>(".nav-orb");
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (orb && !reduce) {
+    const start = async () => {
+      try {
+        const { default: liquidGL } = await import("liquid-gl");
+        liquidGL({
+          target: ".nav-orb",
+          snapshot: "body",
+          // Sidan är närmare 8000px hög. resolution 2 ger en textur runt
+          // 15000px, obehagligt nära GPU-taket på 16384 — och orben är bara
+          // 229px bred, så skärpan behövs inte.
+          resolution: 1.5,
+          refraction: 0.02,
+          bevelDepth: 0.1,
+          bevelWidth: 0.18,
+          aberration: 0.4,
+          frost: 0.04,
+          specular: true,
+          shadow: true,
+          tilt: false,
+          reveal: "none",
+        });
+        if (!window.__liquidGLRenderer__) return;
+        orb.setAttribute("data-gl", "");
+
+        // Texturen är en stillbild av sidan. Sektionerna som glider in
+        // ändrar hur sidan ser ut efteråt, så den måste tas om.
+        let pending: number | undefined;
+        addEventListener("dolly:layoutchange", () => {
+          clearTimeout(pending);
+          pending = setTimeout(
+            () => window.__liquidGLRenderer__?.captureSnapshot?.(),
+            120,
+          );
+        });
+      } catch (err) {
+        console.warn("liquidGL kunde inte starta, behåller css-blurren", err);
+      }
+    };
+    // Efter load: snapshotten ska avbilda en färdig sida, inte en halv.
+    if (document.readyState === "complete") start();
+    else addEventListener("load", start, { once: true });
   }
 </script>
