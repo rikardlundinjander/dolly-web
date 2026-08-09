@@ -41,7 +41,7 @@ const faqs = [
     <div data-reveal-item class="mx-auto mt-flow-lg flex max-w-2xl flex-col gap-1">
       {
         faqs.map((item) => (
-          <details class="faq group rounded-md transition-colors duration-[var(--duration-base)] hover:bg-surface">
+          <details class="faq group rounded-md md:rounded-xl transition-colors duration-[var(--duration-base)] hover:bg-surface">
             <summary class="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-5 text-base text-text marker:content-none sm:text-lg">
               {item.q}
               <svg
@@ -81,43 +81,84 @@ const faqs = [
 </style>
 
 <script>
-  // Mjuk höjd-animering vid öppning/stängning (respekterar reduced-motion).
+  // Dragspel: en fråga öppen åt gången. Öppnas en ny viks den förra ihop.
+  // Höjden animeras mjukt (och hoppas över vid reduced-motion).
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const EASE = "cubic-bezier(0.16, 1, 0.3, 1)";
-  document
-    .querySelectorAll<HTMLDetailsElement>("details.faq")
-    .forEach((d) => {
+
+  const items = [
+    ...document.querySelectorAll<HTMLDetailsElement>("details.faq"),
+  ]
+    .map((d) => {
       const summary = d.querySelector("summary");
       const panel = d.querySelector<HTMLElement>(".faq-panel");
-      if (!summary || !panel) return;
+      if (!summary || !panel) return null;
       let anim: Animation | null = null;
-      summary.addEventListener("click", (e) => {
-        if (reduce) return; // låt native toggla utan animering
-        e.preventDefault();
+      // Räknare så ett fördröjt avslut inte stänger en panel som hunnit
+      // öppnas igen under tiden.
+      let gen = 0;
+
+      const open = () => {
+        gen++;
         anim?.cancel();
-        if (!d.open) {
-          d.open = true;
-          anim = panel.animate(
-            [
-              { height: "0px", opacity: 0 },
-              { height: panel.scrollHeight + "px", opacity: 1 },
-            ],
-            { duration: 280, easing: EASE },
-          );
-          anim.onfinish = () => (panel.style.height = "");
-        } else {
-          anim = panel.animate(
-            [
-              { height: panel.scrollHeight + "px", opacity: 1 },
-              { height: "0px", opacity: 0 },
-            ],
-            { duration: 240, easing: EASE },
-          );
-          anim.onfinish = () => {
-            d.open = false;
-            panel.style.height = "";
-          };
-        }
-      });
+        d.open = true;
+        anim = panel.animate(
+          [
+            { height: "0px", opacity: 0 },
+            { height: panel.scrollHeight + "px", opacity: 1 },
+          ],
+          { duration: 280, easing: EASE },
+        );
+        anim.onfinish = () => (panel.style.height = "");
+      };
+
+      const close = () => {
+        if (!d.open) return;
+        const mine = ++gen;
+        // Höjden mäts innan animeringen börjar; en pågående animering
+        // skulle annars ge ett halvvägs värde att utgå från.
+        const from = panel.scrollHeight + "px";
+        anim?.cancel();
+        anim = panel.animate(
+          [
+            { height: from, opacity: 1 },
+            { height: "0px", opacity: 0 },
+          ],
+          { duration: 240, easing: EASE },
+        );
+        const settle = () => {
+          if (mine !== gen) return; // hann öppnas igen
+          d.open = false;
+          panel.style.height = "";
+        };
+        anim.onfinish = settle;
+        // Säkerhetsnät: levereras aldrig animationens callback — avbruten
+        // animering, bakgrundsflik — blir panelen annars stående öppen och
+        // två frågor syns samtidigt.
+        window.setTimeout(settle, 400);
+      };
+
+      return { d, summary, open, close };
+    })
+    .filter((x) => x !== null);
+
+  for (const item of items) {
+    item.summary.addEventListener("click", (e) => {
+      if (reduce) {
+        // Native togglar själv; vi ser bara till att bara en är öppen.
+        requestAnimationFrame(() => {
+          if (!item.d.open) return;
+          for (const other of items) if (other !== item) other.d.open = false;
+        });
+        return;
+      }
+      e.preventDefault();
+      if (item.d.open) {
+        item.close();
+        return;
+      }
+      for (const other of items) if (other !== item) other.close();
+      item.open();
     });
+  }
 </script>
