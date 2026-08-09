@@ -140,9 +140,11 @@ const menu = [
       visibility 0s linear var(--nav-t-out);
   }
 
-  /* Orben: semitransparent platta med blur, inget glas */
+  /* Orben: mörkgrå platta med blur, inget glas. Ljusare än sidbakgrunden
+     så den läser som ett eget lager även när den ligger över mörkt
+     innehåll — mot sidbakgrundens svarta hade den försvunnit. */
   .nav-orb {
-    background: color-mix(in srgb, var(--bg) 55%, transparent);
+    background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
     -webkit-backdrop-filter: blur(20px);
     backdrop-filter: blur(20px);
     /* -180% av 52px lyfter den väl ovanför skärmkanten */
