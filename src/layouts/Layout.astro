@@ -200,3 +200,49 @@ const jsonLd = {
     });
   });
 </script>
+
+<script>
+  // Sektioner glider in en gång när de kommer upp underifrån.
+  // Ingen omvänd riktning och ingen upprepning: när en grupp väl landat
+  // slutar vi observera den.
+  const reveal = () => {
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const groups = document.querySelectorAll<HTMLElement>("[data-reveal]");
+    if (!groups.length) return;
+
+    const arm = (group: HTMLElement) => {
+      // Indexet styr både startavståndet och fördröjningen, så delarna
+      // ligger glest och dras ihop uppifrån och ned.
+      group
+        .querySelectorAll<HTMLElement>("[data-reveal-item]")
+        .forEach((el, i) => el.style.setProperty("--reveal-i", String(i)));
+      group.setAttribute("data-reveal-armed", "");
+    };
+
+    const io = new IntersectionObserver(
+      (entries) => {
+        for (const e of entries) {
+          if (!e.isIntersecting) continue;
+          (e.target as HTMLElement).setAttribute("data-revealed", "");
+          io.unobserve(e.target);
+        }
+      },
+      // Lite in i vyn, annars startar rörelsen medan sektionen ännu är
+      // en hårsmån utanför och man missar början av den.
+      { rootMargin: "0px 0px -12% 0px" },
+    );
+
+    for (const group of groups) {
+      arm(group);
+      // Allt som redan passerats visas direkt, utan animering. Då kan man
+      // inte scrolla uppåt in i en sektion som aldrig hunnit spelas.
+      if (group.getBoundingClientRect().top < innerHeight) {
+        group.setAttribute("data-revealed", "");
+      } else {
+        io.observe(group);
+      }
+    }
+  };
+  // Efter layout, så mätningen mot innerHeight sker på färdig sida.
+  requestAnimationFrame(reveal);
+</script>

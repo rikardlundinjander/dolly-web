@@ -21,16 +21,19 @@ interface Props {
 const { title, body, items, id } = Astro.props;
 ---
 
-<section id={id} class="pt-flow-2xl">
+<section id={id} data-reveal class="pt-flow-2xl">
   <Container>
     <div class="mx-auto w-10/12 max-w-xl text-center sm:w-auto">
-      <h2 class="text-xl text-text sm:text-4xl">{title}</h2>
-      <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
+      <h2 data-reveal-item class="text-xl text-text sm:text-4xl">{title}</h2>
+      <p
+        data-reveal-item
+        class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg"
+      >
         {body}
       </p>
     </div>
 
-    <div data-showcase class="mt-flow-lg">
+    <div data-showcase data-reveal-item class="mt-flow-lg">
       <!-- Spelare: två videolager som korsfadar, så bytet aldrig blinkar
            till en tom ruta och övergången blir mjuk. -->
       <div

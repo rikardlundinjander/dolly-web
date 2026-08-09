@@ -73,15 +73,16 @@ const features = [
 const SETTING_COUNT = "40+";
 ---
 
-<section class="pt-flow-2xl">
+<section data-reveal class="pt-flow-2xl">
   <Container>
     <div class="mx-auto w-10/12 text-center sm:w-auto sm:max-w-xl">
       <h2
+        data-reveal-item
         class="text-xl text-text tracking-[-0.5px] sm:text-4xl sm:tracking-[-1px]"
       >
         Fine-tune everything.
       </h2>
-      <p class="mx-auto mt-4 text-base text-text-muted sm:text-lg">
+      <p data-reveal-item class="mx-auto mt-4 text-base text-text-muted sm:text-lg">
         {SETTING_COUNT} settings behind every recording. Adjust the details that
         matter to you and leave the rest to Dolly.
       </p>
@@ -90,6 +91,7 @@ const SETTING_COUNT = "40+";
     <!-- Hover-fyllning från md+ (där korten har padding att fylla).
          Negativ marginal så ikon/rubrik linjerar med sektionsrubriken. -->
     <div
+      data-reveal-item
       class="mx-auto mt-flow-lg grid w-10/12 grid-cols-1 gap-x-[var(--grid-gutter)] gap-y-1 md:-mx-6 md:w-auto md:grid-cols-12"
     >
       {

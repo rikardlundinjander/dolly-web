@@ -30,17 +30,18 @@ const DESC = "No subscription. One-time purchase with 12 months of updates inclu
 
 <section
   id="pricing"
+  data-reveal
   class="pt-flow-2xl"
 >
   <Container>
     <div class="mx-auto w-10/12 text-center sm:w-auto sm:max-w-xl">
-      <h2 class="text-xl text-text tracking-[-0.5px] sm:text-4xl sm:tracking-[-1px]">Pay once. It's yours.</h2>
-      <p class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
+      <h2 data-reveal-item class="text-xl text-text tracking-[-0.5px] sm:text-4xl sm:tracking-[-1px]">Pay once. It's yours.</h2>
+      <p data-reveal-item class="mx-auto mt-4 max-w-sm text-base text-text-muted sm:text-lg">
         {DESC}
       </p>
     </div>
 
-    <div class="grid-12 mt-flow-lg">
+    <div data-reveal-item class="grid-12 mt-flow-lg">
       {
         plans.map((plan, i) => (
           <a

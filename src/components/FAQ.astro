@@ -30,14 +30,15 @@ const faqs = [
 
 <section
   id="faq"
+  data-reveal
   class="py-flow-2xl"
 >
   <Container>
     <div class="mx-auto max-w-xl text-center">
-      <h2 class="text-xl text-text tracking-[-0.5px] sm:text-2xl sm:tracking-[-1px]">Asked about Dolly.</h2>
+      <h2 data-reveal-item class="text-xl text-text tracking-[-0.5px] sm:text-2xl sm:tracking-[-1px]">Asked about Dolly.</h2>
     </div>
 
-    <div class="mx-auto mt-flow-lg flex max-w-2xl flex-col gap-1">
+    <div data-reveal-item class="mx-auto mt-flow-lg flex max-w-2xl flex-col gap-1">
       {
         faqs.map((item) => (
           <details class="faq group rounded-md transition-colors duration-[var(--duration-base)] hover:bg-surface">

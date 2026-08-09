@@ -146,6 +146,8 @@
 
   /* ---------- MOTION ---------- */
   --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  /* Lätt översläng — landar strax förbi målet och studsar tillbaka */
+  --ease-rubber: cubic-bezier(0.22, 1.28, 0.36, 1);
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --duration-fast: 150ms;
   --duration-base: 250ms;
@@ -332,6 +334,41 @@ body {
   .press.magnetic:active {
     transform: translate3d(var(--mag-x, 0), var(--mag-y, 0), 0) scale(0.97);
   }
+}
+
+/* Sektioner som glider in vid scroll. Delarna startar glesare ju längre ned
+   i sektionen de sitter — rubriken närmast sitt slutläge, innehållet längst
+   bort — så rubriken landar först och drar med sig resten.
+
+   Grundläget döljs bara när scriptet armerat gruppen (data-reveal-armed).
+   Annars hade allt innehåll blivit osynligt utan JS. */
+[data-reveal][data-reveal-armed] [data-reveal-item] {
+  opacity: 0;
+  transform: translate3d(
+    0,
+    calc(var(--reveal-base) + var(--reveal-i, 0) * var(--reveal-spread)),
+    0
+  );
+  will-change: transform, opacity;
+}
+[data-reveal][data-reveal-armed][data-revealed] [data-reveal-item] {
+  opacity: 1;
+  transform: none;
+  /* Fördröjningen räknas ut här, på barnet. Lagd på gruppen hade calc:en
+     lösts ut mot ett --reveal-i som ännu inte fanns, alltså alltid noll. */
+  transition:
+    opacity var(--reveal-fade) linear
+      calc(var(--reveal-i, 0) * var(--reveal-step)),
+    /* Egen ease med lätt översläng — gummibandet. */
+      transform var(--reveal-move) var(--ease-rubber)
+      calc(var(--reveal-i, 0) * var(--reveal-step));
+}
+[data-reveal] {
+  --reveal-base: 16px;
+  --reveal-spread: 14px; /* per steg: senare delar startar längre bort */
+  --reveal-step: 90ms;
+  --reveal-fade: 420ms;
+  --reveal-move: 760ms;
 }
 
 /* CTA-pilen: två identiska pilar staplade i cirkeln. Vid hover glider den
