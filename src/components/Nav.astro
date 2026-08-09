@@ -74,7 +74,11 @@ const menu = [
          orbens transform bara behöver hantera in- och utåkningen. */
       orb && (
         <div class="pointer-events-none absolute inset-x-0 top-2 flex justify-center">
-          <div class="nav-orb pointer-events-auto flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5">
+          <div class="nav-orb pointer-events-auto relative flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5">
+            {/* Glasets mätyta. liquidGL skriver inline-stilar på sitt target
+                (transparent bakgrund, pointer-events: none, transition: none)
+                — det får gälla ett tomt lager, inte orben själv. */}
+            <div class="nav-orb-glass" aria-hidden="true" />
             <a
               href="/"
               class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
@@ -169,8 +173,16 @@ const menu = [
       visibility 0s linear 0s;
   }
 
+  .nav-orb-glass {
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+  }
+  /* Brytningen renderas i en canvas bakom headern, så orbens egen bakgrund
+     hamnar ovanpå den och fungerar som toning. Behövs för att logotypen ska
+     hålla mot vita partier som passerar under. */
   .nav-orb[data-gl] {
-    background: none;
+    background: rgba(40, 40, 40, 0.4);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
@@ -260,23 +272,26 @@ const menu = [
   // Laddas dynamiskt och bara där orben finns, så de juridiska sidorna
   // slipper ~130 kB JS. Misslyckas något ligger CSS-blurren kvar.
   const orb = document.querySelector<HTMLElement>(".nav-orb");
+  const glassLayer = document.querySelector<HTMLElement>(".nav-orb-glass");
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
-  if (orb && !reduce) {
+  if (orb && glassLayer && !reduce) {
     const start = async () => {
       try {
         const { default: liquidGL } = await import("liquid-gl");
         liquidGL({
-          target: ".nav-orb",
+          target: ".nav-orb-glass",
           snapshot: "body",
           // Sidan är närmare 8000px hög. resolution 2 ger en textur runt
           // 15000px, obehagligt nära GPU-taket på 16384 — och orben är bara
           // 229px bred, så skärpan behövs inte.
           resolution: 1.5,
-          refraction: 0.02,
+          refraction: 0.05,
           bevelDepth: 0.1,
           bevelWidth: 0.18,
-          aberration: 0.4,
-          frost: 0.04,
+          aberration: 0.1,
+          // frost är en blurradie i pixlar, inte 0-1. Bibliotekets egen
+          // balanserade default ligger på 2.
+          frost: 2.5,
           specular: true,
           shadow: true,
           tilt: false,
