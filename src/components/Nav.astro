@@ -106,6 +106,10 @@ const menu = [
   :root {
     --nav-t-out: 300ms;
     --nav-t-in: 340ms;
+    /* Orben kommer ner långsammare än raden och landar med en liten
+       studs. Sektionernas --ease-rubber gav bara 2px översläng på den
+       korta resan (94px) — knappt synligt — därav en tydligare kurva. */
+    --nav-t-orb-in: 540ms;
   }
 
   .nav-fade {
@@ -165,7 +169,7 @@ const menu = [
     transform: translate3d(0, 0, 0);
     visibility: visible;
     transition:
-      transform var(--nav-t-in) var(--ease-out-quart),
+      transform var(--nav-t-orb-in) var(--ease-back),
       visibility 0s linear 0s;
   }
 
