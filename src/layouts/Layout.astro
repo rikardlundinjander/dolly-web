@@ -225,12 +225,6 @@ const jsonLd = {
           if (!e.isIntersecting) continue;
           (e.target as HTMLElement).setAttribute("data-revealed", "");
           io.unobserve(e.target);
-          // Sidan ser annorlunda ut när sektionen landat. Allt som
-          // avbildar sidan (orbens glas) behöver veta om det.
-          setTimeout(
-            () => dispatchEvent(new CustomEvent("dolly:layoutchange")),
-            1000,
-          );
         }
       },
       // Lite in i vyn, annars startar rörelsen medan sektionen ännu är
