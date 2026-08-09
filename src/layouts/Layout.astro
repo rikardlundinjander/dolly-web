@@ -232,16 +232,28 @@ const jsonLd = {
       { rootMargin: "0px 0px -12% 0px" },
     );
 
-    for (const group of groups) {
-      arm(group);
-      // Allt som redan passerats visas direkt, utan animering. Då kan man
-      // inte scrolla uppåt in i en sektion som aldrig hunnit spelas.
-      if (group.getBoundingClientRect().top < innerHeight) {
-        group.setAttribute("data-revealed", "");
-      } else {
-        io.observe(group);
+    // Allt som redan passerats visas direkt, utan animering — annars kan
+    // man scrolla uppåt in i en sektion som aldrig hunnit spela.
+    const sweep = () => {
+      for (const group of groups) {
+        if (group.hasAttribute("data-revealed")) continue;
+        if (group.getBoundingClientRect().top < innerHeight) {
+          group.setAttribute("data-revealed", "");
+          io.unobserve(group);
+        } else {
+          io.observe(group);
+        }
       }
-    }
+    };
+
+    for (const group of groups) arm(group);
+    sweep();
+    // Laddas sidan om nedskrollad återställer browsern scrollpositionen
+    // EFTER att det här körts. Sektioner som då hamnar ovanför vyn skulle
+    // annars stå kvar dolda — observern fyrar aldrig för något som redan
+    // passerat — och sidan såg tom ut tills man scrollade upp förbi dem.
+    addEventListener("load", sweep);
+    addEventListener("pageshow", sweep);
   };
   // Efter layout, så mätningen mot innerHeight sker på färdig sida.
   requestAnimationFrame(reveal);
