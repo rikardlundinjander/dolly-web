@@ -74,7 +74,7 @@ const menu = [
          orbens transform bara behöver hantera in- och utåkningen. */
       orb && (
         <div class="pointer-events-none absolute inset-x-0 top-2 flex justify-center">
-          <div class="nav-orb pointer-events-auto flex items-center gap-[var(--space-xl)] rounded-pill py-2 pr-2 pl-5">
+          <div class="nav-orb pointer-events-auto flex items-center gap-[var(--space-2xl)] rounded-pill py-2 pr-2 pl-6">
             <a
               href="/"
               class="flex items-center transition-opacity duration-[var(--duration-base)] hover:opacity-70"
@@ -144,11 +144,13 @@ const menu = [
   }
 
   /* Orben: mörkgrå platta med blur, inget glas. Ljusare än sidbakgrunden
-     så den läser som ett eget lager även över mörkt innehåll. */
+     så den läser som ett eget lager även över mörkt innehåll — men tunn nog
+     att innehållet under lyser igenom. Ett steg ljusare i neutralskalan
+     (#303030) i stället för ett nytt hårdkodat värde. */
   .nav-orb {
-    background: color-mix(in srgb, var(--surface-elevated) 88%, transparent);
-    -webkit-backdrop-filter: blur(20px);
-    backdrop-filter: blur(20px);
+    background: color-mix(in srgb, var(--color-neutral-700) 72%, transparent);
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
     /* -180% av 52px lyfter den väl ovanför skärmkanten */
     transform: translate3d(0, -180%, 0);
     visibility: hidden;
