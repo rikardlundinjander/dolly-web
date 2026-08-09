@@ -15,14 +15,14 @@ import { getDownloadUrl } from "../lib/links";
 // REDESIGN. Media = grå placeholders. Copy engelsk.
 const DMG = await getDownloadUrl(); // senaste DMG från appcasten
 const recording = [
-  { label: "Screen & window", body: "Capture your whole display, a single window, or a region at full resolution.", video: "/videos/screen-and-window.mp4" },
-  { label: "Camera & mic", body: "Add a webcam bubble and crisp audio. Anchor it anywhere, resize on the fly.", video: "/videos/camera-and-mic.mp4" },
-  { label: "iPhone & devices", body: "Plug in your iPhone and record its screen instead of your Mac's, with the same polish.", video: "/videos/iphone.mp4" },
+  { icon: "fit_screen", label: "Screen & window", body: "Capture your whole display, a single window, or a region at full resolution.", video: "/videos/screen-and-window.mp4" },
+  { icon: "videocam", label: "Camera & mic", body: "Add a webcam bubble and crisp audio. Anchor it anywhere, resize on the fly.", video: "/videos/camera-and-mic.mp4" },
+  { icon: "smartphone", label: "iPhone & devices", body: "Plug in your iPhone and record its screen instead of your Mac's, with the same polish.", video: "/videos/iphone.mp4" },
 ];
 const editing = [
-  { label: "Zoom & animation", body: "Auto-zoom follows your cursor, and custom animations are yours to add. Every move stays editable.", video: "/videos/zoom-and-animation.mp4" },
-  { label: "Backdrops & framing", body: "Rounded corners, padding, and a soft shadow over a backdrop of your choice.", video: "/videos/backdrops-and-framing.mp4" },
-  { label: "Timeline & export", body: "Trim, tweak, and export a share-ready video with presets for every platform." },
+  { icon: "center_focus_strong", label: "Zoom & animation", body: "Auto-zoom follows your cursor, and custom animations are yours to add. Every move stays editable.", video: "/videos/zoom-and-animation.mp4" },
+  { icon: "wallpaper", label: "Backdrops & framing", body: "Rounded corners, padding, and a soft shadow over a backdrop of your choice.", video: "/videos/backdrops-and-framing.mp4" },
+  { icon: "timeline", label: "Timeline & export", body: "Trim, tweak, and export a share-ready video with presets for every platform." },
 ];
 ---
 

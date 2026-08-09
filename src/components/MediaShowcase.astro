@@ -1,5 +1,6 @@
 ---
 import Container from "./Container.astro";
+import Icon from "./Icon.astro";
 
 // Media-sektion (redesign): centrerad titel + paragraf → spelare → 3 väljar-USP.
 // Endast aktiv item har vitt progress-streck; det speglar videons längd
@@ -9,6 +10,7 @@ import Container from "./Container.astro";
 interface Item {
   label: string;
   body: string;
+  icon: IconName;
   video?: string; // mp4-URL; utelämnad = grå placeholder + timer
   image?: string; // stillbild som placeholder (timer-driven progress)
 }
@@ -19,6 +21,7 @@ interface Props {
   id?: string;
 }
 const { title, body, items, id } = Astro.props;
+type IconName = Parameters<typeof Icon>[0]["name"];
 ---
 
 <section id={id} data-reveal class="pt-flow-2xl">
@@ -143,28 +146,36 @@ const { title, body, items, id } = Astro.props;
                 )}
               </div>
 
+              {/* Desktop: en box per val — transparent, mörkgrå vid hover,
+                  ett steg ljusare när den är aktiv. Mobil: ingen box, bara
+                  ikon + text under sin egen videoruta. */}
               <button
                 type="button"
                 data-item
                 data-index={i}
                 data-video-src={it.video ?? ""}
                 data-image-src={it.image ?? ""}
-                class="group cursor-default text-left md:col-span-4 md:cursor-pointer"
+                class="group cursor-default text-left md:col-span-4 md:flex md:cursor-pointer md:flex-col md:rounded-xl md:p-5 md:transition-colors md:duration-[var(--duration-base)] md:hover:bg-surface md:data-[active]:bg-surface-elevated"
               >
-                <span class="hidden h-px w-full overflow-hidden bg-border transition-colors duration-[var(--duration-base)] group-hover:bg-border-strong md:block">
-                  <span data-progress class="block h-full w-0 bg-text" />
-                </span>
-                <span
-                  data-title
-                  class="block text-base pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:mt-4"
-                >
-                  {it.label}
+                <span class="flex items-center gap-2">
+                  <Icon name={it.icon} class="size-5 shrink-0" />
+                  <span
+                    data-title
+                    class="block text-base transition-colors duration-[var(--duration-base)]"
+                  >
+                    {it.label}
+                  </span>
                 </span>
                 <span
                   data-body
-                  class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)]"
+                  class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:pr-0"
                 >
                   {it.body}
+                </span>
+                {/* Progressen sitter i boxens underkant. Spåret är osynligt,
+                    så bara den aktiva boxen visar en linje. */}
+                <span class="mt-4 hidden h-px w-full overflow-hidden md:mt-auto md:block">
+                  <span data-progress class="block h-full w-0 bg-text" />
                 </span>
               </button>
             </div>
