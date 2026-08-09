@@ -401,12 +401,6 @@ body {
   }
 }
 
-/* Showcase-väljare: titeln tänds på hover (inline-färg från scriptet
-   behöver övertrumfas) */
-[data-item]:hover [data-title] {
-  color: var(--text) !important;
-}
-
 /* Glare: mjuk ljusfläck som följer pekaren (positioneras via --glare-x/y
    från script i Layout). Färg per yta via --glare-color. */
 .glare {

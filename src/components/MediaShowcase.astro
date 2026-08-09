@@ -2,11 +2,10 @@
 import Container from "./Container.astro";
 import Icon from "./Icon.astro";
 
-// Media-sektion (redesign): centrerad titel + paragraf → spelare → 3 väljar-USP.
-// Endast aktiv item har vitt progress-streck; det speglar videons längd
-// (5s-timer som fallback för placeholder-items utan klipp). När videon är
-// slut nollas strecket och nästa item startar. Klick på spelaren (eller
-// hover-ikonen i hörnet) togglar play/pause.
+// Media-sektion (redesign): centrerad titel + paragraf → spelare → 3 väljare.
+// Väljarna är boxar på desktop; den aktiva har ljusare yta. När videon är
+// slut startar nästa (items utan klipp byts på en 5s-timer). Klick på
+// spelaren, eller på ikonen i mitten, togglar play/pause.
 interface Item {
   label: string;
   body: string;
@@ -157,25 +156,18 @@ type IconName = Parameters<typeof Icon>[0]["name"];
                 data-image-src={it.image ?? ""}
                 class="group cursor-default text-left md:col-span-4 md:flex md:cursor-pointer md:flex-col md:rounded-xl md:p-5 md:transition-colors md:duration-[var(--duration-base)] md:hover:bg-surface md:data-[active]:bg-surface-elevated"
               >
-                <span class="flex items-center gap-2">
+                {/* Färgen sitter på raden, inte på texten, så ikonen ärver
+                    den. Nedtoningen gäller bara md+: på mobil har varje block
+                    sin egen spelare och det finns inget aktivt val. */}
+                <span class="flex items-center gap-2 transition-colors duration-[var(--duration-base)] md:text-text-muted md:group-hover:text-text md:group-data-[active]:text-text">
                   <Icon name={it.icon} class="size-5 shrink-0" />
-                  <span
-                    data-title
-                    class="block text-base transition-colors duration-[var(--duration-base)]"
-                  >
-                    {it.label}
-                  </span>
+                  <span data-title class="block text-base">{it.label}</span>
                 </span>
                 <span
                   data-body
-                  class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:pr-0"
+                  class="mt-2 block text-sm text-text-muted pr-[var(--space-lg)] transition-colors duration-[var(--duration-base)] md:pr-0 md:text-text-subtle md:group-data-[active]:text-text-muted"
                 >
                   {it.body}
-                </span>
-                {/* Progressen sitter i boxens underkant. Spåret är osynligt,
-                    så bara den aktiva boxen visar en linje. */}
-                <span class="mt-4 hidden h-px w-full overflow-hidden md:mt-auto md:block">
-                  <span data-progress class="block h-full w-0 bg-text" />
                 </span>
               </button>
             </div>
@@ -278,12 +270,6 @@ type IconName = Parameters<typeof Icon>[0]["name"];
     const titles = items.map(
       (i) => i.querySelector<HTMLElement>("[data-title]")!,
     );
-    const bars = items.map(
-      (i) => i.querySelector<HTMLElement>("[data-progress]")!,
-    );
-    const bodies = items.map(
-      (i) => i.querySelector<HTMLElement>("[data-body]")!,
-    );
     if (!items.length || !player) return;
 
     const srcs = items.map((i) => i.dataset.videoSrc || "");
@@ -298,15 +284,6 @@ type IconName = Parameters<typeof Icon>[0]["name"];
 
     const isVideo = () => !!srcs[current] && layers.length > 0;
 
-    // Endast aktiv item har vitt streck; övriga visar bara spårets botten.
-    // Mobil: den enda kvarliggande linjen under spelaren speglar aktiv video.
-    const paint = (pct: number) => {
-      bars.forEach(
-        (b, idx) => (b.style.width = idx === current ? pct + "%" : "0%"),
-      );
-    };
-
-
     const updateIcons = () => {
       iconPlay?.classList.toggle("hidden", playing);
       iconPause?.classList.toggle("hidden", !playing);
@@ -319,18 +296,9 @@ type IconName = Parameters<typeof Icon>[0]["name"];
       current = i;
       startTs = 0;
       elapsed = 0;
+      // Aktivt läge är ett attribut; färgerna sköts av css, som också
+      // begränsar nedtoningen till md+.
       items.forEach((it, idx) => it.toggleAttribute("data-active", idx === i));
-      titles.forEach(
-        (t, idx) =>
-          (t.style.color = idx === i ? "var(--text)" : "var(--text-muted)"),
-      );
-      // Inaktiva brödtexter tonas ner ett steg extra
-      bodies.forEach(
-        (b, idx) =>
-          (b.style.color =
-            idx === i ? "var(--text-muted)" : "var(--text-subtle)"),
-      );
-      paint(0);
       // Label bara när varken video eller bild finns för aktivt item.
       if (label)
         label.textContent =
@@ -395,22 +363,15 @@ type IconName = Parameters<typeof Icon>[0]["name"];
       if (playing) startPlayback();
     };
 
-    // rAF-driven målning i båda lägena — video.currentTime läses per frame
-    // (timeupdate fyrar bara ~4 ggr/s och ger hack i linjen).
+    // Loopen behövs bara för items utan klipp — de byts på en timer.
+    // Riktiga videor avancerar på 'ended'.
     const tick = (ts: number) => {
-      if (!playing) return;
-      if (isVideo()) {
-        const v = video();
-        if (v.duration) paint((v.currentTime / v.duration) * 100);
-      } else {
-        if (!startTs) startTs = ts - elapsed;
-        elapsed = ts - startTs;
-        const p = Math.min(elapsed / DURATION, 1);
-        paint(p * 100);
-        if (p >= 1) {
-          advance();
-          return;
-        }
+      if (!playing || isVideo()) return;
+      if (!startTs) startTs = ts - elapsed;
+      elapsed = ts - startTs;
+      if (elapsed >= DURATION) {
+        advance();
+        return;
       }
       raf = requestAnimationFrame(tick);
     };
@@ -424,8 +385,8 @@ type IconName = Parameters<typeof Icon>[0]["name"];
         v.play().catch(() => {});
       } else {
         startTs = 0;
+        raf = requestAnimationFrame(tick);
       }
-      raf = requestAnimationFrame(tick);
     };
 
     const play = () => {
