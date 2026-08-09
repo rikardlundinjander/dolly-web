@@ -349,7 +349,13 @@ body {
     calc(var(--reveal-base) + var(--reveal-i, 0) * var(--reveal-spread)),
     0
   );
-  will-change: transform, opacity;
+  /* Inget will-change här. Regeln matchar även efter att sektionen landat
+     (det är bara opacity/transform som skrivs över), så varje del hade
+     legat kvar som ett eget kompositorlager i all evighet — bland dem två
+     showcase-block på 1200x805 med nio videoelement inuti. Chrome
+     promoterar villigare än Safari och släpper inte lagren, vilket gjorde
+     scrollen hackig just där. Transform och opacity komponeras ändå, och
+     browsern promoterar själv under övergången. */
 }
 [data-reveal][data-reveal-armed][data-revealed] [data-reveal-item] {
   opacity: 1;
