@@ -67,7 +67,7 @@ type IconName = Parameters<typeof Icon>[0]["name"];
           type="button"
           data-toggle
           aria-label="Play or pause"
-          class="absolute top-1/2 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text backdrop-blur-md transition-opacity duration-[var(--duration-base)] data-[playing]:opacity-0 data-[playing]:group-hover:opacity-100"
+          class="absolute top-1/2 left-1/2 z-10 flex size-14 -translate-x-1/2 -translate-y-1/2 cursor-pointer items-center justify-center rounded-pill bg-bg/60 text-text backdrop-blur-md transition-opacity duration-[var(--duration-base)] data-[playing]:opacity-0"
         >
           <svg
             data-icon-play
@@ -177,6 +177,15 @@ type IconName = Parameters<typeof Icon>[0]["name"];
     </div>
   </Container>
 </section>
+
+<style>
+  /* Under uppspelning ligger knappen dold och tänds bara medan pekaren rör
+     sig. Tidigare räckte hover, men då stod knappen kvar för alla som
+     lämnar musen över spelaren efter att ha tryckt play. */
+  [data-toggle][data-playing][data-nudge] {
+    opacity: 1;
+  }
+</style>
 
 <script>
   const DURATION = 5000; // ms — fallback-"videolängd" för placeholder-items
@@ -389,15 +398,38 @@ type IconName = Parameters<typeof Icon>[0]["name"];
       }
     };
 
+    // Knappen syns medan pekaren rör sig och tonas bort när den legat
+    // stilla i STILL ms. Startas även vid play, så den hinner uppfattas
+    // innan den försvinner.
+    const STILL = 750;
+    let stillTimer = 0;
+    const nudge = () => {
+      if (!playing) return;
+      toggleBtn?.setAttribute("data-nudge", "");
+      clearTimeout(stillTimer);
+      stillTimer = window.setTimeout(
+        () => toggleBtn?.removeAttribute("data-nudge"),
+        STILL,
+      );
+    };
+    const settleCursor = () => {
+      clearTimeout(stillTimer);
+      toggleBtn?.removeAttribute("data-nudge");
+    };
+    player.addEventListener("pointermove", nudge);
+    player.addEventListener("pointerleave", settleCursor);
+
     const play = () => {
       if (playing) return;
       playing = true;
       updateIcons();
       startPlayback();
+      nudge();
     };
     const pause = () => {
       if (!playing) return;
       playing = false;
+      settleCursor(); // pausad knapp syns ändå, timern ska inte ligga kvar
       updateIcons();
       cancelAnimationFrame(raf);
       if (isVideo()) video().pause();
