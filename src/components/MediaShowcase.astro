@@ -1,6 +1,5 @@
 ---
 import Container from "./Container.astro";
-import Icon from "./Icon.astro";
 
 // Media-sektion (redesign): centrerad titel + paragraf → spelare → 3 väljare.
 // Väljarna är boxar på desktop; den aktiva har ljusare yta. När videon är
@@ -9,7 +8,6 @@ import Icon from "./Icon.astro";
 interface Item {
   label: string;
   body: string;
-  icon: IconName;
   video?: string; // mp4-URL; utelämnad = grå placeholder + timer
   image?: string; // stillbild som placeholder (timer-driven progress)
 }
@@ -20,7 +18,6 @@ interface Props {
   id?: string;
 }
 const { title, body, items, id } = Astro.props;
-type IconName = Parameters<typeof Icon>[0]["name"];
 ---
 
 <section id={id} data-reveal class="pt-flow-2xl">
@@ -156,12 +153,13 @@ type IconName = Parameters<typeof Icon>[0]["name"];
                 data-image-src={it.image ?? ""}
                 class="group cursor-default text-left md:col-span-4 md:flex md:cursor-pointer md:flex-col md:rounded-xl md:p-5 md:transition-colors md:duration-[var(--duration-base)] md:hover:bg-surface md:data-[active]:bg-surface-elevated"
               >
-                {/* Färgen sitter på raden, inte på texten, så ikonen ärver
-                    den. Nedtoningen gäller bara md+: på mobil har varje block
-                    sin egen spelare och det finns inget aktivt val. */}
-                <span class="flex items-center gap-2 transition-colors duration-[var(--duration-base)] md:text-text-muted md:group-hover:text-text md:group-data-[active]:text-text">
-                  <Icon name={it.icon} class="size-5 shrink-0" />
-                  <span data-title class="block text-base">{it.label}</span>
+                {/* Nedtoningen gäller bara md+: på mobil har varje block sin
+                    egen spelare och det finns inget aktivt val. */}
+                <span
+                  data-title
+                  class="block text-base transition-colors duration-[var(--duration-base)] md:text-text-muted md:group-hover:text-text md:group-data-[active]:text-text"
+                >
+                  {it.label}
                 </span>
                 <span
                   data-body
