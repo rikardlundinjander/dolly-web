@@ -6,7 +6,7 @@ description: "Terms of Service and License Agreement for Dolly."
 
 # Terms of Service & License Agreement
 
-_Last updated: 2026-08-04._
+_Last updated: 2026-08-19._
 
 These terms govern your purchase and use of **Dolly** ("the Software"), made by
 **Rikard Lundin-Jandér** ("we", "us"). By buying, downloading or using Dolly you agree
@@ -20,20 +20,17 @@ up to 2 Macs. This license is subject to your compliance with these terms.
 
 ## 2. What the license includes
 Your purchase is a **one-time payment — not a subscription**. It includes
-**12 months of updates** from the date of purchase: every version released
-during that period is yours to keep and use **forever**. After the period ends
-the Software keeps working; installing versions released later requires a
-renewal, offered at a discounted price. A renewal issues a new license key and
-includes 12 months of updates from the renewal date.
+**updates for life**: every version of Dolly we release is yours to install and
+use forever, at no further cost. There is nothing to renew.
 
-Purchases made before **August 5, 2026** include lifetime updates.
+This applies retroactively: licenses bought under earlier terms, which
+included 12 months of updates, are now lifetime licenses as well.
 
 ## 3. Team licenses
 A team license covers **3–10 seats** in a single purchase. The buyer assigns
 seats to team members through the customer portal; each member receives a
 personal license key with the same rights as a single license (up to 2 Macs
-per seat, 12 months of updates from the purchase date). Team renewals are
-priced per seat. To add seats to an existing team, contact
+per seat, updates for life). To add seats to an existing team, contact
 **support@heydolly.app**.
 
 ## 4. Restrictions
@@ -60,8 +57,7 @@ Refunds are governed by our [Refund Policy](/refund).
 ## 8. Updates
 We may release updates from time to time and may change or discontinue
 features. The Software includes an updater that checks for and installs new
-versions; it offers the versions your license covers. Versions released after
-your update period remain available after a renewal.
+versions; your license covers every version we release.
 
 ## 9. Disclaimer of warranties
 The Software is provided **"as is"** and **"as available"**, without warranties

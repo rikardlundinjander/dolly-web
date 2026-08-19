@@ -5,10 +5,12 @@ import { BUY_SINGLE, BUY_TEAM } from "../lib/links";
 // Pricing (redesign): två kort på gridden (4/12 kol vardera, centrerade).
 // Hela kortet är klickbart. Endast hover-states (inga 3d/holo-effekter).
 // Struktur: namn → ingress (bär villkoren) → pris → rund knapp.
+// Villkoren är lifetime sedan 2026-08-19: en licens täcker varje framtida
+// version, och förnyelseprodukterna finns inte längre.
 const plans = [
   {
     name: "Single License",
-    desc: "For one person, 2 devices. One-time purchase with 12 months of updates, yours forever, with an optional $29/year renewal.",
+    desc: "For one person, 2 devices. Updates for life, at no extra cost.",
     price: "$69",
     perSeat: false,
     cta: "Buy license",
@@ -17,7 +19,7 @@ const plans = [
   },
   {
     name: "Team License",
-    desc: "For teams 3–10. One-time purchase with 12 months of updates, yours forever, with an optional $19/year renewal.",
+    desc: "For teams 3–10. Updates for life, at no extra cost.",
     price: "$49",
     perSeat: true,
     cta: "Buy team license",
@@ -25,7 +27,7 @@ const plans = [
     featured: false,
   },
 ];
-const DESC = "No subscription. One-time purchase with 12 months of updates included.";
+const DESC = "No subscription, no renewals. One purchase includes every future update.";
 ---
 
 <section
