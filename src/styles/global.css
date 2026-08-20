@@ -287,7 +287,7 @@ body {
      Här är det två tydliga lägen: text respektive display. */
   font-optical-sizing: none;
   font-variation-settings: "opsz" 14;
-  font-synthesis: none; /* en vikt — aldrig fejk-bold/italic */
+  font-synthesis: none; /* aldrig fejk-bold/italic — vikter kommer ur fonten */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -300,6 +300,7 @@ h2,
 h3 {
   font-family: var(--font-display);
   font-variation-settings: "opsz" 32;
+  font-weight: 600;
 }
 
 @media (prefers-reduced-motion: reduce) {
