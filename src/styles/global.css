@@ -60,6 +60,10 @@
      som tracking-display, för sådant som inte är h1-h3 men ska följa dem
      (priset i pricing-korten). */
   --tracking-display: -0.022em;
+  /* Spärr för gränssnittstext: nav, knappar, kortrubriker. Lättare än
+     rubrikernas, eftersom liten text behöver mer luft för att vara läsbar.
+     Exponeras som tracking-ui. */
+  --tracking-ui: -0.016em;
 
   /* Typskala (full skala, inte bara det som används) + line-heights.
      Responsiva par som används i dag (mobil → desktop):
