@@ -3,7 +3,7 @@ import Container from "./Container.astro";
 
 // FAQ (redesign) — samma innehåll som v1, stylad enligt nya designen:
 // centrerad sektionsrubrik, hårfina delare, +-ikon som roterar, mjuk
-// höjd-animering. Brödtext i en vikt — betoning via färg, inte fetare text.
+// höjd-animering. En vikt — betoning via färg, inte font-weight.
 const faqs = [
   {
     q: "Is Dolly a subscription?",
@@ -35,7 +35,7 @@ const faqs = [
 >
   <Container>
     <div class="mx-auto max-w-xl text-center">
-      <h2 data-reveal-item class="text-xl text-text tracking-[-0.5px] sm:text-2xl sm:tracking-[-1px]">Asked about Dolly.</h2>
+      <h2 data-reveal-item class="text-xl text-text sm:text-2xl">Asked about Dolly.</h2>
     </div>
 
     <div data-reveal-item class="mx-auto mt-flow-lg flex max-w-2xl flex-col gap-1">
