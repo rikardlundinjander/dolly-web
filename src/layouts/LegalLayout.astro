@@ -39,27 +39,23 @@ const description = frontmatter?.description;
   .legal > :first-child {
     margin-top: 0;
   }
+  /* Vikt och spärr sätts inte här — h1-h3 ärver sajtens rubrikstilar
+     (vikt 400, --tracking-display) från global.css. Här bara storlek,
+     färg och rytm. */
   .legal h1 {
     color: var(--text);
-    font-family: var(--font-display);
-    font-weight: 700;
     font-size: 2.25rem;
     line-height: 1.1;
-    letter-spacing: -0.025em;
     margin-bottom: 0.25rem;
   }
   .legal h2 {
     color: var(--text);
-    font-family: var(--font-display);
-    font-weight: 700;
     font-size: 1.375rem;
-    letter-spacing: -0.015em;
     margin-top: 2.5rem;
     margin-bottom: 0.75rem;
   }
   .legal h3 {
     color: var(--text);
-    font-weight: 600;
     font-size: 1.0625rem;
     margin-top: 1.75rem;
     margin-bottom: 0.5rem;
@@ -89,9 +85,10 @@ const description = frontmatter?.description;
   .legal a:hover {
     color: var(--accent-hover);
   }
+  /* Markdownens **fetmarkeringar** framhävs inte. Browserns default är
+     bold, så vikten måste nollställas uttryckligen. */
   .legal strong {
-    color: var(--text);
-    font-weight: 600;
+    font-weight: 400;
   }
   .legal hr {
     border: 0;

@@ -55,6 +55,12 @@
   --font-display: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
+  /* Rubrikspärr. I em så den ger samma optiska spärr oavsett storlek —
+     ett fast pixelvärde slog olika hårt per rubrik. Exponeras av Tailwind
+     som tracking-display, för sådant som inte är h1-h3 men ska följa dem
+     (priset i pricing-korten). */
+  --tracking-display: -0.022em;
+
   /* Typskala (full skala, inte bara det som används) + line-heights.
      Responsiva par som används i dag (mobil → desktop):
        hero-rubrik      text-3xl → sm:text-5xl    36 → 56
@@ -301,11 +307,8 @@ h3 {
   font-family: var(--font-display);
   font-variation-settings: "opsz" 32;
   /* Spärren låg tidigare som tracking-klasser i varje komponent, med olika
-     värden och en rubrik som saknade den helt. Samlad här i stället.
-     I em, inte px: ett fast pixelvärde slår olika hårt per rubrikstorlek
-     (-1.25px var -2,2% på hero men -5,2% på mobilens sektionsrubriker).
-     -0.022em ger samma optiska spärr överallt och skalar med storleken. */
-  letter-spacing: -0.022em;
+     värden och en rubrik som saknade den helt. Samlad här i stället. */
+  letter-spacing: var(--tracking-display);
 }
 
 @media (prefers-reduced-motion: reduce) {
