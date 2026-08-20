@@ -301,8 +301,11 @@ h3 {
   font-family: var(--font-display);
   font-variation-settings: "opsz" 32;
   /* Spärren låg tidigare som tracking-klasser i varje komponent, med olika
-     värden och en rubrik som saknade den helt. Samlad här i stället. */
-  letter-spacing: -1.25px;
+     värden och en rubrik som saknade den helt. Samlad här i stället.
+     I em, inte px: ett fast pixelvärde slår olika hårt per rubrikstorlek
+     (-1.25px var -2,2% på hero men -5,2% på mobilens sektionsrubriker).
+     -0.022em ger samma optiska spärr överallt och skalar med storleken. */
+  letter-spacing: -0.022em;
 }
 
 @media (prefers-reduced-motion: reduce) {
