@@ -1,13 +1,9 @@
 @import "tailwindcss";
-
-/* KH Teka — EN vikt (Regular). Self-hostad. */
-@font-face {
-  font-family: "KH Teka";
-  src: url("/fonts/KHTeka-Regular.woff") format("woff");
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Inter 4 som variabel font. Familjen heter "Inter Variable" och bär axeln
+   opsz 14-32: det ÄR Inter Display — samma fil, optisk storleksaxel. Vid
+   opsz 32 får man display-formerna (tightare, högre kontrast), vid 14
+   textformerna. Rubriker och brödtext delar alltså nedladdning. */
+@import "@fontsource-variable/inter/opsz.css";
 
 /* =============================================================
    Dolly — Design system (redesign, dark-first)
@@ -53,8 +49,10 @@
   --color-brand-900: #1d3f83;
 
   /* ---------- TYPOGRAFI ---------- */
-  --font-sans: "KH Teka", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-display: "KH Teka", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Inter Variable", Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  /* Samma familj som --font-sans. Det som skiljer display från text är
+     opsz-axeln, inte fontfilen — den sätts i basstilarna längre ned. */
+  --font-display: var(--font-sans);
   --font-mono: ui-monospace, "SF Mono", "JetBrains Mono", Menlo, monospace;
 
   /* Typskala (full skala, inte bara det som används) + line-heights.
@@ -284,10 +282,24 @@ body {
   color: var(--text);
   font-family: var(--font-sans);
   font-weight: 400;
+  /* Explicit i stället för font-optical-sizing: auto. Auto interpolerar
+     glidande mot font-size, så en 32px-rubrik hade hamnat mittemellan.
+     Här är det två tydliga lägen: text respektive display. */
+  font-optical-sizing: none;
+  font-variation-settings: "opsz" 14;
   font-synthesis: none; /* en vikt — aldrig fejk-bold/italic */
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+}
+
+/* Rubriker får display-formerna. Ärvs till barn, men rubrikerna innehåller
+   bara text och radbrytningar. */
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-variation-settings: "opsz" 32;
 }
 
 @media (prefers-reduced-motion: reduce) {
